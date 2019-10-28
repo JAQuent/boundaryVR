@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Spatial Experiment</title>
+  <script src="/assets/javascripts/jatos.js"></script>
+  <script src = "/study_assets_root/boundaryVR/jquery-3.3.1.min.js" type="text/javascript"></script>
+</head>
+<body>
+  <div id="all_text" align="center" style="visibility:hidden;">
+      <p style="font-family: 'Open Sans', 'Arial', sans-serif; font-size: 170%; line-height: 1.5em; width: 80%; text-align: center"><br><b>exp_title</b></p>
+      <p style="font-family: 'Open Sans', 'Arial', sans-serif; font-size: 140%; line-height: 1.3em; width: 80%; text-align: justify">The aim of this study is to understand how our brains process information in a spatial context. In this experiment you will be shown a video and then complete additional task and be asked questions. Prior to starting, we test your connection speed and browser so we can verify that the movies can be played. The whole session should last around est_time minutes. You may take short breaks, but bear in mind you must finish the session within max_time minutes.<br><br>Anonymised electronic research data will be stored on the hosting site’s EU based servers that are compliant with data protection and security policies, and data transfer will be encrypted.<br><br>We will not have access to identifying information (PID) like name, IP address or bank details; only demographic information (e.g., age, gender, language).<br><br>In addition to your responses during the study, we collect information about the device, operating system and web browser that you’re using. This will not include any information that would identify you.<br><br>The study uses browser cookies. The use of these session cookies, which are cleared when you close your browser tab/window, is necessary in order for the experiment to run properly. By taking part, you agree to the use of cookies.<br><br>Cambridge University is the sponsor for this study based in the United Kingdom. We will be using information from you in order to undertake this study and will act as the data controller for this. Your rights to access, change or move your information are limited, as we need to manage your information in specific ways in order for the research to be reliable and accurate. If you withdraw from the study, we will keep the information about you that we have already obtained. To safeguard your rights, we will use the minimum personally-identifiable information possible. You can find out more about how we use your information at <a href='https://www.medschl.cam.ac.uk/research/privacy-notice-how-we-use-your-research-data/'>https://www.medschl.cam.ac.uk/research/privacy-notice-how-we-use-your-research-data/</a><br><br><i>Researcher:<br>Jörn Alexander Quent, M.Sc.<br>Message via Prolific or alex.quent@mrc-cbu.cam.ac.uk<br><br>This research is conducted by Medical Research Council, Cognition and Brain Sciences Unit, University of Cambridge and has received a favourable ethical approval from the Cambridge Psychological Research Ethics Committee</i></p>
+
+        <button id="continue_btn" style="font-size: 28px; padding: 6px 10px; border-radius: 6px; border: 2px solid #6b6b6b;">Next page</button>
+    </div>
+<script>
+
+  jatos.onLoad(function() {
+
+    var exp_title = jatos.componentJsonInput.exp_title;
+    var est_time = jatos.componentJsonInput.est_time;
+    var max_time = jatos.componentJsonInput.max_time;
+
+    document.body.innerHTML = document.body.innerHTML.replace('exp_title', exp_title);
+    document.body.innerHTML = document.body.innerHTML.replace('est_time', est_time);
+    document.body.innerHTML = document.body.innerHTML.replace('max_time', max_time);
+
+    document.getElementById("all_text").style.visibility = "visible";
+
+    continue_btn = document.getElementById("continue_btn");
+    continue_btn.addEventListener('click', function() {
+      jatos.startNextComponent();
+    });
+  });
+
+</script>
+</body>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Spatial experiment</title>
+  <script src="/assets/javascripts/jatos.js"></script>
+</head>
+<body>
+
+    <div align="center" style='marginTop: 200px;'>
+        <p style="font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.6em; vertical-align: middle; text-align: justify; width: 70%;"> <br><br><br>Please press 'Play Video' to play the video and then enter a description of the video in the text box below. After entering the word, please press 'Continue'. If the video does not play, leave the text box empty and press 'Continue'.<br></p>
+        <video id="player" src="/study_assets_root/boundaryVR/bear_demo2.mp4" ></video><br><br>
+        <button id="play_vid" style="font-size: 22px; padding: 4px 8px; border-radius: 6px; border: 2px solid #6b6b6b;">Play Video</button>
+    </div>
+    <div align="center">
+        <p style="font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.6em; vertical-align:middle">Please enter one word that best describes the content of the <b>video</b>: <textarea id="answer_text" rows="1" cols="5" maxlength=5 style="vertical-align:middle; font-size: 18px; line-height: 1.5em;"></textarea></p>
+        <button id="continue_btn" style="font-size: 22px; padding: 4px 8px; border-radius: 6px; border: 2px solid #6b6b6b;">Continue</button>
+    </div>
+
+<script>
+
+    jatos.onLoad(function() {
+
+      var result_data = {};
+      jatos.addJatosIds(result_data);
+
+      player = document.getElementById("player");
+      button = document.getElementById("play_vid");
+      button.addEventListener('click', function() {player.load(); player.play();});
+      var txt = document.getElementById("answer_text");
+      continue_btn = document.getElementById("continue_btn");
+      continue_btn.addEventListener('click', function() {
+        var txt_val = txt.value;
+        if (txt_val.trim()=='lion' || txt_val.trim()=='lions') {
+          result_data.test_status = "success";
+          result_data.fail_reason = "none";
+          result_json = "[" + JSON.stringify(result_data) + "]";
+          jatos.submitResultData(result_json, jatos.startNextComponent);
+        } else if (txt_val.trim()=='bear') {
+          result_data.test_status = "fail";
+          result_data.fail_reason = "VID_BEAR";
+          result_json = JSON.stringify(result_data);
+          document.body.innerHTML = "<div id=\"container\" align=\"center\" style=\"display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;\"><div id=\"display_message\" style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.2em;\"><br><br><br>Your browser/computer doesn't support the experiment video format. " +
+            "<br><br>Please mark the experiment as incomplete and we'll pay you for your time.</div></div>";
+          var err_msg = 'VID_BEAR';
+          if ("prolific_ID" in jatos.studySessionData) {
+              err_msg = err_msg + '_' + jatos.studySessionData.prolific_ID;
+          }
+          jatos.submitResultData(result_json, function() {return jatos.endStudyAjax(false,err_msg);});
+        } else {
+          result_data.test_status = "fail";
+          result_data.fail_reason = "VID";
+          result_json = JSON.stringify(result_data);
+          document.body.innerHTML = "<div id=\"container\" align=\"center\" style=\"display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;\"><div id=\"display_message\" style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.2em;\"><br><br><br>Your browser/computer doesn't support the experiment video format. " +
+            "<br><br>Please mark the experiment as incomplete and we'll pay you for your time. You may also wish to try running the experiment on a different browser</div></div>";
+          var err_msg = 'VID';
+          if ("prolific_ID" in jatos.studySessionData) {
+              err_msg = err_msg + '_' + jatos.studySessionData.prolific_ID;
+          }
+          jatos.submitResultData(result_json, function() {return jatos.endStudyAjax(false,err_msg);});
+        }
+      });
+    });
+</script>
+</body>

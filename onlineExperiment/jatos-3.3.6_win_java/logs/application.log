@@ -719,3 +719,494 @@
 2019-10-28 09:40:14,554 [INFO] - gui_access - GET /jatos/65 (admin)
 2019-10-28 09:40:14,618 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
 2019-10-28 09:40:14,647 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572255614575 (admin)
+2019-10-28 09:46:54,816 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 09:46:54,939 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:46:54,972 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256014849 (admin)
+2019-10-28 09:53:59,585 [INFO] - gui_access - POST /jatos/65/component (admin)
+2019-10-28 09:53:59,605 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:53:59,613 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256014850 (admin)
+2019-10-28 09:54:01,186 [INFO] - gui_access - GET /jatos/65/65/run (admin)
+2019-10-28 09:54:01,197 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 09:54:01,202 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 09:54:01,207 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 09:54:01,248 [INFO] - publix_access - GET /publix/65/65/start?srid=129
+2019-10-28 09:54:01,248 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 65, studyResultId 129, logged-in user's email admin
+2019-10-28 09:54:01,442 [INFO] - publix_access - GET /publix/65/65/initData?srid=129
+2019-10-28 09:54:01,442 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 65, studyResultId 129
+2019-10-28 09:54:01,466 [INFO] - publix_access - POST /publix/65/heartbeat?srid=129
+2019-10-28 09:54:01,513 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 129
+2019-10-28 09:54:04,937 [INFO] - publix_access - PUT /publix/65/65/resultData?srid=129
+2019-10-28 09:54:04,937 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 65, studyResultId 129
+2019-10-28 09:54:04,978 [INFO] - publix_access - POST /publix/65/studySessionData?srid=129
+2019-10-28 09:54:04,978 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 129
+2019-10-28 09:54:05,031 [INFO] - publix_access - GET /publix/65/end?srid=129&successful=true
+2019-10-28 09:54:05,031 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 129, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 09:54:05,058 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 09:54:05,200 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:54:05,234 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256445118 (admin)
+2019-10-28 09:54:06,801 [INFO] - gui_access - GET /jatos/65/65/results (admin)
+2019-10-28 09:54:06,895 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:54:06,964 [INFO] - gui_access - GET /jatos/65/65/tableData?_=1572256446843 (admin)
+2019-10-28 09:58:38,308 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 09:58:38,443 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:58:38,478 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256718358 (admin)
+2019-10-28 09:58:54,028 [INFO] - gui_access - POST /jatos/65/component (admin)
+2019-10-28 09:58:54,039 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:58:54,042 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256718359 (admin)
+2019-10-28 09:58:56,049 [INFO] - gui_access - GET /jatos/65/66/run (admin)
+2019-10-28 09:58:56,056 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 09:58:56,056 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 09:58:56,059 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 09:58:56,077 [INFO] - publix_access - GET /publix/65/66/start?srid=130
+2019-10-28 09:58:56,078 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 66, studyResultId 130, logged-in user's email admin
+2019-10-28 09:58:56,193 [INFO] - publix_access - GET /publix/65/66/initData?srid=130
+2019-10-28 09:58:56,193 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 66, studyResultId 130
+2019-10-28 09:58:56,209 [INFO] - publix_access - POST /publix/65/heartbeat?srid=130
+2019-10-28 09:58:56,213 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 130
+2019-10-28 09:58:56,290 [INFO] - publix_access - PUT /publix/65/66/resultData?srid=130
+2019-10-28 09:58:56,290 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 66, studyResultId 130
+2019-10-28 09:58:56,301 [INFO] - publix_access - POST /publix/65/studySessionData?srid=130
+2019-10-28 09:58:56,301 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 130
+2019-10-28 09:58:56,323 [INFO] - publix_access - GET /publix/65/end?srid=130&successful=true
+2019-10-28 09:58:56,324 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 130, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 09:58:56,341 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 09:58:56,481 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:58:56,514 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256736388 (admin)
+2019-10-28 09:58:57,953 [INFO] - gui_access - GET /jatos/65/66/results (admin)
+2019-10-28 09:58:58,037 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:58:58,090 [INFO] - gui_access - GET /jatos/65/66/tableData?_=1572256737997 (admin)
+2019-10-28 09:59:21,585 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 09:59:21,674 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:59:21,712 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256761628 (admin)
+2019-10-28 09:59:23,252 [INFO] - gui_access - GET /jatos/65/run (admin)
+2019-10-28 09:59:23,258 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 09:59:23,259 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 09:59:23,261 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 09:59:23,278 [INFO] - publix_access - GET /publix/65/65/start?srid=131
+2019-10-28 09:59:23,278 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 65, studyResultId 131, logged-in user's email admin
+2019-10-28 09:59:23,364 [INFO] - publix_access - GET /publix/65/65/initData?srid=131
+2019-10-28 09:59:23,364 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 65, studyResultId 131
+2019-10-28 09:59:23,374 [INFO] - publix_access - POST /publix/65/heartbeat?srid=131
+2019-10-28 09:59:23,381 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 131
+2019-10-28 09:59:26,239 [INFO] - publix_access - PUT /publix/65/65/resultData?srid=131
+2019-10-28 09:59:26,239 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 65, studyResultId 131
+2019-10-28 09:59:26,254 [INFO] - publix_access - POST /publix/65/studySessionData?srid=131
+2019-10-28 09:59:26,254 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 131
+2019-10-28 09:59:26,295 [INFO] - publix_access - GET /publix/65/66/start?srid=131
+2019-10-28 09:59:26,296 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 66, studyResultId 131, logged-in user's email admin
+2019-10-28 09:59:26,367 [INFO] - publix_access - GET /publix/65/66/initData?srid=131
+2019-10-28 09:59:26,367 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 66, studyResultId 131
+2019-10-28 09:59:26,380 [INFO] - publix_access - POST /publix/65/heartbeat?srid=131
+2019-10-28 09:59:26,388 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 131
+2019-10-28 09:59:26,405 [INFO] - publix_access - PUT /publix/65/66/resultData?srid=131
+2019-10-28 09:59:26,406 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 66, studyResultId 131
+2019-10-28 09:59:26,425 [INFO] - publix_access - POST /publix/65/studySessionData?srid=131
+2019-10-28 09:59:26,426 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 131
+2019-10-28 09:59:26,450 [INFO] - publix_access - GET /publix/65/end?srid=131&successful=true
+2019-10-28 09:59:26,451 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 131, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 09:59:26,469 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 09:59:26,551 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:59:26,576 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256766513 (admin)
+2019-10-28 09:59:29,041 [INFO] - gui_access - GET /jatos/65/66/results (admin)
+2019-10-28 09:59:29,112 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 09:59:29,167 [INFO] - gui_access - GET /jatos/65/66/tableData?_=1572256769077 (admin)
+2019-10-28 10:00:13,094 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:00:13,188 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:00:13,227 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256813138 (admin)
+2019-10-28 10:00:14,201 [INFO] - gui_access - GET /jatos/65/run (admin)
+2019-10-28 10:00:14,206 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:00:14,206 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:00:14,207 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:00:14,225 [INFO] - publix_access - GET /publix/65/65/start?srid=132
+2019-10-28 10:00:14,226 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 65, studyResultId 132, logged-in user's email admin
+2019-10-28 10:00:14,307 [INFO] - publix_access - GET /publix/65/65/initData?srid=132
+2019-10-28 10:00:14,308 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 65, studyResultId 132
+2019-10-28 10:00:14,317 [INFO] - publix_access - POST /publix/65/heartbeat?srid=132
+2019-10-28 10:00:14,326 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 132
+2019-10-28 10:00:21,906 [INFO] - publix_access - PUT /publix/65/65/resultData?srid=132
+2019-10-28 10:00:21,906 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 65, studyResultId 132
+2019-10-28 10:00:21,928 [INFO] - publix_access - POST /publix/65/studySessionData?srid=132
+2019-10-28 10:00:21,928 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 132
+2019-10-28 10:00:21,957 [INFO] - publix_access - GET /publix/65/66/start?srid=132
+2019-10-28 10:00:21,957 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 66, studyResultId 132, logged-in user's email admin
+2019-10-28 10:00:22,059 [INFO] - publix_access - GET /publix/65/66/initData?srid=132
+2019-10-28 10:00:22,060 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 66, studyResultId 132
+2019-10-28 10:00:22,077 [INFO] - publix_access - POST /publix/65/heartbeat?srid=132
+2019-10-28 10:00:22,082 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 132
+2019-10-28 10:00:22,108 [INFO] - publix_access - PUT /publix/65/66/resultData?srid=132
+2019-10-28 10:00:22,108 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 66, studyResultId 132
+2019-10-28 10:00:22,133 [INFO] - publix_access - POST /publix/65/studySessionData?srid=132
+2019-10-28 10:00:22,133 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 132
+2019-10-28 10:00:22,139 [INFO] - publix_access - GET /publix/65/end?srid=132&successful=false&errorMsg=MOBILE_test
+2019-10-28 10:00:22,139 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 132, logged-in user email admin, successful false, errorMsg "MOBILE_test"
+2019-10-28 10:00:40,103 [INFO] - publix_access - GET /publix/65/66/start?srid=132
+2019-10-28 10:00:40,117 [INFO] - g.ErrorHandler - PublixException during call /publix/65/66/start?srid=132: JATOS isn't allowed to run a study with the study result ID 132. Maybe it was closed automatically by JATOS because you started other studies in the same browser in the meantime.
+2019-10-28 10:00:42,416 [INFO] - publix_access - GET /publix/65/66/start?srid=132
+2019-10-28 10:00:42,417 [INFO] - g.ErrorHandler - PublixException during call /publix/65/66/start?srid=132: JATOS isn't allowed to run a study with the study result ID 132. Maybe it was closed automatically by JATOS because you started other studies in the same browser in the meantime.
+2019-10-28 10:00:43,175 [INFO] - publix_access - GET /publix/65/65/start?srid=132
+2019-10-28 10:00:43,175 [INFO] - g.ErrorHandler - PublixException during call /publix/65/65/start?srid=132: JATOS isn't allowed to run a study with the study result ID 132. Maybe it was closed automatically by JATOS because you started other studies in the same browser in the meantime.
+2019-10-28 10:00:43,965 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256843859 (admin)
+2019-10-28 10:00:45,851 [INFO] - gui_access - GET /jatos/65/run (admin)
+2019-10-28 10:00:45,856 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:00:45,856 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:00:45,859 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:00:45,878 [INFO] - publix_access - GET /publix/65/65/start?srid=133
+2019-10-28 10:00:45,878 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 65, studyResultId 133, logged-in user's email admin
+2019-10-28 10:00:45,955 [INFO] - publix_access - GET /publix/65/65/initData?srid=133
+2019-10-28 10:00:45,955 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 65, studyResultId 133
+2019-10-28 10:00:45,967 [INFO] - publix_access - POST /publix/65/heartbeat?srid=133
+2019-10-28 10:00:45,970 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 133
+2019-10-28 10:00:48,215 [INFO] - publix_access - PUT /publix/65/65/resultData?srid=133
+2019-10-28 10:00:48,215 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 65, studyResultId 133
+2019-10-28 10:00:48,231 [INFO] - publix_access - POST /publix/65/studySessionData?srid=133
+2019-10-28 10:00:48,231 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 133
+2019-10-28 10:00:48,265 [INFO] - publix_access - GET /publix/65/66/start?srid=133
+2019-10-28 10:00:48,265 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 66, studyResultId 133, logged-in user's email admin
+2019-10-28 10:00:48,333 [INFO] - publix_access - GET /publix/65/66/initData?srid=133
+2019-10-28 10:00:48,333 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 66, studyResultId 133
+2019-10-28 10:00:48,348 [INFO] - publix_access - POST /publix/65/heartbeat?srid=133
+2019-10-28 10:00:48,350 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 133
+2019-10-28 10:00:48,367 [INFO] - publix_access - PUT /publix/65/66/resultData?srid=133
+2019-10-28 10:00:48,367 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 66, studyResultId 133
+2019-10-28 10:00:48,383 [INFO] - publix_access - POST /publix/65/studySessionData?srid=133
+2019-10-28 10:00:48,383 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 133
+2019-10-28 10:00:48,410 [INFO] - publix_access - GET /publix/65/end?srid=133&successful=true
+2019-10-28 10:00:48,410 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 133, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 10:00:48,427 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:00:48,504 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:00:48,532 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572256848467 (admin)
+2019-10-28 10:00:50,166 [INFO] - gui_access - GET /jatos/65/66/results (admin)
+2019-10-28 10:00:50,268 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:00:50,335 [INFO] - gui_access - GET /jatos/65/66/tableData?_=1572256850214 (admin)
+2019-10-28 10:03:36,687 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:03:36,780 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:03:36,821 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572257016732 (admin)
+2019-10-28 10:04:24,746 [INFO] - gui_access - POST /jatos/65/component (admin)
+2019-10-28 10:04:24,758 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:04:24,763 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572257016733 (admin)
+2019-10-28 10:04:27,318 [INFO] - gui_access - GET /jatos/65/run (admin)
+2019-10-28 10:04:27,324 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:04:27,324 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:04:27,326 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:04:27,344 [INFO] - publix_access - GET /publix/65/65/start?srid=134
+2019-10-28 10:04:27,345 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 65, studyResultId 134, logged-in user's email admin
+2019-10-28 10:04:27,441 [INFO] - publix_access - GET /publix/65/65/initData?srid=134
+2019-10-28 10:04:27,441 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 65, studyResultId 134
+2019-10-28 10:04:27,458 [INFO] - publix_access - POST /publix/65/heartbeat?srid=134
+2019-10-28 10:04:27,459 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 134
+2019-10-28 10:04:30,099 [INFO] - publix_access - PUT /publix/65/65/resultData?srid=134
+2019-10-28 10:04:30,099 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 65, studyResultId 134
+2019-10-28 10:04:30,120 [INFO] - publix_access - POST /publix/65/studySessionData?srid=134
+2019-10-28 10:04:30,120 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 134
+2019-10-28 10:04:30,146 [INFO] - publix_access - GET /publix/65/66/start?srid=134
+2019-10-28 10:04:30,147 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 66, studyResultId 134, logged-in user's email admin
+2019-10-28 10:04:30,220 [INFO] - publix_access - GET /publix/65/66/initData?srid=134
+2019-10-28 10:04:30,220 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 66, studyResultId 134
+2019-10-28 10:04:30,233 [INFO] - publix_access - POST /publix/65/heartbeat?srid=134
+2019-10-28 10:04:30,235 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 134
+2019-10-28 10:04:30,251 [INFO] - publix_access - PUT /publix/65/66/resultData?srid=134
+2019-10-28 10:04:30,251 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 66, studyResultId 134
+2019-10-28 10:04:30,266 [INFO] - publix_access - POST /publix/65/studySessionData?srid=134
+2019-10-28 10:04:30,266 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 134
+2019-10-28 10:04:30,289 [INFO] - publix_access - GET /publix/65/67/start?srid=134
+2019-10-28 10:04:30,289 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 67, studyResultId 134, logged-in user's email admin
+2019-10-28 10:04:30,318 [INFO] - c.p.StudyAssets - .viaAssetsPath: You tried to access the file stopmotion_recency/jquery-3.3.1.min.js but it seems you have no access rights. Maybe this study was never started?
+2019-10-28 10:04:30,377 [INFO] - publix_access - GET /publix/65/67/initData?srid=134
+2019-10-28 10:04:30,378 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 67, studyResultId 134
+2019-10-28 10:04:30,391 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 134
+2019-10-28 10:04:30,393 [INFO] - publix_access - POST /publix/65/heartbeat?srid=134
+2019-10-28 10:05:15,656 [INFO] - publix_access - GET /publix/65/65/start?srid=134
+2019-10-28 10:05:15,656 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 65, studyResultId 134, logged-in user's email admin
+2019-10-28 10:05:15,753 [INFO] - publix_access - GET /publix/65/65/initData?srid=134
+2019-10-28 10:05:15,753 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 65, studyResultId 134
+2019-10-28 10:05:15,770 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 134
+2019-10-28 10:05:15,773 [INFO] - publix_access - POST /publix/65/heartbeat?srid=134
+2019-10-28 10:05:21,474 [INFO] - publix_access - GET /publix/65/65/start?srid=134
+2019-10-28 10:05:21,474 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 65, studyResultId 134, logged-in user's email admin
+2019-10-28 10:05:21,484 [INFO] - publix_access - GET /publix/65/end?srid=134&successful=false&errorMsg=It%27s+not+allowed+to+reload+this+component+%28ID%3A+65%29.+Unfortunately+it+is+neccessary+to+finish+this+study+%28ID%3A+65%29+at+this+point.
+2019-10-28 10:05:21,485 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 134, logged-in user email admin, successful false, errorMsg "It's not allowed to reload this component (ID: 65). Unfortunately it is neccessary to finish this study (ID: 65) at this point."
+2019-10-28 10:05:21,506 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:05:21,673 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:05:21,708 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572257121577 (admin)
+2019-10-28 10:05:38,313 [INFO] - gui_access - GET /jatos/65/run (admin)
+2019-10-28 10:05:38,319 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:05:38,319 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:05:38,321 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:05:38,338 [INFO] - publix_access - GET /publix/65/65/start?srid=135
+2019-10-28 10:05:38,339 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 65, studyResultId 135, logged-in user's email admin
+2019-10-28 10:05:38,425 [INFO] - publix_access - GET /publix/65/65/initData?srid=135
+2019-10-28 10:05:38,425 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 65, studyResultId 135
+2019-10-28 10:05:38,440 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 135
+2019-10-28 10:05:38,445 [INFO] - publix_access - POST /publix/65/heartbeat?srid=135
+2019-10-28 10:05:40,462 [INFO] - publix_access - PUT /publix/65/65/resultData?srid=135
+2019-10-28 10:05:40,462 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 65, studyResultId 135
+2019-10-28 10:05:40,491 [INFO] - publix_access - POST /publix/65/studySessionData?srid=135
+2019-10-28 10:05:40,491 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 135
+2019-10-28 10:05:40,522 [INFO] - publix_access - GET /publix/65/66/start?srid=135
+2019-10-28 10:05:40,523 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 66, studyResultId 135, logged-in user's email admin
+2019-10-28 10:05:40,628 [INFO] - publix_access - GET /publix/65/66/initData?srid=135
+2019-10-28 10:05:40,628 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 66, studyResultId 135
+2019-10-28 10:05:40,647 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 135
+2019-10-28 10:05:40,650 [INFO] - publix_access - POST /publix/65/heartbeat?srid=135
+2019-10-28 10:05:40,675 [INFO] - publix_access - PUT /publix/65/66/resultData?srid=135
+2019-10-28 10:05:40,675 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 66, studyResultId 135
+2019-10-28 10:05:40,703 [INFO] - publix_access - POST /publix/65/studySessionData?srid=135
+2019-10-28 10:05:40,703 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 135
+2019-10-28 10:05:40,730 [INFO] - publix_access - GET /publix/65/67/start?srid=135
+2019-10-28 10:05:40,730 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 67, studyResultId 135, logged-in user's email admin
+2019-10-28 10:05:40,808 [INFO] - publix_access - GET /publix/65/67/initData?srid=135
+2019-10-28 10:05:40,808 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 67, studyResultId 135
+2019-10-28 10:05:40,823 [INFO] - publix_access - POST /publix/65/heartbeat?srid=135
+2019-10-28 10:05:40,823 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 135
+2019-10-28 10:06:10,133 [INFO] - publix_access - GET /publix/65/67/start?srid=135
+2019-10-28 10:06:10,133 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 67, studyResultId 135, logged-in user's email admin
+2019-10-28 10:06:10,144 [INFO] - publix_access - GET /publix/65/end?srid=135&successful=false&errorMsg=It%27s+not+allowed+to+reload+this+component+%28ID%3A+67%29.+Unfortunately+it+is+neccessary+to+finish+this+study+%28ID%3A+65%29+at+this+point.
+2019-10-28 10:06:10,144 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 135, logged-in user email admin, successful false, errorMsg "It's not allowed to reload this component (ID: 67). Unfortunately it is neccessary to finish this study (ID: 65) at this point."
+2019-10-28 10:06:10,164 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:06:10,333 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:06:10,369 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572257170239 (admin)
+2019-10-28 10:06:12,350 [INFO] - gui_access - GET /jatos/65/run (admin)
+2019-10-28 10:06:12,356 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:06:12,356 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:06:12,357 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:06:12,374 [INFO] - publix_access - GET /publix/65/65/start?srid=136
+2019-10-28 10:06:12,374 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 65, studyResultId 136, logged-in user's email admin
+2019-10-28 10:06:12,460 [INFO] - publix_access - GET /publix/65/65/initData?srid=136
+2019-10-28 10:06:12,461 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 65, studyResultId 136
+2019-10-28 10:06:12,480 [INFO] - publix_access - POST /publix/65/heartbeat?srid=136
+2019-10-28 10:06:12,481 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 136
+2019-10-28 10:06:14,532 [INFO] - publix_access - PUT /publix/65/65/resultData?srid=136
+2019-10-28 10:06:14,532 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 65, studyResultId 136
+2019-10-28 10:06:14,558 [INFO] - publix_access - POST /publix/65/studySessionData?srid=136
+2019-10-28 10:06:14,559 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 136
+2019-10-28 10:06:14,587 [INFO] - publix_access - GET /publix/65/66/start?srid=136
+2019-10-28 10:06:14,588 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 66, studyResultId 136, logged-in user's email admin
+2019-10-28 10:06:14,668 [INFO] - publix_access - GET /publix/65/66/initData?srid=136
+2019-10-28 10:06:14,669 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 66, studyResultId 136
+2019-10-28 10:06:14,688 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 136
+2019-10-28 10:06:14,688 [INFO] - publix_access - POST /publix/65/heartbeat?srid=136
+2019-10-28 10:06:14,705 [INFO] - publix_access - PUT /publix/65/66/resultData?srid=136
+2019-10-28 10:06:14,706 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 66, studyResultId 136
+2019-10-28 10:06:14,723 [INFO] - publix_access - POST /publix/65/studySessionData?srid=136
+2019-10-28 10:06:14,723 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 136
+2019-10-28 10:06:14,747 [INFO] - publix_access - GET /publix/65/67/start?srid=136
+2019-10-28 10:06:14,747 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 67, studyResultId 136, logged-in user's email admin
+2019-10-28 10:06:14,812 [INFO] - publix_access - GET /publix/65/67/initData?srid=136
+2019-10-28 10:06:14,812 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 67, studyResultId 136
+2019-10-28 10:06:14,830 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 136
+2019-10-28 10:06:14,834 [INFO] - publix_access - POST /publix/65/heartbeat?srid=136
+2019-10-28 10:08:14,868 [INFO] - publix_access - POST /publix/65/heartbeat?srid=136
+2019-10-28 10:10:14,903 [INFO] - publix_access - POST /publix/65/heartbeat?srid=136
+2019-10-28 10:11:34,592 [INFO] - publix_access - GET /publix/65/65/start?srid=136
+2019-10-28 10:11:34,592 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 65, studyResultId 136, logged-in user's email admin
+2019-10-28 10:11:34,674 [INFO] - publix_access - GET /publix/65/65/initData?srid=136
+2019-10-28 10:11:34,674 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 65, studyResultId 136
+2019-10-28 10:11:34,694 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 136
+2019-10-28 10:11:34,736 [INFO] - publix_access - POST /publix/65/heartbeat?srid=136
+2019-10-28 10:11:35,468 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572257495331 (admin)
+2019-10-28 10:11:39,632 [INFO] - gui_access - GET /jatos/65/67/properties (admin)
+2019-10-28 10:16:50,278 [INFO] - gui_access - POST /jatos/65/67/properties (admin)
+2019-10-28 10:16:50,288 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:16:50,297 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572257495332 (admin)
+2019-10-28 10:16:51,662 [INFO] - gui_access - GET /jatos/65/67/run (admin)
+2019-10-28 10:16:51,667 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:16:51,668 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:16:51,669 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:16:51,685 [INFO] - publix_access - GET /publix/65/67/start?srid=137
+2019-10-28 10:16:51,685 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 67, studyResultId 137, logged-in user's email admin
+2019-10-28 10:16:51,764 [INFO] - publix_access - GET /publix/65/67/initData?srid=137
+2019-10-28 10:16:51,765 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 67, studyResultId 137
+2019-10-28 10:16:51,790 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 137
+2019-10-28 10:16:51,798 [INFO] - publix_access - POST /publix/65/heartbeat?srid=137
+2019-10-28 10:16:58,812 [INFO] - publix_access - POST /publix/65/studySessionData?srid=137
+2019-10-28 10:16:58,812 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 137
+2019-10-28 10:16:58,821 [INFO] - publix_access - GET /publix/65/end?srid=137&successful=true
+2019-10-28 10:16:58,821 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 137, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 10:16:58,842 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:16:58,935 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:16:58,979 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572257818887 (admin)
+2019-10-28 10:21:03,523 [INFO] - gui_access - GET /jatos/65/67/run (admin)
+2019-10-28 10:21:03,531 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:21:03,531 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:21:03,532 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:21:03,548 [INFO] - publix_access - GET /publix/65/67/start?srid=138
+2019-10-28 10:21:03,548 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 67, studyResultId 138, logged-in user's email admin
+2019-10-28 10:21:03,616 [INFO] - publix_access - GET /publix/65/67/initData?srid=138
+2019-10-28 10:21:03,616 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 67, studyResultId 138
+2019-10-28 10:21:03,632 [INFO] - publix_access - POST /publix/65/heartbeat?srid=138
+2019-10-28 10:21:03,633 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 138
+2019-10-28 10:21:19,602 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258079503 (admin)
+2019-10-28 10:21:22,607 [INFO] - gui_access - GET /jatos/65/67/properties (admin)
+2019-10-28 10:21:35,324 [INFO] - gui_access - POST /jatos/65/67/properties (admin)
+2019-10-28 10:21:35,337 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:21:35,342 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258079504 (admin)
+2019-10-28 10:23:51,948 [INFO] - gui_access - POST /jatos/65/component (admin)
+2019-10-28 10:23:51,968 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:23:51,979 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258079505 (admin)
+2019-10-28 10:23:53,611 [INFO] - gui_access - GET /jatos/65/68/run (admin)
+2019-10-28 10:23:53,616 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:23:53,616 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:23:53,617 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:23:53,635 [INFO] - publix_access - GET /publix/65/68/start?srid=139
+2019-10-28 10:23:53,635 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 68, studyResultId 139, logged-in user's email admin
+2019-10-28 10:23:53,731 [INFO] - publix_access - GET /publix/65/68/initData?srid=139
+2019-10-28 10:23:53,731 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 68, studyResultId 139
+2019-10-28 10:23:53,744 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 139
+2019-10-28 10:23:53,746 [INFO] - publix_access - POST /publix/65/heartbeat?srid=139
+2019-10-28 10:23:57,056 [INFO] - publix_access - POST /publix/65/studySessionData?srid=139
+2019-10-28 10:23:57,056 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 139
+2019-10-28 10:23:57,065 [INFO] - publix_access - GET /publix/65/end?srid=139&successful=true
+2019-10-28 10:23:57,066 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 139, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 10:23:57,085 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:23:57,226 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:23:57,260 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258237136 (admin)
+2019-10-28 10:23:59,586 [INFO] - gui_access - GET /jatos/65/68/results (admin)
+2019-10-28 10:23:59,685 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:23:59,741 [INFO] - gui_access - GET /jatos/65/68/tableData?_=1572258239630 (admin)
+2019-10-28 10:24:37,954 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:24:38,046 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:24:38,075 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258278002 (admin)
+2019-10-28 10:26:36,625 [INFO] - gui_access - POST /jatos/65/component (admin)
+2019-10-28 10:26:36,637 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:26:36,642 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258278003 (admin)
+2019-10-28 10:26:39,083 [INFO] - gui_access - GET /jatos/65/69/run (admin)
+2019-10-28 10:26:39,091 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:26:39,092 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:26:39,094 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:26:39,110 [INFO] - publix_access - GET /publix/65/69/start?srid=140
+2019-10-28 10:26:39,111 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 69, studyResultId 140, logged-in user's email admin
+2019-10-28 10:26:39,204 [INFO] - publix_access - GET /publix/65/69/initData?srid=140
+2019-10-28 10:26:39,204 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 69, studyResultId 140
+2019-10-28 10:26:39,219 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 140
+2019-10-28 10:26:39,222 [INFO] - publix_access - POST /publix/65/heartbeat?srid=140
+2019-10-28 10:26:40,394 [INFO] - publix_access - POST /publix/65/studySessionData?srid=140
+2019-10-28 10:26:40,394 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 140
+2019-10-28 10:26:40,404 [INFO] - publix_access - GET /publix/65/end?srid=140&successful=true
+2019-10-28 10:26:40,405 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 140, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 10:26:40,424 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:26:40,510 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:26:40,535 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258400466 (admin)
+2019-10-28 10:29:46,869 [INFO] - gui_access - POST /jatos/65/component (admin)
+2019-10-28 10:29:46,881 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:29:46,886 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258400467 (admin)
+2019-10-28 10:29:54,809 [INFO] - gui_access - GET /jatos/65/70/run (admin)
+2019-10-28 10:29:54,814 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:29:54,814 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:29:54,815 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:29:54,843 [INFO] - publix_access - GET /publix/65/70/start?srid=141
+2019-10-28 10:29:54,843 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 70, studyResultId 141, logged-in user's email admin
+2019-10-28 10:29:54,952 [INFO] - publix_access - GET /publix/65/70/initData?srid=141
+2019-10-28 10:29:54,952 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 70, studyResultId 141
+2019-10-28 10:29:54,964 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 141
+2019-10-28 10:29:54,969 [INFO] - publix_access - POST /publix/65/heartbeat?srid=141
+2019-10-28 10:29:55,350 [INFO] - publix_access - PUT /publix/65/70/resultData?srid=141
+2019-10-28 10:29:55,350 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 70, studyResultId 141
+2019-10-28 10:29:55,373 [INFO] - publix_access - POST /publix/65/studySessionData?srid=141
+2019-10-28 10:29:55,373 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 141
+2019-10-28 10:29:55,383 [INFO] - publix_access - GET /publix/65/end?srid=141&successful=true
+2019-10-28 10:29:55,383 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 141, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 10:29:55,398 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:29:55,486 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:29:55,509 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258595442 (admin)
+2019-10-28 10:29:58,115 [INFO] - gui_access - POST /jatos/65/70/properties/active?active=false (admin)
+2019-10-28 10:29:58,812 [INFO] - gui_access - POST /jatos/65/70/properties/active?active=true (admin)
+2019-10-28 10:30:02,061 [INFO] - gui_access - GET /jatos/65/70/results (admin)
+2019-10-28 10:30:02,137 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:30:02,194 [INFO] - gui_access - GET /jatos/65/70/tableData?_=1572258602098 (admin)
+2019-10-28 10:31:11,503 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:31:11,591 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:31:11,623 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258671548 (admin)
+2019-10-28 10:32:48,211 [INFO] - gui_access - GET /jatos/65/70/run (admin)
+2019-10-28 10:32:48,216 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:32:48,216 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:32:48,217 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:32:48,231 [INFO] - publix_access - GET /publix/65/70/start?srid=142
+2019-10-28 10:32:48,231 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 70, studyResultId 142, logged-in user's email admin
+2019-10-28 10:32:48,317 [INFO] - publix_access - GET /publix/65/70/initData?srid=142
+2019-10-28 10:32:48,317 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 70, studyResultId 142
+2019-10-28 10:32:48,327 [INFO] - publix_access - POST /publix/65/heartbeat?srid=142
+2019-10-28 10:32:48,330 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 142
+2019-10-28 10:32:48,661 [INFO] - publix_access - PUT /publix/65/70/resultData?srid=142
+2019-10-28 10:32:48,662 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 70, studyResultId 142
+2019-10-28 10:32:48,697 [INFO] - publix_access - POST /publix/65/studySessionData?srid=142
+2019-10-28 10:32:48,697 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 142
+2019-10-28 10:32:48,709 [INFO] - publix_access - GET /publix/65/end?srid=142&successful=true
+2019-10-28 10:32:48,709 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 142, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 10:32:48,726 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:32:48,816 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:32:48,847 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258768775 (admin)
+2019-10-28 10:33:13,331 [INFO] - gui_access - POST /jatos/65/component (admin)
+2019-10-28 10:33:13,341 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:33:13,345 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258768776 (admin)
+2019-10-28 10:33:15,808 [INFO] - gui_access - GET /jatos/65/71/run (admin)
+2019-10-28 10:33:15,814 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:33:15,814 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:33:15,816 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:33:15,830 [INFO] - publix_access - GET /publix/65/71/start?srid=143
+2019-10-28 10:33:15,830 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 71, studyResultId 143, logged-in user's email admin
+2019-10-28 10:33:15,936 [INFO] - publix_access - GET /publix/65/71/initData?srid=143
+2019-10-28 10:33:15,936 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 71, studyResultId 143
+2019-10-28 10:33:15,953 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 143
+2019-10-28 10:33:15,957 [INFO] - publix_access - POST /publix/65/heartbeat?srid=143
+2019-10-28 10:33:27,376 [INFO] - publix_access - PUT /publix/65/71/resultData?srid=143
+2019-10-28 10:33:27,377 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 71, studyResultId 143
+2019-10-28 10:33:27,397 [INFO] - publix_access - POST /publix/65/studySessionData?srid=143
+2019-10-28 10:33:27,397 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 143
+2019-10-28 10:33:27,406 [INFO] - publix_access - GET /publix/65/end?srid=143&successful=true
+2019-10-28 10:33:27,406 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 143, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 10:33:27,426 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:33:27,547 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:33:27,572 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572258807488 (admin)
+2019-10-28 10:33:29,272 [INFO] - gui_access - GET /jatos/65/71/results (admin)
+2019-10-28 10:33:29,334 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:33:29,388 [INFO] - gui_access - GET /jatos/65/71/tableData?_=1572258809296 (admin)
+2019-10-28 10:46:52,123 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:46:52,312 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:46:52,346 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572259612215 (admin)
+2019-10-28 10:47:10,013 [INFO] - gui_access - POST /jatos/65/component (admin)
+2019-10-28 10:47:10,025 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:47:10,029 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572259612216 (admin)
+2019-10-28 10:47:11,674 [INFO] - gui_access - GET /jatos/65/72/run (admin)
+2019-10-28 10:47:11,679 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:47:11,679 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:47:11,681 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:47:11,695 [INFO] - publix_access - GET /publix/65/72/start?srid=144
+2019-10-28 10:47:11,695 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 72, studyResultId 144, logged-in user's email admin
+2019-10-28 10:47:11,727 [INFO] - c.p.StudyAssets - .viaAssetsPath: failed loading from path U:\Projects\boundaryVR\onlineExperiment\jatos-3.3.6_win_java\study_assets_root\boundaryVR/jspsych-6.0.1/jspsych.js
+2019-10-28 10:47:11,727 [INFO] - c.p.StudyAssets - .viaAssetsPath: failed loading from path U:\Projects\boundaryVR\onlineExperiment\jatos-3.3.6_win_java\study_assets_root\boundaryVR/jspsych-6.0.1/plugins/jspsych-html-keyboard-response.js
+2019-10-28 10:47:11,737 [INFO] - c.p.StudyAssets - .viaAssetsPath: failed loading from path U:\Projects\boundaryVR\onlineExperiment\jatos-3.3.6_win_java\study_assets_root\boundaryVR/jspsych-6.0.1/jspsych.js
+2019-10-28 10:47:11,743 [INFO] - c.p.StudyAssets - .viaAssetsPath: failed loading from path U:\Projects\boundaryVR\onlineExperiment\jatos-3.3.6_win_java\study_assets_root\boundaryVR/jspsych-6.0.1/plugins/jspsych-html-keyboard-response.js
+2019-10-28 10:47:11,787 [INFO] - publix_access - GET /publix/65/72/initData?srid=144
+2019-10-28 10:47:11,787 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 72, studyResultId 144
+2019-10-28 10:47:11,805 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 144
+2019-10-28 10:47:11,806 [INFO] - publix_access - POST /publix/65/heartbeat?srid=144
+2019-10-28 10:47:43,605 [INFO] - publix_access - GET /publix/65/72/start?srid=144
+2019-10-28 10:47:43,605 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 72, studyResultId 144, logged-in user's email admin
+2019-10-28 10:47:43,616 [INFO] - publix_access - GET /publix/65/end?srid=144&successful=false&errorMsg=It%27s+not+allowed+to+reload+this+component+%28ID%3A+72%29.+Unfortunately+it+is+neccessary+to+finish+this+study+%28ID%3A+65%29+at+this+point.
+2019-10-28 10:47:43,616 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 144, logged-in user email admin, successful false, errorMsg "It's not allowed to reload this component (ID: 72). Unfortunately it is neccessary to finish this study (ID: 65) at this point."
+2019-10-28 10:47:43,635 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:47:43,835 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:47:43,874 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572259663709 (admin)
+2019-10-28 10:47:45,541 [INFO] - gui_access - GET /jatos/65/72/run (admin)
+2019-10-28 10:47:45,547 [INFO] - publix_access - GET /publix/65/start?batchId=-1&jatosWorkerId=1
+2019-10-28 10:47:45,547 [INFO] - c.p.w.JatosPublix - .startStudy: studyId 65, batchId -1, logged-in user's email admin
+2019-10-28 10:47:45,549 [INFO] - c.p.w.JatosPublix - .startStudy: study (study ID 65, batch ID -1) assigned to worker with ID 1
+2019-10-28 10:47:45,576 [INFO] - publix_access - GET /publix/65/72/start?srid=145
+2019-10-28 10:47:45,576 [INFO] - c.p.w.JatosPublix - .startComponent: studyId 65, componentId 72, studyResultId 145, logged-in user's email admin
+2019-10-28 10:47:45,674 [INFO] - publix_access - GET /publix/65/72/initData?srid=145
+2019-10-28 10:47:45,674 [INFO] - c.p.Publix - .getInitData: studyId 65, componentId 72, studyResultId 145
+2019-10-28 10:47:45,694 [INFO] - c.p.JatosBatchChannel - .open: studyId 65, studyResultId 145
+2019-10-28 10:47:45,711 [INFO] - publix_access - POST /publix/65/heartbeat?srid=145
+2019-10-28 10:48:08,899 [INFO] - publix_access - PUT /publix/65/72/resultData?srid=145
+2019-10-28 10:48:08,899 [INFO] - c.p.Publix - .submitResultData: studyId 65, componentId 72, studyResultId 145
+2019-10-28 10:48:08,919 [INFO] - publix_access - POST /publix/65/studySessionData?srid=145
+2019-10-28 10:48:08,919 [INFO] - c.p.Publix - .setStudySessionData: studyId 65, studyResultId 145
+2019-10-28 10:48:08,929 [INFO] - publix_access - GET /publix/65/end?srid=145&successful=true
+2019-10-28 10:48:08,929 [INFO] - c.p.w.JatosPublix - .finishStudy: studyId 65, studyResultId 145, logged-in user email admin, successful true, errorMsg "null"
+2019-10-28 10:48:08,953 [INFO] - gui_access - GET /jatos/65 (admin)
+2019-10-28 10:48:09,110 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)
+2019-10-28 10:48:09,144 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572259689018 (admin)
+2019-10-28 10:48:11,969 [INFO] - gui_access - GET /jatos/65/72/properties (admin)
+2019-10-28 10:48:16,689 [INFO] - gui_access - DELETE /jatos/65/72 (admin)
+2019-10-28 10:48:16,717 [INFO] - gui_access - GET /jatos/65/componentsTableData?_=1572259689019 (admin)
+2019-10-28 10:48:16,719 [INFO] - gui_access - GET /jatos/sidebarStudyList (admin)

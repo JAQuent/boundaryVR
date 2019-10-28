@@ -1,3 +1,54 @@
 
 {"timestamp":1572255612488,"msg":"Initial entry","studyUuid":"d40325a4-8dcc-4277-8730-b3d225bfd93e","jatosVersion":"3.3.6","serversMac":"50-9A-4C-51-54-83","hashFunction":"SHA-256"}
 {"msg":"Created study","timestamp":1572255612496}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572256441225}
+{"msg":"Stored component result data","componentUuid":"b129311d-7460-4515-afbf-eb48e78395ef","workerId":1,"dataHash":"5f2d60b91797645121d678a2e2b1c7d4f907bc11ef744eedca46b2a1c855cb9d","timestamp":1572256444960}
+{"msg":"Finished study run","workerId":1,"timestamp":1572256445047}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572256736064}
+{"msg":"Stored component result data","componentUuid":"e678c504-74c0-48e7-9bd3-771e15561509","workerId":1,"dataHash":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","timestamp":1572256736297}
+{"msg":"Finished study run","workerId":1,"timestamp":1572256736331}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572256763266}
+{"msg":"Stored component result data","componentUuid":"b129311d-7460-4515-afbf-eb48e78395ef","workerId":1,"dataHash":"a4efba8be73722644b1f412bbc8267a3498f50bf4bd4f772f6d293a60e507cbe","timestamp":1572256766239}
+{"msg":"Stored component result data","componentUuid":"e678c504-74c0-48e7-9bd3-771e15561509","workerId":1,"dataHash":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","timestamp":1572256766415}
+{"msg":"Finished study run","workerId":1,"timestamp":1572256766459}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572256814213}
+{"msg":"Stored component result data","componentUuid":"b129311d-7460-4515-afbf-eb48e78395ef","workerId":1,"dataHash":"ac9c74f2014cb629ed415a6d1a538a3e536b993c81ba124b8f58535b8221834c","timestamp":1572256821914}
+{"msg":"Stored component result data","componentUuid":"e678c504-74c0-48e7-9bd3-771e15561509","workerId":1,"dataHash":"728a5efb4d7caaaab1ea6f021f84767beda761b0acc0e79b763d59b65fbe1199","timestamp":1572256822121}
+{"msg":"Finished study run","workerId":1,"timestamp":1572256822139}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572256845867}
+{"msg":"Stored component result data","componentUuid":"b129311d-7460-4515-afbf-eb48e78395ef","workerId":1,"dataHash":"d890e67cecbb64a28002a512c47291310f0dec3af8a0935ee19979c04dcf7ef3","timestamp":1572256848215}
+{"msg":"Stored component result data","componentUuid":"e678c504-74c0-48e7-9bd3-771e15561509","workerId":1,"dataHash":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","timestamp":1572256848372}
+{"msg":"Finished study run","workerId":1,"timestamp":1572256848417}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572257067332}
+{"msg":"Stored component result data","componentUuid":"b129311d-7460-4515-afbf-eb48e78395ef","workerId":1,"dataHash":"1bc47ccd6e2e19873a8adfdeb53937f6b852892546ed97cae4adb95a148ff4e7","timestamp":1572257070106}
+{"msg":"Stored component result data","componentUuid":"e678c504-74c0-48e7-9bd3-771e15561509","workerId":1,"dataHash":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","timestamp":1572257070255}
+{"msg":"Finished study run","workerId":1,"timestamp":1572257121490}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572257138326}
+{"msg":"Stored component result data","componentUuid":"b129311d-7460-4515-afbf-eb48e78395ef","workerId":1,"dataHash":"cea408f1eeb8f2904599a2a429358f8b145a01830ea7b540c87f625e076211c4","timestamp":1572257140476}
+{"msg":"Stored component result data","componentUuid":"e678c504-74c0-48e7-9bd3-771e15561509","workerId":1,"dataHash":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","timestamp":1572257140689}
+{"msg":"Finished study run","workerId":1,"timestamp":1572257170150}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572257172362}
+{"msg":"Stored component result data","componentUuid":"b129311d-7460-4515-afbf-eb48e78395ef","workerId":1,"dataHash":"b8930161c93e9351ef5abb9a3666f7fd583fcec06000a16ac6a5313c69d570fa","timestamp":1572257174544}
+{"msg":"Stored component result data","componentUuid":"e678c504-74c0-48e7-9bd3-771e15561509","workerId":1,"dataHash":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","timestamp":1572257174711}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572257811675}
+{"msg":"Finished study run","workerId":1,"timestamp":1572257818829}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572258063537}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572258233621}
+{"msg":"Finished study run","workerId":1,"timestamp":1572258237072}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572258399098}
+{"msg":"Finished study run","workerId":1,"timestamp":1572258400411}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572258594828}
+{"msg":"Stored component result data","componentUuid":"ea170264-614e-4c6c-8a96-02b3a34f0114","workerId":1,"dataHash":"3b46d3074d2b9b02b20ba522f3752294868fe30c2d32a2dc594e5054e4e066cf","timestamp":1572258595358}
+{"msg":"Finished study run","workerId":1,"timestamp":1572258595388}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572258768222}
+{"msg":"Stored component result data","componentUuid":"ea170264-614e-4c6c-8a96-02b3a34f0114","workerId":1,"dataHash":"d834e8a7ddff7968d40d3b1649fcbff45d26b7e1d7c404308033544fb9cb39a7","timestamp":1572258768677}
+{"msg":"Finished study run","workerId":1,"timestamp":1572258768714}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572258795820}
+{"msg":"Stored component result data","componentUuid":"956eb1fc-3b5f-41fc-8c87-989b599be3d5","workerId":1,"dataHash":"1a5ef5b13bf7e31ad842fe6d9f4db615924e8e723f7d697b3ce773eb69237405","timestamp":1572258807383}
+{"msg":"Finished study run","workerId":1,"timestamp":1572258807414}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572259631686}
+{"msg":"Finished study run","workerId":1,"timestamp":1572259663623}
+{"msg":"Started study run with Jatos worker","batchId":97,"workerId":1,"timestamp":1572259665563}
+{"msg":"Stored component result data","componentUuid":"d7107e3a-7bde-4685-b795-1dfdf30fac1a","workerId":1,"dataHash":"696c55431e10f1cc51ebdf2eec38065d7f393c1b746bbf2eaa5f5e66cddcd7b4","timestamp":1572259688906}
+{"msg":"Finished study run","workerId":1,"timestamp":1572259688938}
+{"msg":"Removed component result data","componentUuids":["d7107e3a-7bde-4685-b795-1dfdf30fac1a","d7107e3a-7bde-4685-b795-1dfdf30fac1a"],"workerIds":[1,1],"dataHashes":["no data","696c55431e10f1cc51ebdf2eec38065d7f393c1b746bbf2eaa5f5e66cddcd7b4"],"timestamp":1572259696698}
