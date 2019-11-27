@@ -1,6 +1,9 @@
 Analysis of debrief questionnaire
 ================
 
+Questions
+=========
+
     ## Did you do anything else while watching the video?
 
 ![](debriefAnalysis_files/figure-markdown_github/unnamed-chunk-1-1.png)
@@ -102,4 +105,12 @@ Analysis of debrief questionnaire
     ## 3 I think the instructions were fine.  
     ## 8 Maybe saying more about the ongoing experiment. 
     ## 12 All instructions were accurate and legible, I have no objections
-    ##
+    ## 
+
+General comments
+================
+
+    ## 4 I cannot imagine all the work that went into designing and implementing this experiment and I just wanted to say it was engaging and smooth!  
+    ## 6 As I said earlier, a visual confirmation of some kind that it detected a button press when watching the video would have been useful. I was worried it wasn't detecting them, so a couple of times I clicked on the video or the area of the window next to the video to make sure it was focused properly.  
+    ## 10 very difficult to remember where objects were in rooms,at the time i was just focused on the size of the object  
+    ## 12 Very interesting study, it required a great deal of concentration and I tried to do it best ;-)

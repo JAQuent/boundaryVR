@@ -166,6 +166,7 @@ for(i in 1:nSub){
 
 ```
 
+# Questions
 ```{r}
 for(i in 1:nQuestions){
   cat(questions_string[i])
@@ -195,5 +196,15 @@ for(i in 1:nQuestions){
    }
    
  }
+}
+```
+
+# General comments
+```{r general_comment}
+for(j in 1:nSub){
+  tempString <- general_comments[j]
+  if(tempString != '' & !is.na(tempString)){
+    cat(paste(j ,tempString, '\n'))
+   }
 }
 ```
