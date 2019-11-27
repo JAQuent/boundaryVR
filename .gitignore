@@ -1,7 +1,8 @@
 ignore_*
 .Rhistory
 .Rproj.user
-.mov
-.mp4
-.ogg
-analysis.Rproj
+*.mov
+*.mp4
+*.ogg
+*.webm
+*.Rproj

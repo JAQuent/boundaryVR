@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html jspsych="present" style="height: 100%;">
+<head>
+	<meta charset="utf-8">
+	<title>Spatial Experiment</title>
+	<script src = "/study_assets_root/boundaryVR/jquery-3.3.1.min.js" type="text/javascript"></script>
+	<script src="/assets/javascripts/jatos.js"></script>
+	<link href="/study_assets_root/boundaryVR/debrief.css" rel="stylesheet" type="text/css">
+</head>
+<body tabindex="0" class=" jspsych-display-element" style="margin: 0px; height: 100%; width: 100%;">
+</body>
+<script>
+
+	var body_html = `<div align="center" style="width: 1500px">
+
+		<div id="jspsych-survey-text-preamble" class="jspsych-survey-text-preamble" align="center" style="width: 1000px"><br><font size="5">That concludes the experiment itself.<br><br>Please answer the following questions about your experience (elaborating when applicable). Please answer truthfully, <u><strong>you will not be penalised in any way</strong></u> for your answers in this section. We will not transfer any of the information submitted here to Prolific nor will it affect your payment for participation.</font></div>
+
+		<style id="jspsych-survey-multi-choice-css">
+			.debrief_multi { margin-top: 2em; margin-bottom: 2em;  text-align: left; width: 900px}
+			.debrief_multi_text { line-height: 2; margin-bottom: 0em;}
+			.debrief_choice_option { line-height: 2; }
+			label.debrief_multi_text input[type='radio'] {margin-right: 1em;}
+		</style>
+
+	
+		<form id="debrief">`
+
+
+	debrief_questions = [
+		{
+			q_id: "video_viewing", 
+			prompt: "Did you do anything else while watching the video?",
+			options: [
+				{value:"other_things", option_label: "Yes, at times I was busy with other things and missed parts of the video."},
+				{value:"unattentive", option_label: "I didn't do anything else, but did not always watch attentively."},
+				{value:"attentive", option_label: "No, I watched all the whole video attentively."}
+			],
+			textarea: false,
+		},
+		{
+			q_id: "q_answering", 
+			prompt: "Did you do your best to answer the questions correctly?",
+			options: [
+				{value:"did_best", option_label: "Yes, I tried my best to answer everything correctly."},
+				{value:"random", option_label: "I answered randomly for the most part."},
+				{value:"partly_random", option_label: "At least some of the time I answered randomly."}
+			],
+			textarea: false,
+		},
+		{
+			q_id: "breaks", 
+			prompt: "Did you take breaks during the experiment?",
+			options: [
+				{value:"yes", option_label: "Yes, I took breaks."},
+				{value:"short_breaks", option_label: "I took some, but they were short (up to 1 minute)."},
+				{value:"no", option_label: "No, I completed the experiment in one go."}
+			],
+			textarea: false,
+		},
+		{
+			q_id: "room_feeling1", 
+			prompt: "Did rooms with a partition feel like they were a single room (similar to the room without a partition) or did they feel like two separate rooms? (Please elaborate below.)",
+			options: [
+				{value:"yes", option_label: "Yes, I both type of rooms felt like one."},
+				{value:"cannot_say", option_label: "I can't say."},
+				{value:"no", option_label: "No, the room with walls in the middle felt like two separate rooms."}
+			],
+			textarea: true,
+		},
+		{
+			q_id: "room_feeling2", 
+			prompt: "Did you feel it was harder/easier to remember the order of objects in the rooms without a partition relative to those with a partition?",
+			options: [
+				{value:"easierWithout", option_label: "It was easier without partition."},
+				{value:"noDiff", option_label: "There was no diferrence."},
+				{value:"easierWith", option_label: "It was easier with partition."}
+			],
+			textarea: true,
+		},
+		{
+			q_id: "room_feeling3", 
+			prompt: "When crossing from one part of the room to the next in a partitioned room, did that feel like you were moving to a new room (a bit like walking through a door)?",
+			options: [
+				{value:"yes", option_label: "Yes, did feel like this."},
+				{value:"cannot_say", option_label: "I can't say."},
+				{value:"no", option_label: "No, I didn't feel like this."}
+			],
+			textarea: true,
+		},
+		{
+			q_id: "object_recognition", 
+			prompt: "Did you recognise all objects in the video and in the memory task? (If you can, please try describe the/those object(s) briefly.)",
+			options: [
+				{value:"all", option_label: "I recognised all."},
+				{value:"nearlyAll", option_label: "I recognised nearly all."},
+				{value:"manyNot", option_label: "I  didn't recognise many objects."}
+			],
+			textarea: true,
+		},
+		{
+			q_id: "exp_problems", 
+			prompt: "Did you experience any problems viewing the videos? Or problems in the experiment in general? (If yes, please elaborate.)",
+			options: [
+				{value:"yes", option_label: "Yes."},
+				{value:"no", option_label: "No."}
+			],
+			textarea: true,
+		},
+		{
+			q_id: "navigation", 
+			prompt: "Did the navigation feel too fast?",
+			options: [
+				{value:"yes", option_label: "Yes."},
+				{value:"no", option_label: "No."}
+			],
+			textarea: false,
+		},
+		{
+			q_id: "object_time", 
+			prompt: "Did you think the time the objects were visible was long enough?",
+			options: [
+				{value:"yes", option_label: "Yes."},
+				{value:"no", option_label: "No."}
+			],
+			textarea: false,
+		},
+		{
+			q_id: "memory1", 
+			prompt: "Did you anticipate there would be a memory test on the objects? If so, did you anticipate you would be asked about the order of the objects?",
+			options: [
+				{value:"expOrder", option_label: "I anticipated I would be tested on order."},
+				{value:"expTest", option_label: "I anticipated there would be a test, but not which questions would be asked."},
+				{value:"expNone", option_label: "I didn’t anticipate memory would be tested."}
+			],
+			textarea: false,
+		},
+		{
+			q_id: "memory2", 
+			prompt: "Did you use any strategy to remember the objects and their order? (If yes, please elaborate.)",
+			options: [
+				{value:"yes", option_label: "Yes."},
+				{value:"no", option_label: "No."}
+			],
+			textarea: true,
+		},
+		{
+			q_id: "instructions", 
+			prompt: "Now, you've completed the task. Can we somehow improve our instructions? (If yes, please elaborate.)",
+			options: [
+				{value:"yes", option_label: "Yes."},
+				{value:"no", option_label: "No."}
+			],
+			textarea: true,
+		}
+	];
+
+	var n_debrief_questions = debrief_questions.length;
+
+	for (var q in debrief_questions) {
+
+		var prompt = debrief_questions[q].prompt;
+		var q_id = debrief_questions[q].q_id;
+		var q_num = parseInt(q)+1;
+		q_html = `<div id="${q_id}" class="debrief_multi"><p class="debrief_multi_text">${prompt}</p>`;
+
+		for (var i in debrief_questions[q].options) {
+			var curr_value = debrief_questions[q].options[i].value;
+			var curr_label = debrief_questions[q].options[i].option_label;
+			q_html += `<div id="debrief_choice_option-0" class="debrief_choice_option">
+						<label class="debrief_multi_text" for="q${q_num}_choice-${i}"><input type="radio" name="q${q_num}" id="q${q_num}_choice-${i}" value="${curr_value}" required="">${curr_label}</label></div>`
+		}
+
+		// If textarea has a name - adds a textarea
+		if (debrief_questions[q].textarea) {
+			var textarea_name = `q${q_num}_survey`;
+			q_html += `<textarea name="${textarea_name}" cols="120" rows="6"></textarea>`
+		}
+		q_html += `</div>`
+
+
+		body_html += q_html;
+	}
+
+	body_html += `<div id="general_comments" class="debrief_multi"><p class="debrief_multi_text">If you have any additional thoughts/comments, please enter them below:</p>
+				<textarea name="general_comments_survey" cols="120" rows="6"></textarea>
+			</div>
+
+			<input type="submit" id="submit_btn" class="jspsych-btn" value="Continue">
+			</form></div>`
+
+	document.body.innerHTML = body_html;
+
+	jatos.onLoad(function() {
+		document.querySelector("#debrief").addEventListener("submit", function(e){
+			e.preventDefault();    //stop form from submitting
+
+			// Gets form results and adds some general info. Converts form results 
+			// from array to objects, assumes no overlapping fields and combines the
+			// questions with their survey and id info
+			var result_data = {};
+			result_data.result_type = 'debrief';
+			result_data.n_debrief_questions = n_debrief_questions;
+
+			var form_data = {};
+			$.each($(debrief).serializeArray(), function() {
+			    form_data[this.name] = this.value;
+			});
+
+			for (var q_name in form_data) {
+				var q_matches = q_name.match(/^q(\d+)$/);
+				if (q_matches != null) {
+					var q_num = parseInt(q_matches[1]);
+
+					result_data[q_name] = {q_id: debrief_questions[q_num-1].q_id, answer: form_data[q_name]};
+
+					// Adds survey answer if it exists
+					if (q_name + "_survey" in form_data) {
+						result_data[q_name].survey = form_data[q_name + "_survey"];
+					}
+				}
+			}
+
+			// Adds general comments to the results data 
+			result_data.general_comments = form_data['general_comments_survey'];
+
+			var result_json = JSON.stringify(result_data);
+
+	      	console.log("form data: " + result_json);
+	      	jatos.submitResultData(result_json, jatos.startNextComponent);
+		});
+	});
+	
+
+</script>
+</html>
