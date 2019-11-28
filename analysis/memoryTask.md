@@ -34,7 +34,7 @@ plot_grid(afcPlot, rtPlot)
 
 ![](memoryTask_files/figure-markdown_github/unnamed-chunk-1-1.png)
 
-As can be seen above, some participants seems to significantly peforme below chance. To show this, I simulated a null distribution (see below). In an ANOVA, there were no difference between the conditions:
+As can be seen above, some participants seems to significantly perform below chance. To show this, I simulated a null distribution (see below). In an ANOVA, there were no difference between the conditions:
 
 ``` r
 ezANOVA(temporalOrder_agg, dv = acc, wid = id, within = context)
@@ -91,7 +91,7 @@ t.test(roomType_comb_agg$acc -0.5)
     ##  mean of x 
     ## 0.01923077
 
-the peformance for the table question was:
+the performance for the table question was:
 
 ``` r
 t.test(tableNum_comb_agg$acc - 0.5)
@@ -112,7 +112,7 @@ t.test(tableNum_comb_agg$acc - 0.5)
 Simulating a null distribution for temporal memory
 ==================================================
 
-With random guesses participants should get an average accuracy of 1/3 in the 3AFC task. However, some participants' accuracy is extremely low. To exclude those participants that actually peforme below chance, I simulated a null distribution (N = 10000) for each condition since each condition has different number of trials.
+With random guesses participants should get an average accuracy of 1/3 in the 3AFC task. However, some participants' accuracy is extremely low. To exclude those participants that actually perform below chance, I simulated a null distribution (N = 10000) for each condition since each condition has different number of trials.
 
 ``` r
 # Simulation parameters
@@ -146,7 +146,7 @@ ggplot(accDists, aes(x = Accuracy)) +
 
 ![](memoryTask_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
-Above, you see the null distrubtion that we would expect if participants answer randomly. We will re-ran the analysis using the following cut-offs
+Above, you see the null distribution that we would expect if participants answer randomly. We will re-ran the analysis using the following cut-offs
 
 ``` r
 kable(cutOffs)
@@ -158,7 +158,35 @@ kable(cutOffs)
 | within-no-walls |  0.1500000|
 | within-walls    |  0.1578947|
 
-and exclude anyone scoring below any of these cut-offs.
+and exclude anyone scoring below any of these cut-offs. As can be seen above, the trial number per condition influences the cut-off. This is because with a smaller trial number, fewer response patterns are possible.
+
+``` r
+nTrials        <- 5:100
+percentile_5th <- c()
+
+# Run simulation
+for(i in 1:length(nTrials)){
+  tempDist <- c()
+  
+  for(j in 1:nSims){
+    tempDist[j] <- mean(rbinom(nTrials[i], 1, 1/3))
+  }
+  percentile_5th[i] <- quantile(tempDist, 0.05)
+}
+
+trial_sim <- data.frame(nTrials = nTrials,
+                        per_5th = percentile_5th)
+
+ggplot(trial_sim, aes(x = nTrials, y = per_5th)) + 
+  geom_point() +
+  labs(x = 'Number of trials', 
+       y = '5th percentile', 
+       title = 'Cut-off values as a function of trial number')
+```
+
+![](memoryTask_files/figure-markdown_github/unnamed-chunk-8-1.png)
+
+The graphic above shows the 5th percentile varies as function of the trial number. For situations with small trial numbers, lower values are still probable under the null distribution. This is because the probability of getting all trials right is higher if you have only 2 trials compared if you have a 100 trials. Hence, I would argue it's appropriate to have different cut-offs for the different conditions. While the across condition has 39 trials, the within-walls only has 19. If participants randomly guessed, I expect different null distributions even though in both cases the success probability is 1/3.
 
 Exlcuding participants that are below 5th percentile of null distribution
 =========================================================================
@@ -203,7 +231,7 @@ rtPlot <- ggplot(temporalOrder_agg_sub, aes(x = context, y = rt)) +
 plot_grid(afcPlot, rtPlot)
 ```
 
-![](memoryTask_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](memoryTask_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 However, there are still no significant difference between the conditions:
 
