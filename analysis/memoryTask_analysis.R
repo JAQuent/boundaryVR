@@ -7,7 +7,7 @@ theme_set(theme_grey()) # Important to retain the ggplot theme
 library(ez)
 
 # Load all data
-prefix         <- 'U:/Projects/boundaryVR/ignore_boundaryAnalysis/batch2/memoryTask/'
+prefix         <- 'U:/Projects/boundaryVR/analysis/batch2/memoryTask/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -15,10 +15,10 @@ n              <- length(allFiles_paths)
 for(i in 1:n){
   tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
   # To be able to visualise
-  # tempDF$stimulus         <- NULL 
-  # tempDF$success          <- NULL
-  # tempDF$trial_type       <- NULL
-  # tempDF$internal_node_id <- NULL
+  tempDF$stimulus         <- NULL 
+  tempDF$success          <- NULL
+  tempDF$trial_type       <- NULL
+  tempDF$internal_node_id <- NULL
   
   temporalOrder    <- subset(tempDF, test_part == 'temporalOrder')
   temporalOrder$rt <- as.numeric(as.character(temporalOrder$rt))
@@ -80,14 +80,14 @@ tableNum_comb$id      <- as.factor(tableNum_comb$id)
 
 
 ggplot(temporalOrder_comb, aes(x = trial_index, y = accuracy, colour = id)) + 
-  geom_point(alpha = 0.5) + geom_smooth() + labs(title = 'Temporal Order')
+  geom_point(alpha = 0.5) + geom_smooth(se = FALSE) + labs(title = 'Temporal Order')
 ggplot(roomType_comb, aes(x = trial_index, y = accuracy, colour = id)) + 
-  geom_point(alpha = 0.5) + geom_smooth() + labs(title = 'Room type')
+  geom_point(alpha = 0.5) + geom_smooth(se = FALSE) + labs(title = 'Room type')
 ggplot(tableNum_comb, aes(x = trial_index, y = accuracy, colour = id)) + 
-  geom_point(alpha = 0.5) + geom_smooth() + labs(title = 'Table number')
+  geom_point(alpha = 0.5) + geom_smooth(se = FALSE) + labs(title = 'Table number')
 
 
-temporalOrder_agg <- ddply(temporalOrder_comb, c('id', 'context'), summarise, acc = mean(accuracy), rt = mean(rt))
+temporalOrder_agg <- ddply(temporalOrder_comb, c('id', 'context'), summarise, n = length(rt),acc = mean(accuracy), rt = mean(rt))
 temporalOrder_agg
 
 afcPlot <- ggplot(temporalOrder_agg, aes(x = context, y = acc)) + 
