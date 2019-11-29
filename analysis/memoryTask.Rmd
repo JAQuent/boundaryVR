@@ -235,6 +235,7 @@ ggplot(trial_sim, aes(x = nTrials, y = per_5th)) +
 The graphic above shows the 5th percentile varies as function of the trial number. For situations with small trial numbers, lower values are still probable under the null distribution. This is because the probability of getting all trials right is higher if you have only 2 trials compared if you have a 100 trials. Hence, I would argue it's appropriate to have different cut-offs for the different conditions. While the across condition has 39 trials, the within-walls only has 19. If participants randomly guessed, I expect different null distributions even though in both cases the success probability is 1/3.
 
 # Exlcuding participants that are below 5th percentile of null distribution
+## With condition specific cut-offs
 ```{r}
 # Create exlusion var and set to 0 as default
 exclude <- rep(0, n)
@@ -249,7 +250,7 @@ for(i in 1:dim(temporalOrder_agg)[1]){
 
 # Create subset
 temporalOrder_agg$exclude <- rep(exclude, each = 3)
-temporalOrder_agg_sub     <- subset(temporalOrder_agg, temporalOrder_agg$exclude == 0)
+temporalOrder_agg_sub     <- temporalOrder_agg[temporalOrder_agg$exclude == 0, ]
 ```
 
 Based on the cut-offs, I excluded `r sum(exclude)` participants from the analysis. 
@@ -280,3 +281,48 @@ ezANOVA(temporalOrder_agg_sub, dv = acc, wid = id, within = context)
 ```
 
 Unexpectedly, the effect size increased with increased memory for the across and the within-walls condition. 
+
+## Cut-off across conditions
+Overall, there are 78 trials in the experiment. Below chance performance for that case would be `r trial_sim[trial_sim$nTrials == 78, 2]`. 
+
+```{r}
+temporalOrder_agg2 <- ddply(temporalOrder_comb, c('id'), summarise, 
+                           n = length(accuracy),
+                           acc = mean(accuracy))
+
+# How many participants are excluded becuase they're below or equal to that cut-off
+cutOff78 <- trial_sim[trial_sim$nTrials == 78, 2]
+exclude  <- temporalOrder_agg2$id[which(temporalOrder_agg2$acc <= cutOff78)]
+```
+
+There is `r length(exclude)` participant(s), to which that applies. If we exclude this participant from the analysis.
+
+```{r}
+temporalOrder_agg_sub2 <- temporalOrder_agg[temporalOrder_agg$id != exclude, ]
+```
+
+
+# Temporal order memory on subset
+```{r}
+# Aggregate data
+afcPlot <- ggplot(temporalOrder_agg_sub2, aes(x = context, y = acc)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  geom_hline(yintercept = 1/3) +
+  annotate('text', x = 2, y = 0.31, label = 'Chance') +
+  labs(y = '3AFC accuracy', x = "Room type", title = 'Temporal Order')
+
+
+rtPlot <- ggplot(temporalOrder_agg_sub2, aes(x = context, y = rt)) + 
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) + 
+  geom_jitter(width = 0.5) +
+  labs(y = 'RT (msec)', x = "Room type", title = '')
+
+plot_grid(afcPlot, rtPlot)
+```
+
+As expected, excluding that participant didn't change the interpretation. 
+
+```{r}
+ezANOVA(temporalOrder_agg_sub2, dv = acc, wid = id, within = context)
+```

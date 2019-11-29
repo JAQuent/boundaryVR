@@ -191,6 +191,9 @@ The graphic above shows the 5th percentile varies as function of the trial numbe
 Exlcuding participants that are below 5th percentile of null distribution
 =========================================================================
 
+With condition specific cut-offs
+--------------------------------
+
 ``` r
 # Create exlusion var and set to 0 as default
 exclude <- rep(0, n)
@@ -205,7 +208,7 @@ for(i in 1:dim(temporalOrder_agg)[1]){
 
 # Create subset
 temporalOrder_agg$exclude <- rep(exclude, each = 3)
-temporalOrder_agg_sub     <- subset(temporalOrder_agg, temporalOrder_agg$exclude == 0)
+temporalOrder_agg_sub     <- temporalOrder_agg[temporalOrder_agg$exclude == 0, ]
 ```
 
 Based on the cut-offs, I excluded 4 participants from the analysis.
@@ -252,3 +255,65 @@ ezANOVA(temporalOrder_agg_sub, dv = acc, wid = id, within = context)
     ## 2 context 0.6852536 0.2091039           0.7961692 0.2039348
 
 Unexpectedly, the effect size increased with increased memory for the across and the within-walls condition.
+
+Cut-off across conditions
+-------------------------
+
+Overall, there are 78 trials in the experiment. Below chance performance for that case would be 0.2435897.
+
+``` r
+temporalOrder_agg2 <- ddply(temporalOrder_comb, c('id'), summarise, 
+                           n = length(accuracy),
+                           acc = mean(accuracy))
+
+# How many participants are excluded becuase they're below or equal to that cut-off
+cutOff78 <- trial_sim[trial_sim$nTrials == 78, 2]
+exclude  <- temporalOrder_agg2$id[which(temporalOrder_agg2$acc <= cutOff78)]
+```
+
+There is 1 participant(s), to which that applies. If we exclude this participant from the analysis.
+
+``` r
+temporalOrder_agg_sub2 <- temporalOrder_agg[temporalOrder_agg$id != exclude, ]
+```
+
+Temporal order memory on subset
+===============================
+
+``` r
+# Aggregate data
+afcPlot <- ggplot(temporalOrder_agg_sub2, aes(x = context, y = acc)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  geom_hline(yintercept = 1/3) +
+  annotate('text', x = 2, y = 0.31, label = 'Chance') +
+  labs(y = '3AFC accuracy', x = "Room type", title = 'Temporal Order')
+
+
+rtPlot <- ggplot(temporalOrder_agg_sub2, aes(x = context, y = rt)) + 
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) + 
+  geom_jitter(width = 0.5) +
+  labs(y = 'RT (msec)', x = "Room type", title = '')
+
+plot_grid(afcPlot, rtPlot)
+```
+
+![](memoryTask_files/figure-markdown_github/unnamed-chunk-14-1.png)
+
+As expected, excluding that participant didn't change the interpretation.
+
+``` r
+ezANOVA(temporalOrder_agg_sub2, dv = acc, wid = id, within = context)
+```
+
+    ## $ANOVA
+    ##    Effect DFn DFd        F        p p<.05        ges
+    ## 2 context   2  20 0.269512 0.766482       0.01724896
+    ## 
+    ## $`Mauchly's Test for Sphericity`
+    ##    Effect         W         p p<.05
+    ## 2 context 0.7219926 0.2308859      
+    ## 
+    ## $`Sphericity Corrections`
+    ##    Effect       GGe     p[GG] p[GG]<.05       HFe     p[HF] p[HF]<.05
+    ## 2 context 0.7824681 0.7138664           0.9018485 0.7445744
