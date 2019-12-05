@@ -317,3 +317,70 @@ ezANOVA(temporalOrder_agg_sub2, dv = acc, wid = id, within = context)
     ## $`Sphericity Corrections`
     ##    Effect       GGe     p[GG] p[GG]<.05       HFe     p[HF] p[HF]<.05
     ## 2 context 0.7824681 0.7138664           0.9018485 0.7445744
+
+Additional analysis after rabble
+================================
+
+During rabble, we came up with two additional analyses to figure out why our performance is so low.
+
+Is there a bias towards one foil?
+---------------------------------
+
+In the first step, I need to add the respective information from the [R-script](https://github.com/JAQuent/boundaryVR/blob/master/onlineExperiment/r_supportFiles/createTrials.R) that creates the trial information.
+
+``` r
+temporalOrder_comb_incorrect <- subset(temporalOrder_comb, temporalOrder_comb$accuracy == 0)
+temporalOrder_foils <- ddply(temporalOrder_comb_incorrect, c('id'), 
+                             summarise,
+                             n   = length(choice),
+                             foil1 = table(choice)[1],
+                             foil2 = table(choice)[2])
+
+# Create percentages
+temporalOrder_foils$foil1 <- temporalOrder_foils$foil1 / temporalOrder_foils$n
+temporalOrder_foils$foil2 <- temporalOrder_foils$foil2 / temporalOrder_foils$n
+
+# Melt for plotting
+temporalOrder_foils <- melt(temporalOrder_foils, id.vars =c("id"), measure.vars = c('foil1', 'foil2'))
+
+# Plot
+ggplot(temporalOrder_foils, aes(x = variable, y = value)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  labs(y = 'Percentage of choice', x = '', title = 'Foil choice')
+```
+
+![](memoryTask_files/figure-markdown_github/unnamed-chunk-16-1.png)
+
+Foil 1 is behind the target and foil 2 is after the target. However, there is nearly no difference between the times foil 1 is choosen over foil 2 and vice versa.
+
+Analysis of participants that expected a memory test
+----------------------------------------------------
+
+Because I didn't save a participant ID for all output, I need to manually assign the results of the memory task to the debrief questionnaire data by renaming the filenames.
+
+``` r
+# Get participants that expected memory task
+expectedTest <- debriefData$SubNum[debriefData$id == 'memory1'] 
+expectedTest <- expectedTest[debriefData$answerValue[debriefData$id == 'memory1'] != 'expNone']
+
+# Create subset
+temporalOrder_agg_sub <- temporalOrder_agg[temporalOrder_agg$id %in% expectedTest, ]
+
+afcPlot <- ggplot(temporalOrder_agg_sub, aes(x = context, y = acc)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  geom_hline(yintercept = 1/3) +
+  annotate('text', x = 2, y = 0.31, label = 'Chance') +
+  labs(y = '3AFC accuracy', x = "Room type", title = 'Temporal Order')
+
+
+rtPlot <- ggplot(temporalOrder_agg_sub, aes(x = context, y = rt)) + 
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) + 
+  geom_jitter(width = 0.5) +
+  labs(y = 'RT (msec)', x = "Room type", title = '')
+
+plot_grid(afcPlot, rtPlot)
+```
+
+![](memoryTask_files/figure-markdown_github/unnamed-chunk-17-1.png)

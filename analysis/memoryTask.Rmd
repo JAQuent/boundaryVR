@@ -11,6 +11,7 @@ library(MRColour)
 library(cowplot)
 library(knitr)
 library(plyr)
+library(reshape2)
 theme_set(theme_grey()) # Important to retain the ggplot theme
 library(ez)
 ```
@@ -326,3 +327,331 @@ As expected, excluding that participant didn't change the interpretation.
 ```{r}
 ezANOVA(temporalOrder_agg_sub2, dv = acc, wid = id, within = context)
 ```
+
+# Additional analysis after rabble
+During rabble, we came up with two additional analyses to figure out why our performance is so low. 
+
+## Is there a bias towards one foil?
+In the first step, I need to add the respective information from the [R-script](https://github.com/JAQuent/boundaryVR/blob/master/onlineExperiment/r_supportFiles/createTrials.R) that creates the trial information. 
+```{r loadData2, echo = FALSE}
+# Load trial information
+load("U:/Projects/boundaryVR/onlineExperiment/r_supportFiles/trialData_20191120_174756.RData")
+# Note that counterbalancing in that images goes from 1 to 8, while it goes from 0 to 7 in the javascript
+# files.
+
+# Order trial information
+trials_cond5 <- trials_cond5[order(trials_cond5$objNum),]
+trials_cond6 <- trials_cond6[order(trials_cond6$objNum),]
+trials_cond7 <- trials_cond7[order(trials_cond7$objNum),]
+trials_cond8 <- trials_cond8[order(trials_cond8$objNum),]
+
+# Load all data
+prefix         <- 'U:/Projects/boundaryVR/analysis/batch2/memoryTask/'
+allFiles       <- list.files(paste(prefix, sep = ''))
+allFiles_paths <- paste(prefix, allFiles, sep = '')
+n              <- length(allFiles_paths)
+
+for(i in 1:n){
+  tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
+  # To be able to visualise
+  tempDF$stimulus         <- NULL 
+  tempDF$success          <- NULL
+  tempDF$trial_type       <- NULL
+  tempDF$internal_node_id <- NULL
+  
+  # Temporal order memory
+  temporalOrder <- subset(tempDF, test_part == 'temporalOrder')
+  
+  # Sort by objectNumber
+  temporalOrder <- temporalOrder[order(temporalOrder$probe),]
+  
+  # get trialinfo and add to temporalOrder
+  cond <- temporalOrder$condition[1] + 1 # to correct for difference
+  temporalOrder$foil1Pos <- get(paste0("trials_cond", cond))$foil1Pos
+  temporalOrder$foil2Pos <- get(paste0("trials_cond", cond))$foil2Pos
+  
+  temporalOrder$rt <- as.numeric(as.character(temporalOrder$rt))
+  # Recode key presses
+  response      <- rep(NA, dim(temporalOrder)[1])
+  response[temporalOrder$key_press == 49] <- 1
+  response[temporalOrder$key_press == 50] <- 2
+  response[temporalOrder$key_press == 51] <- 3
+  temporalOrder$response                  <- response
+  
+  # Calcalate accuracy 
+  accuracy <- rep(NA, dim(temporalOrder)[1])
+  accuracy[temporalOrder$response == temporalOrder$corr_resp] <- 1
+  accuracy[temporalOrder$response != temporalOrder$corr_resp] <- 0
+  temporalOrder$accuracy <- accuracy
+  
+  # Create variable that desribe whether target, foil1, foil2 was choosen
+  choice <- rep('Target', dim(temporalOrder)[1])
+  choice[temporalOrder$response == temporalOrder$foil1Pos] <- 'Foil 1'
+  choice[temporalOrder$response == temporalOrder$foil2Pos] <- 'Foil 2'
+  temporalOrder$choice <- choice
+   
+  # Room type question
+  roomType      <- subset(tempDF, test_part == 'roomType')
+  roomType$rt   <- as.numeric(as.character(roomType$rt))
+  
+  # Recode key presses
+  response      <- rep(NA, dim(roomType)[1])
+  response[roomType$key_press == 49] <- 1
+  response[roomType$key_press == 50] <- 2
+  roomType$response                  <- response
+  
+  # Calculate accuracy
+  accuracy <- rep(NA, dim(roomType)[1])
+  accuracy[roomType$response == roomType$corr_resp] <- 1
+  accuracy[roomType$response != roomType$corr_resp] <- 0
+  roomType$accuracy <- accuracy
+  
+  
+  # Table question
+  tableNum      <- subset(tempDF, test_part == 'tableNum')
+  tableNum$rt   <- as.numeric(as.character(tableNum$rt))
+  
+  # Recode keypresses
+  response      <- rep(NA, dim(tableNum)[1])
+  response[tableNum$key_press == 49] <- 3 # for key press 1
+  response[tableNum$key_press == 50] <- 2 # for key press 2
+  tableNum$response                  <- response
+  
+  # Calculate accuracy
+  accuracy <- rep(NA, dim(tableNum)[1])
+  accuracy[tableNum$response == tableNum$corr_resp] <- 1
+  accuracy[tableNum$response != tableNum$corr_resp] <- 0
+  tableNum$accuracy <- accuracy
+  
+  # Create or bind to data.frame
+  if(i == 1){
+    temporalOrder_comb    <- temporalOrder
+    temporalOrder_comb$id <- i
+    roomType_comb         <- roomType
+    roomType_comb$id      <- i
+    tableNum_comb         <- tableNum
+    tableNum_comb$id      <- i
+  } else {
+    temporalOrder$id   <- i
+    temporalOrder_comb <- rbind(temporalOrder_comb, temporalOrder)
+    roomType$id        <- i
+    roomType_comb      <- rbind(roomType_comb, roomType)
+    tableNum$id        <- i
+    tableNum_comb      <- rbind(tableNum_comb, tableNum)
+  }
+}
+
+# Convert to id factor
+temporalOrder_comb$id <- as.factor(temporalOrder_comb$id)
+roomType_comb$id      <- as.factor(roomType_comb$id)
+tableNum_comb$id      <- as.factor(tableNum_comb$id)
+```
+
+```{r}
+temporalOrder_comb_incorrect <- subset(temporalOrder_comb, temporalOrder_comb$accuracy == 0)
+temporalOrder_foils <- ddply(temporalOrder_comb_incorrect, c('id'), 
+                             summarise,
+                             n   = length(choice),
+                             foil1 = table(choice)[1],
+                             foil2 = table(choice)[2])
+
+# Create percentages
+temporalOrder_foils$foil1 <- temporalOrder_foils$foil1 / temporalOrder_foils$n
+temporalOrder_foils$foil2 <- temporalOrder_foils$foil2 / temporalOrder_foils$n
+
+# Melt for plotting
+temporalOrder_foils <- melt(temporalOrder_foils, id.vars =c("id"), measure.vars = c('foil1', 'foil2'))
+
+# Plot
+ggplot(temporalOrder_foils, aes(x = variable, y = value)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  labs(y = 'Percentage of choice', x = '', title = 'Foil choice')
+```
+
+Foil 1 is behind the target and foil 2 is after the target. However, there is nearly no difference between the times foil 1 is choosen over foil 2 and vice versa.
+
+## Analysis of participants that expected a memory test
+Because I didn't save a participant ID for all output, I need to manually assign the results of the memory task to the debrief questionnaire data by renaming the filenames. 
+
+```{r strings, echo = FALSE}
+# Question and answer string
+q_id <- c('video_viewing', 
+          'q_answering', 
+          'breaks', 
+          'room_feeling1', 
+          'room_feeling2', 
+          'room_feeling3', 
+          'object_recognition',
+          'exp_problems',
+          'navigation',
+          'object_time',
+          'memory1',
+          'memory2', 
+          'instructions')
+
+questions_string <- c('Did you do anything else while watching the video?',
+               'Did you do your best to answer the questions correctly?',
+               'Did you take breaks during the experiment?',
+               'Did rooms with a partition feel like they were a single room (similar to the room without a partition) \nor did they feel like two separate rooms? (Please elaborate below.)',
+               'Did you feel it was harder/easier to remember the order of objects in the rooms without a partition \nrelative to those with a partition?',
+               'When crossing from one part of the room to the next in a partitioned room, did that feel like you were \nmoving to a new room (a bit like walking through a door)?',
+               'Did you recognise all objects in the video and in the memory task? (If you can, please try describe \nthe/those object(s) briefly.)',
+               'Did you experience any problems viewing the videos? Or problems in the experiment in general? (If yes,\nplease elaborate.)',
+               'Did the navigation feel too fast?',
+               'Did you think the time the objects were visible was long enough?',
+               'Did you anticipate there would be a memory test on the objects? If so, did you anticipate you would be \nasked about the order of the objects?',
+               'Did you use any strategy to remember the objects and their order? (If yes, please elaborate.)',
+               'Now, you\'ve completed the task. Can we somehow improve our instructions? (If yes, please elaborate.)')
+
+questions <- data.frame(id = q_id,
+                       question = questions_string)
+
+answerQuestionID <- c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5 ,5, 5, 6, 6, 6, 7, 7, 7,
+                      8, 8, 9, 9, 10, 10, 11, 11, 11, 12, 12, 13, 13)
+
+answerValue <- c('other_things',
+                 'unattentive',
+                 'attentive',
+                 'did_best',
+                 'random',
+                 'partly_random',
+                 'yes',
+                 'short_breaks',
+                 'no',
+                 'yes',
+                 'cannot_say',
+                 'no',
+                 'easierWithout',
+                 'noDiff',
+                 'easierWith',
+                 'yes',
+                 'cannot_say',
+                 'no',
+                 'all',
+                 'nearlyAll',
+                 'manyNot',
+                 'yes',
+                 'no',
+                 'yes',
+                 'no',
+                 'yes',
+                 'no',
+                 'expOrder',
+                 'expTest',
+                 'expNone',
+                 'yes',
+                 'no',
+                 'yes',
+                 'no')
+
+answerString <- c('Yes, at times I was busy with other things and missed parts of the video.',
+                  'I didn\'t do anything else, but did not always watch attentively.',
+                  'No, I watched all the whole video attentively.',
+                  'Yes, I tried my best to answer everything correctly.',
+                  'I answered randomly for the most part.',
+                  'At least some of the time I answered randomly.',
+                  'Yes, I took breaks.',
+                  'I took some, but they were short (up to 1 minute).',
+                  'No, I completed the experiment in one go.',
+                  'Yes, I both type of rooms felt like one.',
+                  'I can\'t say.',
+                  'No, the room with walls in the middle felt like two separate rooms.',
+                  'It was easier without partition.',
+                  'There was no diferrence.',
+                  'It was easier with partition.',
+                  'Yes, did feel like this.',
+                  'I can\'t say.',
+                  'No, I didn\'t feel like this.',
+                  'I recognised all.',
+                  'I recognised nearly all.',
+                  'I  didn\'t recognise many objects.',
+                  'Yes.',
+                  'No.',
+                  'Yes.',
+                  'No.',
+                  'Yes.',
+                  'No.',
+                  'I anticipated I would be tested on order.',
+                  'I anticipated there would be a test, but not which questions would be asked.',
+                  'I didn’t anticipate memory would be tested.',
+                  'Yes.',
+                  'No.',
+                  'Yes.',
+                  'No.')
+```
+
+```{r parseData, echo = FALSE}
+nQuestions     <- 13
+prefix         <- 'U:/Projects/boundaryVR/analysis/batch2/debrief/'
+allFiles       <- list.files(paste(prefix, sep = ''))
+allFiles_paths <- paste(prefix, allFiles, sep = '')
+nSub           <- length(allFiles_paths)
+
+general_comments <- rep(NA_character_, nSub)
+
+for(i in 1:nSub){
+  # Load JSON
+  jsonString  <- readChar(allFiles_paths[i], file.info(allFiles_paths[i])$size)
+  resultsList <- fromJSON(jsonString)
+  
+  # Get questions
+  tempData              <- questions
+  tempData$SubNum       <- i
+  tempData$answerValue  <- NA
+  tempData$answerString <- NA
+  tempData$survey       <- NA
+  
+  # Go through list of ith participant
+  for(j in 1:nQuestions){
+    # Assign answer value 
+    tempData$answerValue[j] <- resultsList[[paste0('q', j)]]$answer
+    
+    # Get answer string by subsetting answer values belonging to jth question
+    temp_answerStrings       <- answerString[which(answerQuestionID == j)]
+    tempData$answerString[j] <- temp_answerStrings[which(answerValue[which(answerQuestionID == j)] == tempData$answerValue[j])]
+    
+    # Add content of text field if it exists
+    if(!is.null(resultsList[[paste0('q', j)]]$survey)){
+      tempData$survey[j] <- resultsList[[paste0('q', j)]]$survey
+    }
+  }
+  
+  # Bind to df
+  if(i == 1){
+    debriefData <- tempData
+  } else{
+    debriefData <- rbind(debriefData, tempData)
+  }
+  
+  # Get general comments
+  general_comments[i] <- resultsList$general_comments
+}
+
+```
+
+```{r}
+# Get participants that expected memory task
+expectedTest <- debriefData$SubNum[debriefData$id == 'memory1'] 
+expectedTest <- expectedTest[debriefData$answerValue[debriefData$id == 'memory1'] != 'expNone']
+
+# Create subset
+temporalOrder_agg_sub <- temporalOrder_agg[temporalOrder_agg$id %in% expectedTest, ]
+
+afcPlot <- ggplot(temporalOrder_agg_sub, aes(x = context, y = acc)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  geom_hline(yintercept = 1/3) +
+  annotate('text', x = 2, y = 0.31, label = 'Chance') +
+  labs(y = '3AFC accuracy', x = "Room type", title = 'Temporal Order')
+
+
+rtPlot <- ggplot(temporalOrder_agg_sub, aes(x = context, y = rt)) + 
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) + 
+  geom_jitter(width = 0.5) +
+  labs(y = 'RT (msec)', x = "Room type", title = '')
+
+plot_grid(afcPlot, rtPlot)
+```
+
+
