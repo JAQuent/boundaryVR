@@ -59,7 +59,7 @@
 		},
 		{
 			q_id: "room_feeling1", 
-			prompt: "Did rooms with a partition feel like they were a single room (similar to the room without a partition) or did they feel like two separate rooms? (Please elaborate below.)",
+			prompt: "Did rooms with a partition (with a wall in the middle) feel like they were a single room (similar to the room without a partition) or did they feel like two separate rooms? (Please elaborate below.)",
 			options: [
 				{value:"yes", option_label: "Yes, I both type of rooms felt like one."},
 				{value:"cannot_say", option_label: "I can't say."},
@@ -75,7 +75,7 @@
 				{value:"noDiff", option_label: "There was no diferrence."},
 				{value:"easierWith", option_label: "It was easier with partition."}
 			],
-			textarea: true,
+			textarea: false,
 		},
 		{
 			q_id: "room_feeling3", 
@@ -85,11 +85,11 @@
 				{value:"cannot_say", option_label: "I can't say."},
 				{value:"no", option_label: "No, I didn't feel like this."}
 			],
-			textarea: true,
+			textarea: false,
 		},
 		{
 			q_id: "object_recognition", 
-			prompt: "Did you recognise all objects in the video and in the memory task? (If you can, please try describe the/those object(s) briefly.)",
+			prompt: "Did you recognise all objects in the video and in the memory task? (If you can, please try describe the/those object(s) where you had problems briefly.)",
 			options: [
 				{value:"all", option_label: "I recognised all."},
 				{value:"nearlyAll", option_label: "I recognised nearly all."},
@@ -135,8 +135,8 @@
 			textarea: false,
 		},
 		{
-			q_id: "memory2", 
-			prompt: "Did you use any strategy to remember the objects and their order? (If yes, please elaborate.)",
+			q_id: "strategy1", 
+			prompt: "Did you use any strategy to remember the objects and their order? One strategy for instance could be to recall the table an object was on and then to exclude options on that basis. (If yes, please elaborate.)",
 			options: [
 				{value:"yes", option_label: "Yes."},
 				{value:"no", option_label: "No."}
@@ -144,8 +144,18 @@
 			textarea: true,
 		},
 		{
+			q_id: "strategy2", 
+			prompt: "Specifically, did you sometimes make responses based on the general memory when objects appeared in the video but not based on exactly knowing order of objects?",
+			options: [
+				{value:"often", option_label: "Yes, often."},
+				{value:"rare", option_label: "Yes but rarely."},
+				{value:"no", option_label: "No."}
+			],
+			textarea: false,
+		},
+		{
 			q_id: "instructions", 
-			prompt: "Now, you've completed the task. Can we somehow improve our instructions? (If yes, please elaborate.)",
+			prompt: "Now, you've completed the task. Can we somehow improve our instructions? Please describe the instructions for memory task very briefly.",
 			options: [
 				{value:"yes", option_label: "Yes."},
 				{value:"no", option_label: "No."}
@@ -180,7 +190,13 @@
 
 		body_html += q_html;
 	}
+	// Add Approach
+	body_html += `<div id="approach" class="debrief_multi"><p class="debrief_multi_text">Please shortly describe they way you've used to answer question about the order of objects below:</p>
+				<textarea name="approach_survey" cols="120" rows="6"></textarea>
+			</div>`
 
+
+	// Add General comments
 	body_html += `<div id="general_comments" class="debrief_multi"><p class="debrief_multi_text">If you have any additional thoughts/comments, please enter them below:</p>
 				<textarea name="general_comments_survey" cols="120" rows="6"></textarea>
 			</div>
@@ -198,6 +214,7 @@
 			// from array to objects, assumes no overlapping fields and combines the
 			// questions with their survey and id info
 			var result_data = {};
+			result_data.worker_id = jatos.workerId; 
 			result_data.result_type = 'debrief';
 			result_data.n_debrief_questions = n_debrief_questions;
 

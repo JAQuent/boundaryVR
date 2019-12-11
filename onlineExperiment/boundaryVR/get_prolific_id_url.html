@@ -19,6 +19,7 @@
     jatos.onLoad(function() {
 
       var result_data = {};
+      result_data.worker_id = jatos.workerId; 
 
       // Gets the pID from the query line and uses that if it's defined
       var query_pID = jatos.urlQueryParameters.PARTICIPANT_ID;

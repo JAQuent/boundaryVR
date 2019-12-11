@@ -24,6 +24,7 @@
 
       /* Variables to hold information regarding the browser and speed, so a proper message can be displayed later */
       var result_data = {};
+      result_data.worker_id = jatos.workerId; 
       jatos.addJatosIds(result_data);
 
       /* If this is IE - checks the document mode, to verify it's 10 or later, otherwise displays an error message */
