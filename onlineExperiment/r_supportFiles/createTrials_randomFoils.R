@@ -56,7 +56,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond1[trials_cond1$room < trials_cond1$room[i] - 1, 'objNum']
-    foil1[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    }
     dist1[i] <- which(foil1[i] == trials_cond1$objNum) - i
   }
   
@@ -65,7 +70,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond1[trials_cond1$room > trials_cond1$room[i] + 1, 'objNum']
-    foil2[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
     dist2[i] <- which(foil2[i] == trials_cond1$objNum) - i
   }
 }
@@ -143,7 +153,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond2[trials_cond2$room < trials_cond2$room[i] - 1, 'objNum']
-    foil1[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    }
     dist1[i] <- which(foil1[i] == trials_cond2$objNum) - i
   }
   
@@ -152,7 +167,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond2[trials_cond2$room > trials_cond2$room[i] + 1, 'objNum']
-    foil2[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
     dist2[i] <- which(foil2[i] == trials_cond2$objNum) - i
   }
 }
@@ -232,7 +252,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond3[trials_cond3$room < trials_cond3$room[i] - 1, 'objNum']
-    foil1[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    }
     dist1[i] <- which(foil1[i] == trials_cond3$objNum) - i
   }
   
@@ -241,7 +266,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond3[trials_cond3$room > trials_cond3$room[i] + 1, 'objNum']
-    foil2[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
     dist2[i] <- which(foil2[i] == trials_cond3$objNum) - i
   }
 }
@@ -322,7 +352,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond4[trials_cond4$room < trials_cond4$room[i] - 1, 'objNum']
-    foil1[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    }
     dist1[i] <- which(foil1[i] == trials_cond4$objNum) - i
   }
   
@@ -331,7 +366,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond4[trials_cond4$room > trials_cond4$room[i] + 1, 'objNum']
-    foil2[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
     dist2[i] <- which(foil2[i] == trials_cond4$objNum) - i
   }
 }
@@ -410,7 +450,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond5[trials_cond5$room < trials_cond5$room[i] - 1, 'objNum']
-    foil1[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    } 
     dist1[i] <- which(foil1[i] == trials_cond5$objNum) - i
   }
   
@@ -419,7 +464,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond5[trials_cond5$room > trials_cond5$room[i] + 1, 'objNum']
-    foil2[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
     dist2[i] <- which(foil2[i] == trials_cond5$objNum) - i
   }
 }
@@ -498,7 +548,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond6[trials_cond6$room < trials_cond6$room[i] - 1, 'objNum']
-    foil1[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    }
     dist1[i] <- which(foil1[i] == trials_cond6$objNum) - i
   }
   
@@ -507,7 +562,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond6[trials_cond6$room > trials_cond6$room[i] + 1, 'objNum']
-    foil2[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
     dist2[i] <- which(foil2[i] == trials_cond6$objNum) - i
   }
 }
@@ -566,7 +626,7 @@ trials_cond6$context <- context
 # /* 
 # ----------------------------- Condition 7 ---------------------------
 # */
-# Video 3 + before
+# Video 3 + after
 rooms                 <- numObj/2+1
 trials_cond7          <- objectOrder
 trials_cond7$table    <- c(rep(c(3, 2), (rooms - 1)/2))
@@ -587,7 +647,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond7[trials_cond7$room < trials_cond7$room[i] - 1, 'objNum']
-    foil1[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    }
     dist1[i] <- which(foil1[i] == trials_cond7$objNum) - i
   }
   
@@ -596,7 +661,12 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond7[trials_cond7$room > trials_cond7$room[i] + 1, 'objNum']
-    foil2[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
     dist2[i] <- which(foil2[i] == trials_cond7$objNum) - i
   }
 }
@@ -677,16 +747,26 @@ for(i in 1:numObj){
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond8[trials_cond8$room < trials_cond8$room[i] - 1, 'objNum']
-    foil1[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    }
     dist1[i] <- which(foil1[i] == trials_cond8$objNum) - i
   }
   
-  if(any(trials_cond2$room > trials_cond8$room[i] + 1)){
+  if(any(trials_cond8$room > trials_cond8$room[i] + 1)){
     # If there is a room that is after the probe/cue
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
     availObj <- trials_cond8[trials_cond8$room > trials_cond8$room[i] + 1, 'objNum']
-    foil2[i] <- sample(availObj, 1) 
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
     dist2[i] <- which(foil2[i] == trials_cond8$objNum) - i
   }
 }
@@ -754,8 +834,9 @@ trials_cond5 <- na.omit(trials_cond5)
 trials_cond6 <- na.omit(trials_cond6)
 trials_cond7 <- na.omit(trials_cond7)
 trials_cond8 <- na.omit(trials_cond8)
-nTrials      <- dim(trials_cond8)[1]
 
+dim(trials_cond7)
+dim(trials_cond8)
 # /* 
 # ----------------------------- Creating JSON strings ---------------------------
 # */
@@ -767,26 +848,34 @@ suffix <- '.png'
 question        <- list(before, before, before, before, after, after, after, after)
 question_string <- create_json_variable_str('question', question)
 
-# The is the same for all conditions
-objNum_string          <- paste(trials_cond1$objNum, ',', sep = '')
-objNum_string[1]       <- paste('var objNum = [', trials_cond1$objNum[1], ',', sep = '')
-objNum_string[nTrials] <- paste(trials_cond1$objNum[nTrials], '];', sep = '')
-objNum_string          <- paste(objNum_string , collapse = '', sep = '')
+objNum <- list(trials_cond1$objNum,
+               trials_cond2$objNum,
+               trials_cond3$objNum,
+               trials_cond4$objNum,
+               trials_cond5$objNum,
+               trials_cond6$objNum,
+               trials_cond7$objNum,
+               trials_cond8$objNum)
+objNum_string <- create_json_variable_str('objNum', objNum)
 
-# The is the same for all conditions
-probe_string          <- paste('\t"', prefix ,trials_cond1$objNum, suffix, '"', ',\n', sep = '')
-probe_string[1]       <- paste('var probe = ["', prefix, trials_cond1$objNum[1], suffix, '"', ',\n', sep = '')
-probe_string[nTrials] <- paste('\t"', prefix, trials_cond1$objNum[nTrials], suffix, '"', '];', sep = '')
-probe_string          <- paste(probe_string , collapse = '', sep = '')
+probe <- list(paste(prefix ,trials_cond1$objNum, suffix, sep = ''),
+              paste(prefix ,trials_cond2$objNum, suffix, sep = ''),
+              paste(prefix ,trials_cond3$objNum, suffix, sep = ''),
+              paste(prefix ,trials_cond4$objNum, suffix, sep = ''),
+              paste(prefix ,trials_cond5$objNum, suffix, sep = ''),
+              paste(prefix ,trials_cond6$objNum, suffix, sep = ''),
+              paste(prefix ,trials_cond7$objNum, suffix, sep = ''),
+              paste(prefix ,trials_cond8$objNum, suffix, sep = ''))
+probe_string <- create_json_variable_str('probe', probe)
 
 target <- list(paste(prefix ,trials_cond1$target, suffix, sep = ''),
-                   paste(prefix ,trials_cond2$target, suffix, sep = ''),
-                   paste(prefix ,trials_cond3$target, suffix, sep = ''),
-                   paste(prefix ,trials_cond4$target, suffix, sep = ''),
-                   paste(prefix ,trials_cond5$target, suffix, sep = ''),
-                   paste(prefix ,trials_cond6$target, suffix, sep = ''),
-                   paste(prefix ,trials_cond7$target, suffix, sep = ''),
-                   paste(prefix ,trials_cond8$target, suffix, sep = ''))
+               paste(prefix ,trials_cond2$target, suffix, sep = ''),
+               paste(prefix ,trials_cond3$target, suffix, sep = ''),
+               paste(prefix ,trials_cond4$target, suffix, sep = ''),
+               paste(prefix ,trials_cond5$target, suffix, sep = ''),
+               paste(prefix ,trials_cond6$target, suffix, sep = ''),
+               paste(prefix ,trials_cond7$target, suffix, sep = ''),
+               paste(prefix ,trials_cond8$target, suffix, sep = ''))
 target_string <- create_json_variable_str('target', target)
 
 targetPos <- list(trials_cond1$targetPos,

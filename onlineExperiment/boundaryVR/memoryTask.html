@@ -105,11 +105,11 @@
       var i;
       var stimuli = new Array();
       for (i = 0; i < nTrial; i++) {
-          stimuli[i] = {temp_stim: create_temporalOrder_stim(probe[i], target[subjCond][i], targetPos[subjCond][i], foil1[subjCond][i], foil1Pos[subjCond][i], foil2[subjCond][i], foil2Pos[subjCond][i], question[subjCond]),
-                        temp_data: {worker_id: jatos.workerId, test_part: 'temporalOrder', corr_resp: targetPos[subjCond][i], probe: objNum[i], target: target[subjCond][i], foil1: foil1[subjCond][i], dist1: dist1[subjCond][i], foil1Pos: foil1Pos[subjCond][i], foil2: foil2[subjCond][i], dist2: dist2[subjCond][i], foil2Pos: foil2Pos[subjCond][i], condition: subjCond, question: question[subjCond], roomNum: roomNum_probe[subjCond][i], sameRoom: sameRoom[subjCond][i], context: context[subjCond][i]},
-                        roomType_stim: create_roomType_stim(probe[i]),
+          stimuli[i] = {temp_stim: create_temporalOrder_stim(probe[subjCond][i], target[subjCond][i], targetPos[subjCond][i], foil1[subjCond][i], foil1Pos[subjCond][i], foil2[subjCond][i], foil2Pos[subjCond][i], question[subjCond]),
+                        temp_data: {worker_id: jatos.workerId, test_part: 'temporalOrder', corr_resp: targetPos[subjCond][i], probe: objNum[subjCond][i], target: target[subjCond][i], foil1: foil1[subjCond][i], dist1: dist1[subjCond][i], foil1Pos: foil1Pos[subjCond][i], foil2: foil2[subjCond][i], dist2: dist2[subjCond][i], foil2Pos: foil2Pos[subjCond][i], condition: subjCond, question: question[subjCond], roomNum: roomNum_probe[subjCond][i], sameRoom: sameRoom[subjCond][i], context: context[subjCond][i]},
+                        roomType_stim: create_roomType_stim(probe[subjCond][i]),
                         room_data: {worker_id: jatos.workerId, test_part: 'roomType', corr_resp: corRoom[subjCond][i], roomNum: roomNum_probe[subjCond][i] , condition: subjCond},
-                        tableNum_stim: create_tableNum_stim(probe[i]),
+                        tableNum_stim: create_tableNum_stim(probe[subjCond][i]),
                         table_data: {worker_id: jatos.workerId, test_part: 'tableNum', corr_resp: table[subjCond][i], condition: subjCond}}  
       };
 
