@@ -55,13 +55,14 @@ for(i in 1:n){
 
 temporalOrder_comb$id <- as.factor(temporalOrder_comb$id)
 
+temporalOrder_comb <- subset(temporalOrder_comb, temporalOrder_comb$condition != 6 | temporalOrder_comb$condition != 7)
 
-temporalOrder_agg <- ddply(temporalOrder_comb, c('id', 'context'), summarise, acc = mean(accuracy), rt = mean(rt))
+temporalOrder_agg <- ddply(temporalOrder_comb, c('worker_id', 'context'), summarise, acc = mean(accuracy), rt = mean(rt), condition = condition[1])
 temporalOrder_agg
 
 afcPlot <- ggplot(temporalOrder_agg, aes(x = context, y = acc)) + 
   geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
-  geom_jitter(width = 0.1) +
+  geom_jitter(width = 0.1, height = 0) +
   geom_hline(yintercept = 1/3) +
   annotate('text', x = 2, y = 0.31, label = 'Chance') +
   labs(y = '3AFC accuracy', x = "Room type", title = 'Temporal Order')
@@ -69,7 +70,7 @@ afcPlot <- ggplot(temporalOrder_agg, aes(x = context, y = acc)) +
 
 rtPlot <- ggplot(temporalOrder_agg, aes(x = context, y = rt)) + 
   geom_boxplot(alpha = 0.5, outlier.shape = NA) + 
-  geom_jitter(width = 0.5) +
+  geom_jitter(width = 0.5, height = 0) +
   labs(y = 'RT (msec)', x = "Room type", title = '')
 
 plot_grid(afcPlot, rtPlot)
@@ -89,3 +90,6 @@ t.test(temporalOrder_agg$acc[temporalOrder_agg$context =='within-walls'] - 1/3)
 # Temporal order
 ezANOVA(temporalOrder_agg, dv = acc, wid = id, within = context)
 
+
+t.test(tableNum_comb_agg$acc - 0.5)
+t.test(roomType_comb_agg$acc - 0.5)

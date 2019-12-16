@@ -7,7 +7,8 @@ theme_set(theme_grey()) # Important to retain the ggplot theme
 library(ez)
 
 # Load all data
-prefix         <- 'U:/Projects/boundaryVR/analysis/batch2/memoryTask/'
+prefix         <- 'U:/Projects/boundaryVR/analysis/batch3/memoryTask/'
+#prefix         <- 'U:/Projects/boundaryVR/analysis/batch3/memoryTask/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -15,7 +16,7 @@ n              <- length(allFiles_paths)
 for(i in 1:n){
   tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
   # To be able to visualise
-  tempDF$stimulus         <- NULL 
+  #tempDF$stimulus         <- NULL 
   tempDF$success          <- NULL
   tempDF$trial_type       <- NULL
   tempDF$internal_node_id <- NULL
@@ -79,16 +80,19 @@ roomType_comb$id      <- as.factor(roomType_comb$id)
 tableNum_comb$id      <- as.factor(tableNum_comb$id)
 
 
-ggplot(temporalOrder_comb, aes(x = trial_index, y = accuracy, colour = id)) + 
-  geom_point(alpha = 0.5) + geom_smooth(se = FALSE) + labs(title = 'Temporal Order')
-ggplot(roomType_comb, aes(x = trial_index, y = accuracy, colour = id)) + 
-  geom_point(alpha = 0.5) + geom_smooth(se = FALSE) + labs(title = 'Room type')
-ggplot(tableNum_comb, aes(x = trial_index, y = accuracy, colour = id)) + 
-  geom_point(alpha = 0.5) + geom_smooth(se = FALSE) + labs(title = 'Table number')
 
-
-temporalOrder_agg <- ddply(temporalOrder_comb, c('id', 'context'), summarise, n = length(rt),acc = mean(accuracy), rt = mean(rt))
+temporalOrder_agg <- ddply(temporalOrder_comb, c('id','worker_id', 'context'), 
+                           summarise, 
+                           n = length(rt),
+                           acc = mean(accuracy), 
+                           number = sum(accuracy),
+                           rt = mean(rt),
+                           condition = condition[1])
 temporalOrder_agg
+
+conditions <- ddply(temporalOrder_comb, c('id', 'worker_id'), summarise, condition = condition[1])
+table(conditions$condition)
+
 
 afcPlot <- ggplot(temporalOrder_agg, aes(x = context, y = acc)) + 
   geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
@@ -114,18 +118,13 @@ tableNum_comb_agg <- ddply(tableNum_comb, c('id'), summarise, acc = mean(accurac
 overall  <- ddply(temporalOrder_comb, c('id'), summarise, acc = mean(accuracy))
 t.test(overall$acc - 1/3)
 
-# Each condition against chance
-t.test(temporalOrder_agg$acc[temporalOrder_agg$context =='across'] - 1/3)
-t.test(temporalOrder_agg$acc[temporalOrder_agg$context =='within-no-walls'] - 1/3)
-t.test(temporalOrder_agg$acc[temporalOrder_agg$context =='within-walls'] - 1/3)
-
 # Temporal order
 ezANOVA(temporalOrder_agg, dv = acc, wid = id, within = context)
 
 
 # Room type task against chance
-t.test(roomType_comb_agg$acc -0.5)
+t.test(roomType_comb_agg$acc - 0.5)
 
 #  Table task against chance
-t.test(tableNum_comb_agg$acc-0.5)
+t.test(tableNum_comb_agg$acc - 0.5)
 
