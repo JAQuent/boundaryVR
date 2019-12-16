@@ -34,6 +34,8 @@ question = JSON.parse(question);
 
 target = JSON.parse(target);
 
+probe = JSON.parse(probe);
+
 targetPos = JSON.parse(targetPos);
 
 foil1 = JSON.parse(foil1);

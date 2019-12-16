@@ -858,24 +858,24 @@ objNum <- list(trials_cond1$objNum,
                trials_cond8$objNum)
 objNum_string <- create_json_variable_str('objNum', objNum)
 
-probe <- list(paste(prefix ,trials_cond1$objNum, suffix, sep = ''),
-              paste(prefix ,trials_cond2$objNum, suffix, sep = ''),
-              paste(prefix ,trials_cond3$objNum, suffix, sep = ''),
-              paste(prefix ,trials_cond4$objNum, suffix, sep = ''),
-              paste(prefix ,trials_cond5$objNum, suffix, sep = ''),
-              paste(prefix ,trials_cond6$objNum, suffix, sep = ''),
-              paste(prefix ,trials_cond7$objNum, suffix, sep = ''),
-              paste(prefix ,trials_cond8$objNum, suffix, sep = ''))
+probe <- list(paste(prefix, trials_cond1$objNum, suffix, sep = ''),
+              paste(prefix, trials_cond2$objNum, suffix, sep = ''),
+              paste(prefix, trials_cond3$objNum, suffix, sep = ''),
+              paste(prefix, trials_cond4$objNum, suffix, sep = ''),
+              paste(prefix, trials_cond5$objNum, suffix, sep = ''),
+              paste(prefix, trials_cond6$objNum, suffix, sep = ''),
+              paste(prefix, trials_cond7$objNum, suffix, sep = ''),
+              paste(prefix, trials_cond8$objNum, suffix, sep = ''))
 probe_string <- create_json_variable_str('probe', probe)
 
-target <- list(paste(prefix ,trials_cond1$target, suffix, sep = ''),
-               paste(prefix ,trials_cond2$target, suffix, sep = ''),
-               paste(prefix ,trials_cond3$target, suffix, sep = ''),
-               paste(prefix ,trials_cond4$target, suffix, sep = ''),
-               paste(prefix ,trials_cond5$target, suffix, sep = ''),
-               paste(prefix ,trials_cond6$target, suffix, sep = ''),
-               paste(prefix ,trials_cond7$target, suffix, sep = ''),
-               paste(prefix ,trials_cond8$target, suffix, sep = ''))
+target <- list(paste(prefix, trials_cond1$target, suffix, sep = ''),
+               paste(prefix, trials_cond2$target, suffix, sep = ''),
+               paste(prefix, trials_cond3$target, suffix, sep = ''),
+               paste(prefix, trials_cond4$target, suffix, sep = ''),
+               paste(prefix, trials_cond5$target, suffix, sep = ''),
+               paste(prefix, trials_cond6$target, suffix, sep = ''),
+               paste(prefix, trials_cond7$target, suffix, sep = ''),
+               paste(prefix, trials_cond8$target, suffix, sep = ''))
 target_string <- create_json_variable_str('target', target)
 
 targetPos <- list(trials_cond1$targetPos,
@@ -1040,6 +1040,10 @@ cat('\n\n')
 cat('question = JSON.parse(question);')
 cat('\n\n')
 cat('target = JSON.parse(target);')
+cat('\n\n')
+cat('probe = JSON.parse(probe);')
+cat('\n\n')
+cat('objNum = JSON.parse(objNum);')
 cat('\n\n')
 cat('targetPos = JSON.parse(targetPos);')
 cat('\n\n')
