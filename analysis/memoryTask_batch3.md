@@ -8,37 +8,31 @@ Analysis of memory task
 ![](memoryTask_batch3_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
 As you can see above, most participants now perform above chance. Below,
-you see the ANOVA results.
-
-|   | Effect  | DFn | DFd |        F |         p | p\<.05 |       ges |
-| - | :------ | --: | --: | -------: | --------: | :----- | --------: |
-| 2 | context |   2 |  24 | 5.226728 | 0.0130539 | \*     | 0.1984575 |
-
-|   | Effect  |         W |         p | p\<.05 |
-| - | :------ | --------: | --------: | :----- |
-| 2 | context | 0.4466891 | 0.0118858 | \*     |
-
-|   | Effect  |       GGe |   p\[GG\] | p\[GG\]\<.05 |       HFe |   p\[HF\] | p\[HF\]\<.05 |
-| - | :------ | --------: | --------: | :----------- | --------: | --------: | :----------- |
-| 2 | context | 0.6437861 | 0.0295572 | \*           | 0.6879131 | 0.0266932 | \*           |
+you see the ANOVA compring the different conditions.
 
 Interestingly, there was a main effect of context, p = .03. In
 **uncorrected** pairwise t-tests, performance in the within-wall
 condition was better than across rooms, p = .007, and better than in the
 within-no-walls condition, p = .041. However, performance in the
 within-no-wall condition was not better than in the across condition, p
-= .45.
+= .45. The average values can be found here:
+
+| context         |  accuracy |        SD |
+| :-------------- | --------: | --------: |
+| across          | 0.3688363 | 0.0962469 |
+| within-no-walls | 0.4038462 | 0.1189249 |
+| within-walls    | 0.5008097 | 0.1322718 |
 
 ### Temporal memory: across vs. within
 
-![](memoryTask_batch3_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](memoryTask_batch3_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
-When we colllasp across both within-room conditions, the difference
+When I colllasp across both within-room conditions, the difference
 between across and within rooms is significantly different, p = .029.
 
 ## Room and table question
 
-![](memoryTask_batch3_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](memoryTask_batch3_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 As in Batch 2, participants did not perform above chance for the room
 type question, p = .534 but they did for the table question, p = .005.
@@ -57,7 +51,7 @@ differs as a function of the foil distance.
 
 In a logistic regrression model (see above) with context as fixed effect
 and a random intercept for each participant, the contrast between across
-and within-no-wall was not significant, p = = .356, while the contrast
+and within-no-wall was not significant, p = .356, while the contrast
 between across and within-walls was, p \< .001.
 
 |             | Estimate |   SE |      Z |      P | Sig    |
@@ -69,8 +63,9 @@ between across and within-walls was, p \< .001.
 
 In another step, I tried to predict accuracy by including fixed effects
 for the absolute minimum, maximum and mean distance values of foil 1
-(before cue/probe) and foil 2 (after cue/probe). However as can you can
-see above, none significantly predicts accuracy.
+(before cue/probe) and foil 2 (after cue/probe). In other words, for
+each trial I for instance used the minimum of both absolute distances.
+However as can you can see above, none significantly predicts accuracy.
 
 |             | Estimate |   SE |      Z |      P | Sig    |
 | ----------- | -------: | ---: | -----: | -----: | :----- |
@@ -92,8 +87,8 @@ cue/probe was relatively small, p = .138.
 | contextwithin-walls:dist2    |   \-0.01 | 0.01 | \-0.63 | 0.5257 |        |
 
 In a next step, I included context and dist2 as predictors in the
-logistic regression model and allowed and interaction between both fixed
-effects. As you can see none of the interactio are significant but, a)
+logistic regression model and allowed an interaction between both fixed
+effects. As you can see none of the interactions are significant but, a)
 there is again a significant contrast between across and within-walls, p
 = .012. Most interestingly, there is also trend for the contrast between
 across and within-no-walls, p = .091.
@@ -109,8 +104,8 @@ across and within-no-walls, p = .091.
 | contextwithin-no-walls:binDist2far |   \-0.31 | 0.32 | \-0.98 | 0.3292 |        |
 | contextwithin-walls:binDist2far    |   \-0.28 | 0.31 | \-0.89 | 0.3761 |        |
 
-If you use a binary measure of foil distance instead of a continuous
-one, then the effects don’t chance a lot actually.
+If I use a binary measure of foil distance instead of a continuous one,
+then the effects don’t chance a lot actually.
 
 ## Effect of condition
 
