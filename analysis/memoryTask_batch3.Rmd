@@ -4,7 +4,7 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE)
 library(rjson)
 library(ggplot2)
 library(MRColour)
@@ -14,12 +14,13 @@ library(plyr)
 library(reshape2)
 theme_set(theme_grey()) # Important to retain the ggplot theme
 library(ez)
+library(assortedRFunctions)
 library(lmerTest)
 ```
 
 ```{r loadData, echo = FALSE}
 # Load all data
-prefix         <- 'U:/Projects/boundaryVR/analysis/batch3/memoryTask/'
+prefix         <- '~/GitHub/boundaryVR/analysis/batch3/memoryTask/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -140,9 +141,19 @@ rtPlot <- ggplot(temporalOrder_agg, aes(x = context, y = rt)) +
 plot_grid(afcPlot, rtPlot)
 ```
 
-As can be seen above, some participants seems to significantly perform below chance. To show this, I simulated a null distribution (see below). In an ANOVA, there were no difference between the conditions:
+As you can see above, most participants now perform above chance. Below, you see the ANOVA compring the different conditions.
+
 ```{r}
-ezANOVA(temporalOrder_agg, dv = acc, wid = id, within = context)
+result1 <- ezANOVA(temporalOrder_agg, dv = acc, wid = id, within = context)
+p1 <- result1$`Sphericity Corrections`$`p[GG]`
+
+result2 <-  pairwise.t.test(temporalOrder_agg$acc, temporalOrder_agg$context, p.adj = "none")
+```
+
+Interestingly, there was a main effect of context, p `r pValue(p1)`. In **uncorrected** pairwise t-tests, performance in the within-wall condition was better than across rooms, p `r pValue(result2$p.value[2, 1])`, and better than in the within-no-walls condition, p `r pValue(result2$p.value[2, 2])`. However, performance in the within-no-wall condition was not better than in the across condition, p `r pValue(result2$p.value[1, 1])`. The average values can be found here:
+
+```{r}
+kable(ddply(temporalOrder_agg, c('context'), summarise, accuracy = mean(acc), SD = sd(acc)))
 ```
 
 ### Temporal memory: across vs. within
@@ -154,10 +165,11 @@ ggplot(temporalOrder_agg2, aes(x = context2, y = acc)) +
   annotate('text', x = 2, y = 0.31, label = 'Chance') +
   labs(y = '3AFC accuracy', x = "Room type", title = 'Temporal Order')
 
-t.test(temporalOrder_agg2[temporalOrder_agg2$context2 == 'across', 4], 
-       temporalOrder_agg2[temporalOrder_agg2$context2 == 'within', 4])
+result3 <- t.test(temporalOrder_agg2[temporalOrder_agg2$context2 == 'across', 4], 
+                  temporalOrder_agg2[temporalOrder_agg2$context2 == 'within', 4])
 ```
 
+When I colllasp across both within-room conditions, the difference between across and within rooms is significantly different, p `r pValue(result3$p.value)`.
 
 ## Room and table question
 ```{r}
@@ -176,19 +188,12 @@ ggplot(roomTable_agg, aes(x = Type, y = acc)) +
   annotate('text', x = 1.5, y = 0.48, label = 'Chance') +
   labs(y = 'Accuracy', x = "Memory type", title = 'Memory for room type and table')
 
+
+result4 <- t.test(roomType_comb_agg$acc -0.5)
+result5 <- t.test(tableNum_comb_agg$acc - 0.5)
 ```
 
-While performance for the room task was not above chance
-
-```{r}
-t.test(roomType_comb_agg$acc -0.5)
-```
-
-the performance for the table question was:
-
-```{r}
-t.test(tableNum_comb_agg$acc - 0.5)
-```
+As in Batch 2, participants did not perform above chance for the room type question, p `r pValue(result4$p.value)` but they did for the table question, p `r pValue(result5$p.value)`.
 
 # Predicting trial-to-trial accruacy and influence of foil distance
 For this section, I fished around to see what the relationship between context and foil distance might be and whether the effect of context differs as a function of the foil distance. 
@@ -209,38 +214,46 @@ temporalOrder_comb_foilDist <- ddply(temporalOrder_comb,
 m_context <- glmer(accuracy ~ context + (1| id ), 
                    family = binomial, 
                    data = temporalOrder_comb_foilDist)
-summary(m_context)
+
+table1 <- createResultTable(m_context)
+kable(table1)
 ```
 
-This actually shows tha the contrast between across and within-walls is close to be significant. 
+In a logistic regrression model (see above) with context as fixed effect and a random intercept for each participant, the contrast between across and within-no-wall was not significant, p `r pValue(table1$P[2])`, while the contrast between across and within-walls was, p `r pValue(table1$P[3])`.
 
 ```{r}
 
 m_foil1 <- glmer(accuracy ~ minDist + maxDist + meanDist + (1 | id ), 
                  family = binomial, 
                  data = temporalOrder_comb_foilDist)
-summary(m_foil1)
+
+table2 <- createResultTable(m_foil1)
+kable(table2)
 ```
 
-No absolute aggregate meassures across both foils predict accuracy. 
+In another step, I tried to predict accuracy by including fixed effects for the absolute minimum, maximum and mean distance values of foil 1 (before cue/probe) and foil 2 (after cue/probe). In other words, for each trial I for instance used the minimum of both absolute distances. However as can you can see above, none significantly predicts accuracy. 
 
 ```{r}
 m_foil2 <- glmer(accuracy ~ dist1 + dist2 + (1 | id ), 
                  family = binomial, 
                  data = temporalOrder_comb_foilDist)
-summary(m_foil2)
+
+table3 <- createResultTable(m_foil2)
+kable(table3)
 ```
 
-If both raw distances are entered, then the distance of foil2 is close to be significant. This foil is like the target after the probe. The other foil doesn't seem to have an influence. 
+When I use the raw distance values of foil 1 and foil 2, there again were no significant effects even though the distance of foil 2 to the cue/probe was relatively small, p `r pValue(table3$P[3])`.
 
 ```{r}
 m_context2 <- glmer(accuracy ~ context*dist2 + (1| id ), 
                     family = binomial, 
                     data = temporalOrder_comb_foilDist)
-summary(m_context2)
+
+table4 <- createResultTable(m_context2)
+kable(table4)
 ```
 
-If we controll for the difference of foil 2, then the effect of within-walls get bigger and both the contrast between across and within-walls and the effect of the distance of foil 2 are close to be significant. 
+In a next step, I included context and dist2 as predictors in the logistic regression model and allowed an interaction between both fixed effects. As you can see none of the interactions are significant but, a) there is again a significant contrast between across and within-walls, p `r pValue(table4$P[3])`. Most interestingly, there is also trend for the contrast between across and within-no-walls, p `r pValue(table4$P[2])`.  
 
 ## Binary distance
 ```{r}
@@ -251,17 +264,25 @@ temporalOrder_comb_foilDist$binDist2 <- binDist2
 m_context3 <- glmer(accuracy ~ context*binDist2 + (1| id ), 
                     family = binomial, 
                     data = temporalOrder_comb_foilDist)
-summary(m_context3)
+
+table5 <- createResultTable(m_context3)
+kable(table5)
 ```
+
+If I use a binary measure of foil distance instead of a continuous one, then the effects don't chance a lot actually. 
 
 ## Effect of condition
 ```{r}
 temporalOrder_comb$condition <- as.factor(temporalOrder_comb$condition)
-m_context3 <- glmer(accuracy ~ context*condition + (1| id ), 
+m_context4 <- glmer(accuracy ~ context*condition + (1| id ), 
                    family = binomial, 
                    data = temporalOrder_comb)
-summary(m_context3)
+
+table6 <- createResultTable(m_context4)
+kable(table6)
 ```
 
+In the last step, I included condition as fixed effect. After replacing the problematic participants it's a good sign that there are no significant interactions left between any context contrast and conditions. 
+
 # Conclusion
-Obviously, this all has to be taken with the caution that a) post-hoc fishing and b) low N. So I think we should run another batch. 
+We have robust and strong effect in the within-wall condition and only when we controll for distance between foil 2 to the cue/probe, there is a trend for the contrast between across and within-no-walls. 
