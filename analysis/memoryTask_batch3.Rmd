@@ -27,7 +27,7 @@ n              <- length(allFiles_paths)
 for(i in 1:n){
   tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
   # To be able to visualise
-  tempDF$stimulus         <- NULL 
+  #tempDF$stimulus         <- NULL 
   tempDF$success          <- NULL
   tempDF$trial_type       <- NULL
   tempDF$internal_node_id <- NULL
@@ -241,6 +241,27 @@ summary(m_context2)
 ```
 
 If we controll for the difference of foil 2, then the effect of within-walls get bigger and both the contrast between across and within-walls and the effect of the distance of foil 2 are close to be significant. 
+
+## Binary distance
+```{r}
+binDist2 <- rep('close', dim(temporalOrder_comb_foilDist)[1])
+binDist2[temporalOrder_comb_foilDist$dist2 >= median(temporalOrder_comb_foilDist$dist2)] <- 'far'
+temporalOrder_comb_foilDist$binDist2 <- binDist2
+
+m_context3 <- glmer(accuracy ~ context*binDist2 + (1| id ), 
+                    family = binomial, 
+                    data = temporalOrder_comb_foilDist)
+summary(m_context3)
+```
+
+## Effect of condition
+```{r}
+temporalOrder_comb$condition <- as.factor(temporalOrder_comb$condition)
+m_context3 <- glmer(accuracy ~ context*condition + (1| id ), 
+                   family = binomial, 
+                   data = temporalOrder_comb)
+summary(m_context3)
+```
 
 # Conclusion
 Obviously, this all has to be taken with the caution that a) post-hoc fishing and b) low N. So I think we should run another batch. 

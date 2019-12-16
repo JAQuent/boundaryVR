@@ -49,16 +49,16 @@ ezANOVA(temporalOrder_agg, dv = acc, wid = id, within = context)
 ```
 
     ## $ANOVA
-    ##    Effect DFn DFd        F         p p<.05        ges
-    ## 2 context   2  22 1.046171 0.3681121       0.06352534
+    ##    Effect DFn DFd        F          p p<.05       ges
+    ## 2 context   2  24 5.226728 0.01305394     * 0.1984575
     ## 
     ## $`Mauchly's Test for Sphericity`
-    ##    Effect        W           p p<.05
-    ## 2 context 0.256343 0.001106897     *
+    ##    Effect         W          p p<.05
+    ## 2 context 0.4466891 0.01188583     *
     ## 
     ## $`Sphericity Corrections`
-    ##    Effect       GGe     p[GG] p[GG]<.05       HFe    p[HF] p[HF]<.05
-    ## 2 context 0.5735073 0.3372555           0.5969853 0.339767
+    ##    Effect       GGe      p[GG] p[GG]<.05       HFe      p[HF] p[HF]<.05
+    ## 2 context 0.6437861 0.02955724         * 0.6879131 0.02669316         *
 
 ### Temporal memory: across vs. within
 
@@ -82,13 +82,13 @@ t.test(temporalOrder_agg2[temporalOrder_agg2$context2 == 'across', 4],
     ##  Welch Two Sample t-test
     ## 
     ## data:  temporalOrder_agg2[temporalOrder_agg2$context2 == "across", 4] and temporalOrder_agg2[temporalOrder_agg2$context2 == "within", 4]
-    ## t = -0.77254, df = 21.653, p-value = 0.4481
+    ## t = -2.3291, df = 23.621, p-value = 0.02874
     ## alternative hypothesis: true difference in means is not equal to 0
     ## 95 percent confidence interval:
-    ##  -0.11817261  0.05407005
+    ##  -0.156308860 -0.009371614
     ## sample estimates:
     ## mean of x mean of y 
-    ## 0.4017094 0.4337607
+    ## 0.3688363 0.4516765
 
 Room and table question
 -----------------------
@@ -122,13 +122,13 @@ t.test(roomType_comb_agg$acc -0.5)
     ##  One Sample t-test
     ## 
     ## data:  roomType_comb_agg$acc - 0.5
-    ## t = 0.13689, df = 11, p-value = 0.8936
+    ## t = -0.6396, df = 12, p-value = 0.5345
     ## alternative hypothesis: true mean is not equal to 0
     ## 95 percent confidence interval:
-    ##  -0.03221857  0.03649207
+    ##  -0.03911106  0.02135958
     ## sample estimates:
     ##   mean of x 
-    ## 0.002136752
+    ## -0.00887574
 
 the performance for the table question was:
 
@@ -140,13 +140,13 @@ t.test(tableNum_comb_agg$acc - 0.5)
     ##  One Sample t-test
     ## 
     ## data:  tableNum_comb_agg$acc - 0.5
-    ## t = 2.5083, df = 11, p-value = 0.02907
+    ## t = 3.4153, df = 12, p-value = 0.005122
     ## alternative hypothesis: true mean is not equal to 0
     ## 95 percent confidence interval:
-    ##  0.01073368 0.16447999
+    ##  0.04391764 0.19868591
     ## sample estimates:
-    ##  mean of x 
-    ## 0.08760684
+    ## mean of x 
+    ## 0.1213018
 
 Predicting trial-to-trial accruacy and influence of foil distance
 =================================================================
@@ -179,29 +179,29 @@ summary(m_context)
     ##    Data: temporalOrder_comb_foilDist
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##   1276.4   1295.7   -634.2   1268.4      932 
+    ##   1365.9   1385.6   -679.0   1357.9     1010 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -0.9966 -0.8213 -0.7799  1.1778  1.2983 
+    ## -1.1301 -0.8215 -0.7252  1.1314  1.4836 
     ## 
     ## Random effects:
     ##  Groups Name        Variance Std.Dev.
-    ##  id     (Intercept) 0.01708  0.1307  
-    ## Number of obs: 936, groups:  id, 12
+    ##  id     (Intercept) 0.04538  0.213   
+    ## Number of obs: 1014, groups:  id, 13
     ## 
     ## Fixed effects:
     ##                        Estimate Std. Error z value Pr(>|z|)    
-    ## (Intercept)            -0.40002    0.10177  -3.931 8.47e-05 ***
-    ## contextwithin-no-walls -0.01093    0.16400  -0.067   0.9469    
-    ## contextwithin-walls     0.27184    0.16154   1.683   0.0924 .  
+    ## (Intercept)             -0.5432     0.1099  -4.944 7.66e-07 ***
+    ## contextwithin-no-walls   0.1464     0.1586   0.923 0.356003    
+    ## contextwithin-walls      0.5432     0.1565   3.470 0.000521 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
     ##             (Intr) cntx--
-    ## cntxtwthn-- -0.535       
-    ## cntxtwthn-w -0.543  0.337
+    ## cntxtwthn-- -0.491       
+    ## cntxtwthn-w -0.499  0.345
 
 This actually shows tha the contrast between across and within-walls is close to be significant.
 
@@ -219,31 +219,33 @@ summary(m_foil1)
     ##    Data: temporalOrder_comb_foilDist
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##   1278.3   1302.5   -634.2   1268.3      931 
+    ##   1376.4   1401.0   -683.2   1366.4     1009 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -1.0565 -0.8436 -0.7839  1.1583  1.3811 
+    ## -1.1236 -0.8364 -0.7486  1.1550  1.5124 
     ## 
     ## Random effects:
     ##  Groups Name        Variance Std.Dev.
-    ##  id     (Intercept) 0.01727  0.1314  
-    ## Number of obs: 936, groups:  id, 12
+    ##  id     (Intercept) 0.04522  0.2127  
+    ## Number of obs: 1014, groups:  id, 13
     ## 
     ## Fixed effects:
-    ##              Estimate Std. Error z value Pr(>|z|)   
-    ## (Intercept) -0.571487   0.191204  -2.989   0.0028 **
-    ## minDist      0.008863   0.008850   1.001   0.3166   
-    ## maxDist      0.007473   0.004768   1.567   0.1170   
-    ## meanDist    -0.005710   0.004581  -1.246   0.2126   
+    ##               Estimate Std. Error z value Pr(>|z|)    
+    ## (Intercept) -0.6654937  0.1917568  -3.471 0.000519 ***
+    ## minDist      0.0130893  0.0085396   1.533 0.125329    
+    ## maxDist      0.0045125  0.0046159   0.978 0.328270    
+    ## meanDist    -0.0009655  0.0044039  -0.219 0.826468    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
     ##          (Intr) minDst maxDst
-    ## minDist  -0.477              
-    ## maxDist  -0.665  0.094       
-    ## meanDist  0.035 -0.302 -0.485
+    ## minDist  -0.465              
+    ## maxDist  -0.647  0.096       
+    ## meanDist  0.038 -0.303 -0.489
+    ## convergence code: 0
+    ## Model failed to converge with max|grad| = 0.00141793 (tol = 0.001, component 1)
 
 No absolute aggregate meassures across both foils predict accuracy.
 
@@ -261,29 +263,29 @@ summary(m_foil2)
     ##    Data: temporalOrder_comb_foilDist
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##   1276.4   1295.7   -634.2   1268.4      932 
+    ##   1375.3   1395.0   -683.6   1367.3     1010 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -1.0675 -0.8427 -0.7847  1.1609  1.3796 
+    ## -1.0357 -0.8374 -0.7495  1.1537  1.4961 
     ## 
     ## Random effects:
     ##  Groups Name        Variance Std.Dev.
-    ##  id     (Intercept) 0.01729  0.1315  
-    ## Number of obs: 936, groups:  id, 12
+    ##  id     (Intercept) 0.04527  0.2128  
+    ## Number of obs: 1014, groups:  id, 13
     ## 
     ## Fixed effects:
-    ##              Estimate Std. Error z value Pr(>|z|)   
-    ## (Intercept) -0.568461   0.190061  -2.991  0.00278 **
-    ## dist1       -0.002067   0.004246  -0.487  0.62640   
-    ## dist2        0.007753   0.004353   1.781  0.07491 . 
+    ##              Estimate Std. Error z value Pr(>|z|)    
+    ## (Intercept) -0.646713   0.190620  -3.393 0.000692 ***
+    ## dist1       -0.005417   0.004077  -1.329 0.183965    
+    ## dist2        0.006240   0.004209   1.482 0.138220    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
     ##       (Intr) dist1 
-    ## dist1  0.768       
-    ## dist2 -0.782 -0.434
+    ## dist1  0.748       
+    ## dist2 -0.761 -0.441
 
 If both raw distances are entered, then the distance of foil2 is close to be significant. This foil is like the target after the probe. The other foil doesn't seem to have an influence.
 
@@ -301,37 +303,167 @@ summary(m_context2)
     ##    Data: temporalOrder_comb_foilDist
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##   1277.9   1311.8   -632.0   1263.9      929 
+    ##   1368.8   1403.3   -677.4   1354.8     1007 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -1.0728 -0.8435 -0.7476  1.1186  1.4343 
+    ## -1.1861 -0.8174 -0.7026  1.1221  1.6305 
     ## 
     ## Random effects:
     ##  Groups Name        Variance Std.Dev.
-    ##  id     (Intercept) 0.01804  0.1343  
-    ## Number of obs: 936, groups:  id, 12
+    ##  id     (Intercept) 0.04666  0.216   
+    ## Number of obs: 1014, groups:  id, 13
     ## 
     ## Fixed effects:
     ##                               Estimate Std. Error z value Pr(>|z|)    
-    ## (Intercept)                  -0.630401   0.167257  -3.769 0.000164 ***
-    ## contextwithin-no-walls       -0.012180   0.291659  -0.042 0.966690    
-    ## contextwithin-walls           0.520861   0.279975   1.860 0.062831 .  
-    ## dist2                         0.009902   0.005632   1.758 0.078737 .  
-    ## contextwithin-no-walls:dist2 -0.001027   0.009505  -0.108 0.913989    
-    ## contextwithin-walls:dist2    -0.010694   0.009711  -1.101 0.270784    
+    ## (Intercept)                  -0.747713   0.169998  -4.398 1.09e-05 ***
+    ## contextwithin-no-walls        0.474308   0.280783   1.689   0.0912 .  
+    ## contextwithin-walls           0.681461   0.272164   2.504   0.0123 *  
+    ## dist2                         0.008693   0.005425   1.602   0.1091    
+    ## contextwithin-no-walls:dist2 -0.013497   0.009276  -1.455   0.1456    
+    ## contextwithin-walls:dist2    -0.005921   0.009329  -0.635   0.5257    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
     ##             (Intr) cntx-- cntxt- dist2  cn--:2
-    ## cntxtwthn-- -0.541                            
-    ## cntxtwthn-w -0.565  0.323                     
-    ## dist2       -0.790  0.452  0.471              
-    ## cntxtwt--:2  0.467 -0.825 -0.279 -0.591       
-    ## cntxtwth-:2  0.458 -0.262 -0.816 -0.579  0.343
+    ## cntxtwthn-- -0.529                            
+    ## cntxtwthn-w -0.545  0.329                     
+    ## dist2       -0.760  0.458  0.473              
+    ## cntxtwt--:2  0.443 -0.824 -0.276 -0.583       
+    ## cntxtwth-:2  0.440 -0.266 -0.818 -0.579  0.338
 
 If we controll for the difference of foil 2, then the effect of within-walls get bigger and both the contrast between across and within-walls and the effect of the distance of foil 2 are close to be significant.
+
+Binary distance
+---------------
+
+``` r
+binDist2 <- rep('close', dim(temporalOrder_comb_foilDist)[1])
+binDist2[temporalOrder_comb_foilDist$dist2 >= median(temporalOrder_comb_foilDist$dist2)] <- 'far'
+temporalOrder_comb_foilDist$binDist2 <- binDist2
+
+m_context3 <- glmer(accuracy ~ context*binDist2 + (1| id ), 
+                    family = binomial, 
+                    data = temporalOrder_comb_foilDist)
+summary(m_context3)
+```
+
+    ## Generalized linear mixed model fit by maximum likelihood (Laplace
+    ##   Approximation) [glmerMod]
+    ##  Family: binomial  ( logit )
+    ## Formula: accuracy ~ context * binDist2 + (1 | id)
+    ##    Data: temporalOrder_comb_foilDist
+    ## 
+    ##      AIC      BIC   logLik deviance df.resid 
+    ##   1369.0   1403.5   -677.5   1355.0     1007 
+    ## 
+    ## Scaled residuals: 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -1.1410 -0.8155 -0.6969  1.1194  1.6079 
+    ## 
+    ## Random effects:
+    ##  Groups Name        Variance Std.Dev.
+    ##  id     (Intercept) 0.04667  0.216   
+    ## Number of obs: 1014, groups:  id, 13
+    ## 
+    ## Fixed effects:
+    ##                                    Estimate Std. Error z value Pr(>|z|)
+    ## (Intercept)                         -0.6976     0.1446  -4.825  1.4e-06
+    ## contextwithin-no-walls               0.2994     0.2363   1.267  0.20509
+    ## contextwithin-walls                  0.6784     0.2252   3.012  0.00259
+    ## binDist2far                          0.3143     0.1858   1.692  0.09069
+    ## contextwithin-no-walls:binDist2far  -0.3120     0.3197  -0.976  0.32916
+    ## contextwithin-walls:binDist2far     -0.2776     0.3136  -0.885  0.37605
+    ##                                       
+    ## (Intercept)                        ***
+    ## contextwithin-no-walls                
+    ## contextwithin-walls                ** 
+    ## binDist2far                        .  
+    ## contextwithin-no-walls:binDist2far    
+    ## contextwithin-walls:binDist2far       
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Correlation of Fixed Effects:
+    ##             (Intr) cntx-- cntxt- bnDst2 c--:D2
+    ## cntxtwthn-- -0.505                            
+    ## cntxtwthn-w -0.531  0.324                     
+    ## binDist2far -0.645  0.393  0.413              
+    ## cntxtw--:D2  0.373 -0.739 -0.239 -0.579       
+    ## cntxtwt-:D2  0.381 -0.233 -0.718 -0.592  0.343
+
+Effect of condition
+-------------------
+
+``` r
+temporalOrder_comb$condition <- as.factor(temporalOrder_comb$condition)
+m_context3 <- glmer(accuracy ~ context*condition + (1| id ), 
+                   family = binomial, 
+                   data = temporalOrder_comb)
+summary(m_context3)
+```
+
+    ## Generalized linear mixed model fit by maximum likelihood (Laplace
+    ##   Approximation) [glmerMod]
+    ##  Family: binomial  ( logit )
+    ## Formula: accuracy ~ context * condition + (1 | id)
+    ##    Data: temporalOrder_comb
+    ## 
+    ##      AIC      BIC   logLik deviance df.resid 
+    ##   1377.8   1441.8   -675.9   1351.8     1001 
+    ## 
+    ## Scaled residuals: 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -1.3932 -0.8223 -0.6923  1.1980  1.4772 
+    ## 
+    ## Random effects:
+    ##  Groups Name        Variance Std.Dev.
+    ##  id     (Intercept) 0.04093  0.2023  
+    ## Number of obs: 1014, groups:  id, 13
+    ## 
+    ## Fixed effects:
+    ##                                   Estimate Std. Error z value Pr(>|z|)   
+    ## (Intercept)                       -0.50005    0.19402  -2.577  0.00996 **
+    ## contextwithin-no-walls             0.12521    0.28669   0.437  0.66229   
+    ## contextwithin-walls                0.34888    0.27926   1.249  0.21155   
+    ## condition5                        -0.04908    0.29744  -0.165  0.86894   
+    ## condition6                        -0.08716    0.29819  -0.292  0.77007   
+    ## condition7                        -0.04900    0.29744  -0.165  0.86914   
+    ## contextwithin-no-walls:condition5 -0.05706    0.43657  -0.131  0.89601   
+    ## contextwithin-walls:condition5     0.74514    0.43762   1.703  0.08863 . 
+    ## contextwithin-no-walls:condition6  0.28388    0.43754   0.649  0.51646   
+    ## contextwithin-walls:condition6     0.17086    0.42805   0.399  0.68978   
+    ## contextwithin-no-walls:condition7 -0.12896    0.43803  -0.294  0.76844   
+    ## contextwithin-walls:condition7    -0.04959    0.43267  -0.115  0.90875   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Correlation of Fixed Effects:
+    ##             (Intr) cntx-- cntxt- cndtn5 cndtn6 cndtn7 cn--:5 cnt-:5 cn--:6
+    ## cntxtwthn-- -0.493                                                        
+    ## cntxtwthn-w -0.506  0.342                                                 
+    ## condition5  -0.652  0.321  0.330                                          
+    ## condition6  -0.650  0.321  0.329  0.425                                   
+    ## condition7  -0.652  0.321  0.330  0.426  0.425                            
+    ## cntxtwt--:5  0.324 -0.657 -0.225 -0.497 -0.211 -0.211                     
+    ## cntxtwth-:5  0.323 -0.218 -0.638 -0.497 -0.210 -0.211  0.338              
+    ## cntxtwt--:6  0.323 -0.655 -0.224 -0.211 -0.498 -0.211  0.430  0.143       
+    ## cntxtwth-:6  0.330 -0.223 -0.652 -0.215 -0.510 -0.215  0.147  0.417  0.347
+    ## cntxtwt--:7  0.322 -0.654 -0.224 -0.210 -0.210 -0.496  0.430  0.143  0.429
+    ## cntxtwth-:7  0.326 -0.221 -0.645 -0.213 -0.212 -0.502  0.145  0.412  0.145
+    ##             cnt-:6 cn--:7
+    ## cntxtwthn--              
+    ## cntxtwthn-w              
+    ## condition5               
+    ## condition6               
+    ## condition7               
+    ## cntxtwt--:5              
+    ## cntxtwth-:5              
+    ## cntxtwt--:6              
+    ## cntxtwth-:6              
+    ## cntxtwt--:7  0.146       
+    ## cntxtwth-:7  0.421  0.341
 
 Conclusion
 ==========
