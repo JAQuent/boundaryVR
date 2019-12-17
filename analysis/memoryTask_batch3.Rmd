@@ -20,7 +20,7 @@ library(lmerTest)
 
 ```{r loadData, echo = FALSE}
 # Load all data
-prefix         <- '~/GitHub/boundaryVR/analysis/batch3/memoryTask/'
+prefix         <- 'U:/Projects/boundaryVR/analysis/batch3/memoryTask/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -28,7 +28,7 @@ n              <- length(allFiles_paths)
 for(i in 1:n){
   tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
   # To be able to visualise
-  #tempDF$stimulus         <- NULL 
+  tempDF$stimulus         <- NULL 
   tempDF$success          <- NULL
   tempDF$trial_type       <- NULL
   tempDF$internal_node_id <- NULL
@@ -104,13 +104,16 @@ for(i in 1:n){
 temporalOrder_comb$id <- as.factor(temporalOrder_comb$id)
 roomType_comb$id      <- as.factor(roomType_comb$id)
 tableNum_comb$id      <- as.factor(tableNum_comb$id)
+
+# Align condition with createTrials script
+temporalOrder_comb$condition <- as.numeric(temporalOrder_comb$condition) + 1
 ```
 
 # Analyse data
 ## Temporal order memory
 ```{r}
 # Aggregate data 1
-temporalOrder_agg <- ddply(temporalOrder_comb, c('id', 'context'), summarise, 
+temporalOrder_agg <- ddply(temporalOrder_comb, c('id', 'context', 'condition'), summarise, 
                            n = length(rt),
                            acc = mean(accuracy), 
                            rt = mean(rt))
@@ -141,7 +144,7 @@ rtPlot <- ggplot(temporalOrder_agg, aes(x = context, y = rt)) +
 plot_grid(afcPlot, rtPlot)
 ```
 
-As you can see above, most participants now perform above chance. Below, you see the ANOVA compring the different conditions.
+As you can see above, most participants now perform above chance. Below, you see the ANOVA comparing the different conditions.
 
 ```{r}
 result1 <- ezANOVA(temporalOrder_agg, dv = acc, wid = id, within = context)
@@ -153,8 +156,37 @@ result2 <-  pairwise.t.test(temporalOrder_agg$acc, temporalOrder_agg$context, p.
 Interestingly, there was a main effect of context, p `r pValue(p1)`. In **uncorrected** pairwise t-tests, performance in the within-wall condition was better than across rooms, p `r pValue(result2$p.value[2, 1])`, and better than in the within-no-walls condition, p `r pValue(result2$p.value[2, 2])`. However, performance in the within-no-wall condition was not better than in the across condition, p `r pValue(result2$p.value[1, 1])`. The average values can be found here:
 
 ```{r}
-kable(ddply(temporalOrder_agg, c('context'), summarise, accuracy = mean(acc), SD = sd(acc)))
+ourData <- ddply(temporalOrder_agg, c('context'), summarise, accuracy = mean(acc), SD = sd(acc))
+kable(ourData)
+
+boundaryEffect1 <-  temporalOrder_agg$acc[temporalOrder_agg$context == 'within-no-walls'] - temporalOrder_agg$acc[temporalOrder_agg$context == 'across']
+boundaryEffect2 <-  temporalOrder_agg$acc[temporalOrder_agg$context == 'within-walls'] - temporalOrder_agg$acc[temporalOrder_agg$context == 'across']
+
+# Aidan's results
+# Which object came next?
+aidansData1 <- data.frame(Experiment = c('Exp 1', 'Exp 1', 'Exp 2', 'Exp 2', 'Exp 3', 'Exp 3'),
+                         Context = c('within', 'across', 'within', 'across', 'within', 'across'),
+                         accuracy = c(0.52, 0.42, 0.45, 0.38, 0.52, 0.44),
+                         SD = c(0.15, 0.1, 0.17, 0.18, 0.18, 0.14))
+
+# Which object came before?
+aidansData2 <- data.frame(Experiment = c('Exp 1', 'Exp 1', 'Exp 2', 'Exp 2', 'Exp 3', 'Exp 3'),
+                         Context = c('within', 'across', 'within', 'across', 'within', 'across'),
+                         accuracy = c(0.42, 0.38, 0.46, 0.41, 0.49, 0.44),
+                         SD = c(0.15, 0.13, 0.21, 0.16, 0.18, 0.17))
 ```
+
+The mean accuracy difference between across and within-no-walls is `r round(mean(boundaryEffect1), 4)` (SD = `r round(sd(boundaryEffect1), 4)`), while it is `r round(mean(boundaryEffect2), 4)` (SD = `r round(sd(boundaryEffect2), 4)`) for the within-wall condition. Here is the Table 1 from his paper for *'Which object came next?'*
+```{r}
+kable(aidansData1)
+```
+
+his boundary effects are `r aidansData1$accuracy[aidansData1$Context == 'within'] - aidansData1$accuracy[aidansData1$Context == 'across']` and for the question *'Which object came before?'*
+```{r}
+kable(aidansData2)
+```
+
+here the boundary effects are `r aidansData2$accuracy[aidansData2$Context == 'within'] - aidansData2$accuracy[aidansData2$Context == 'across']`. This is not much different from our effect if this is not just noise. The problem is that those low effects are observed for the question that we're not testing. It could very well that we just don't have enough power for to find this effect. The question then would be why is the effect stronger in the within-wall condition. 
 
 ### Temporal memory: across vs. within
 ```{r}
@@ -166,10 +198,13 @@ ggplot(temporalOrder_agg2, aes(x = context2, y = acc)) +
   labs(y = '3AFC accuracy', x = "Room type", title = 'Temporal Order')
 
 result3 <- t.test(temporalOrder_agg2[temporalOrder_agg2$context2 == 'across', 4], 
-                  temporalOrder_agg2[temporalOrder_agg2$context2 == 'within', 4])
+                  temporalOrder_agg2[temporalOrder_agg2$context2 == 'within', 4],  paired = TRUE)
+
+diff1 <- temporalOrder_agg2[temporalOrder_agg2$context2 == 'within', 4] -
+  temporalOrder_agg2[temporalOrder_agg2$context2 == 'across', 4]
 ```
 
-When I colllasp across both within-room conditions, the difference between across and within rooms is significantly different, p `r pValue(result3$p.value)`.
+When I colllasp across both within-room conditions, the difference between across and within rooms is significantly different, p `r pValue(result3$p.value)`. The mean differnce is `r round(mean(diff1), 4)` (SD = `r round(sd(diff1), 4)` ).
 
 ## Room and table question
 ```{r}
@@ -271,6 +306,52 @@ kable(table5)
 
 If I use a binary measure of foil distance instead of a continuous one, then the effects don't chance a lot actually. 
 
+```{r}
+binDist2_agg1 <- ddply(temporalOrder_comb_foilDist, 
+                      c('id', 'binDist2'), 
+                      summarise, 
+                      N = length(accuracy), 
+                      accuracy = mean(accuracy))
+result6 <- t.test(binDist2_agg1$accuracy[binDist2_agg1$binDist2 == 'far'],
+                  binDist2_agg1$accuracy[binDist2_agg1$binDist2 == 'close'],
+                  paired = TRUE)
+diff2 <- binDist2_agg1$accuracy[binDist2_agg1$binDist2 == 'far'] - binDist2_agg1$accuracy[binDist2_agg1$binDist2 == 'close']
+
+binDist2_agg2 <- ddply(temporalOrder_comb_foilDist, 
+                      c('id', 'context', 'binDist2'), 
+                      summarise, 
+                      N = length(accuracy), 
+                      accuracy = mean(accuracy))
+```
+
+The mean accuracy between trial where foil 2 is far way compared to close is `r round(mean(diff2), 4)` (SD = `r round(mean(diff2), 4)`), p `r pValue(result6$p.value)`. 
+
+```{r}
+kable(ddply(temporalOrder_comb_foilDist, 
+                      c('context', 'binDist2'), 
+                      summarise, 
+                      N = length(accuracy), 
+                      accuracy = mean(accuracy)))
+
+# within-walls: far vs. close
+diff3.1 <- binDist2_agg2$accuracy[binDist2_agg2$context == 'within-walls' & binDist2_agg2$binDist2 == 'close'] - binDist2_agg2$accuracy[binDist2_agg2$context == 'across' & binDist2_agg2$binDist2 == 'close']
+
+diff3.2 <- binDist2_agg2$accuracy[binDist2_agg2$context == 'within-walls' & binDist2_agg2$binDist2 == 'far'] - binDist2_agg2$accuracy[binDist2_agg2$context == 'across' & binDist2_agg2$binDist2 == 'far']
+
+con1 <- diff3.1 - diff3.2
+result7 <- t.test(con1)
+
+# within-no-wall: far vs. close
+diff3.3 <- binDist2_agg2$accuracy[binDist2_agg2$context == 'within-no-walls' & binDist2_agg2$binDist2 == 'close'] - binDist2_agg2$accuracy[binDist2_agg2$context == 'across' & binDist2_agg2$binDist2 == 'close']
+
+diff3.4 <- binDist2_agg2$accuracy[binDist2_agg2$context == 'within-no-walls' & binDist2_agg2$binDist2 == 'far'] - binDist2_agg2$accuracy[binDist2_agg2$context == 'across' & binDist2_agg2$binDist2 == 'far']
+
+con2 <- diff3.3 - diff3.4
+result8 <- t.test(con2)
+```
+
+I've furthermore tested the interaction between our contrasts (across vs. within-walls and across vs. wihtin-no-walls) and the distance between trials with close and far foil 2. The first contrasts shows no interaction, `r round(mean(diff3.1), 4)` (SD = `r round(sd(diff3.1), 4)`) vs `r round(mean(diff3.2), 4)` (SD = `r round(sd(diff3.2), 4)`), p `r pValue(result7$p.value)`, so that the boundary effect is similar for far and close foil 2s. The same is true for the contrast of across vs. within-no-walls,`r round(mean(diff3.3), 4)` (SD = `r round(sd(diff3.3), 4)`) vs `r round(mean(diff3.4), 4)` (SD = `r round(sd(diff3.4), 4)`), p `r pValue(result8$p.value)`.
+
 ## Effect of condition
 ```{r}
 temporalOrder_comb$condition <- as.factor(temporalOrder_comb$condition)
@@ -283,6 +364,18 @@ kable(table6)
 ```
 
 In the last step, I included condition as fixed effect. After replacing the problematic participants it's a good sign that there are no significant interactions left between any context contrast and conditions. 
+To see how the results differ across the different conditions, I plot them seperately. 
+
+```{r}
+ggplot(temporalOrder_agg, aes(x = context, y = acc)) + 
+  facet_wrap( ~ condition, ncol = 2) +
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  geom_hline(yintercept = 1/3) +
+  annotate('text', x = 2, y = 0.31, label = 'Chance') +
+  labs(y = '3AFC accuracy', x = "Room type", title = 'Temporal Order by counterbalance condition')
+```
+
 
 # Conclusion
 We have robust and strong effect in the within-wall condition and only when we controll for distance between foil 2 to the cue/probe, there is a trend for the contrast between across and within-no-walls. 
