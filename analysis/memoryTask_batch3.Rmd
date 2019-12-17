@@ -43,6 +43,8 @@ for(i in 1:n){
   response[temporalOrder$key_press == 51] <- 3
   temporalOrder$response                  <- response
   
+  # Adding table information to temporal order memory
+  
   # Calcalate accuracy 
   accuracy <- rep(NA, dim(temporalOrder)[1])
   accuracy[temporalOrder$response == temporalOrder$corr_resp] <- 1
