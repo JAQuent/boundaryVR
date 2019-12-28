@@ -16,7 +16,8 @@ library(rjson)
 library(assortedRFunctions)
 
 # Setting wd
-setwd("U:/Projects/boundaryVR/onlineExperiment/r_supportFiles")
+setwd("C:/Users/Alex/Documents/GitHub/boundaryVR/onlineExperiment/r_supportFiles")
+#setwd("U:/Projects/boundaryVR/onlineExperiment/r_supportFiles")
 
 # /* 
 # ----------------------------- General variables ---------------------------
@@ -825,6 +826,16 @@ trials_cond8$context <- context
 # /* 
 # ----------------------------- Excluding trials without possible foils ---------------------------
 # */
+# Create df that containt all objects (important for getting table information)
+trials_cond1_full <- na.omit(trials_cond1)
+trials_cond2_full <- na.omit(trials_cond2)
+trials_cond3_full <- na.omit(trials_cond3)
+trials_cond4_full <- na.omit(trials_cond4)
+trials_cond5_full <- na.omit(trials_cond5)
+trials_cond6_full <- na.omit(trials_cond6)
+trials_cond7_full <- na.omit(trials_cond7)
+trials_cond8_full <- na.omit(trials_cond8)
+
 # Omit NA for all
 trials_cond1 <- na.omit(trials_cond1)
 trials_cond2 <- na.omit(trials_cond2)
@@ -835,8 +846,6 @@ trials_cond6 <- na.omit(trials_cond6)
 trials_cond7 <- na.omit(trials_cond7)
 trials_cond8 <- na.omit(trials_cond8)
 
-dim(trials_cond7)
-dim(trials_cond8)
 # /* 
 # ----------------------------- Creating JSON strings ---------------------------
 # */

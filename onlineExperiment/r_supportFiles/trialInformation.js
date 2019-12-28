@@ -36,6 +36,8 @@ target = JSON.parse(target);
 
 probe = JSON.parse(probe);
 
+objNum = JSON.parse(objNum);
+
 targetPos = JSON.parse(targetPos);
 
 foil1 = JSON.parse(foil1);
