@@ -20,10 +20,14 @@ library(lmerTest)
 
 ```{r loadData, echo = FALSE}
 # Load all data
-prefix         <- 'U:/Projects/boundaryVR/analysis/batch3/memoryTask/'
+prefix         <- 'C:/Users/Alex/Documents/GitHub/boundaryVR/analysis/batch3/memoryTask/'
+#prefix         <- 'U:/Projects/boundaryVR/analysis/batch3/memoryTask/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
+
+# Load trial informatuon from createTrials script
+load("~/GitHub/boundaryVR/analysis/trialData_randomFoils.RData")
 
 for(i in 1:n){
   tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
@@ -43,7 +47,34 @@ for(i in 1:n){
   response[temporalOrder$key_press == 51] <- 3
   temporalOrder$response                  <- response
   
+  # Align condition with createTrials script
+  temporalOrder$condition <- as.numeric(temporalOrder$condition) + 1
+  
   # Adding table information to temporal order memory
+  # Get right information and create temp variable
+  tempInfo      <- get(paste0("trials_cond",  temporalOrder$condition[1]))
+  tempInfo_full <- get(paste0("trials_cond",  temporalOrder$condition[1], '_full'))
+  # Order both data frames by objNum/probe
+  tempInfo <- tempInfo[1:78, ] # Because of an error in the code only 78 trials exist per participant
+  tempInfo <- tempInfo[order(tempInfo$objNum),]
+  temporalOrder <- temporalOrder[order(temporalOrder$probe),]
+  
+  # Transfering information between dfs
+  temporalOrder$probeTable <- tempInfo$table
+  # Loop through df to get table of target, foil1 and foil2
+  targetTable <- c()
+  foil1Table  <- c()
+  foil2Table  <- c()
+  for(j in 1:dim(tempInfo)[1]){
+    targetTable[j] <- tempInfo_full[tempInfo_full$objNum == tempInfo$target[j], 'table']
+    foil1Table[j]  <- tempInfo_full[tempInfo_full$objNum == tempInfo$foil1[j], 'table']
+    foil2Table[j]  <- tempInfo_full[tempInfo_full$objNum == tempInfo$foil2[j], 'table']
+  }
+  
+  # Add the information to main data.frame
+  temporalOrder$targetTable <- targetTable
+  temporalOrder$foil1Table  <- foil1Table
+  temporalOrder$foil2Table  <- foil2Table
   
   # Calcalate accuracy 
   accuracy <- rep(NA, dim(temporalOrder)[1])
@@ -106,9 +137,6 @@ for(i in 1:n){
 temporalOrder_comb$id <- as.factor(temporalOrder_comb$id)
 roomType_comb$id      <- as.factor(roomType_comb$id)
 tableNum_comb$id      <- as.factor(tableNum_comb$id)
-
-# Align condition with createTrials script
-temporalOrder_comb$condition <- as.numeric(temporalOrder_comb$condition) + 1
 ```
 
 # Analyse data
@@ -206,7 +234,7 @@ diff1 <- temporalOrder_agg2[temporalOrder_agg2$context2 == 'within', 4] -
   temporalOrder_agg2[temporalOrder_agg2$context2 == 'across', 4]
 ```
 
-When I colllasp across both within-room conditions, the difference between across and within rooms is significantly different, p `r pValue(result3$p.value)`. The mean differnce is `r round(mean(diff1), 4)` (SD = `r round(sd(diff1), 4)` ).
+When I colllasp across both within-room conditions, the difference between across and within rooms is significantly different, p `r pValue(result3$p.value)`. The mean difference is `r round(mean(diff1), 4)` (SD = `r round(sd(diff1), 4)`).
 
 ## Room and table question
 ```{r}
@@ -378,6 +406,115 @@ ggplot(temporalOrder_agg, aes(x = context, y = acc)) +
   labs(y = '3AFC accuracy', x = "Room type", title = 'Temporal Order by counterbalance condition')
 ```
 
+## Effect of same table
+Does it matter if both of the foils are on a different or on the same table as the target object? To examine this question, I compare the average accuracy across trials with both foils from the same table as the target with that being not the case. Note that 0 means both foils or foil2 are/is not on the same table and 1 means it is the same table. 
+
+```{r}
+bothSameTable <- rep(0, dim(temporalOrder_comb)[1])
+# if both are the same
+bothSameTable[temporalOrder_comb$targetTable == temporalOrder_comb$foil1Table & temporalOrder_comb$targetTable == temporalOrder_comb$foil2Table] <- 1 
+temporalOrder_comb$bothSameTable <- as.factor(bothSameTable)
+
+bothSameTable_agg <- ddply(temporalOrder_comb, c('id', 'bothSameTable'), summarise, accuracy =  mean(accuracy))
+
+ggplot(bothSameTable_agg, aes(x = bothSameTable, y = accuracy)) + 
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  geom_hline(yintercept = 1/3) +
+  annotate('text', x = 2, y = 0.31, label = 'Chance') +
+  labs(y = '3AFC accuracy', x = "Both foils from the same tables", title = 'Temporal Order (both tables)')
+
+diff_bothTables <- bothSameTable_agg[bothSameTable_agg$bothSameTable  == 0, ] - bothSameTable_agg[bothSameTable_agg$bothSameTable  == 1, ] 
+result9         <- t.test(diff_bothTables)
+```
+
+This analysis has to be interpreted very carefully because only `r round(mean(bothSameTable), 2)*100` % of trials are with both foils on the same table. Accuracy is not significantly lower on trials where the foils are from the same tables, p `r pValue(result9$p.value)`. If we plug that variable into our model,
+
+```{r}
+m_context4 <- glmer(accuracy ~ context*bothSameTable + (1| id ), 
+                    family = binomial, 
+                    data = temporalOrder_comb)
+
+table6 <- createResultTable(m_context4)
+kable(table6)
+```
+
+the contrast between across and within-walls remains unchanged by the inclusion of the variable. Interestingly, there is a trend for an interaction between foils being on the same table with the target and the contrast across vs. within-no-walls `r pValue(table6$P[5])`. Below, I display the interaction
+
+```{r}
+interaction_agg     <- ddply(temporalOrder_comb, c('id', 'context', 'bothSameTable'), summarise, N = length(accuracy), accuracy =  mean(accuracy))
+interaction_agg_sub <- interaction_agg[interaction_agg$context == 'across' | interaction_agg$context == 'within-no-walls', ]
+ggplot(interaction_agg_sub, aes(x = context, y = accuracy)) + 
+  facet_wrap( ~ bothSameTable  , ncol = 2) +
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  geom_hline(yintercept = 1/3) +
+  annotate('text', x = 1.5, y = 0.31, label = 'Chance') +
+  labs(y = '3AFC accuracy', x = "Room type", title = 'Across vs. within-no-walls as function of foils being on same table')
+```
+
+The problem with this comparison is that there are on average `r  mean(interaction_agg_sub$N[interaction_agg_sub$bothSameTable == 1])` trials in the same table case, while there are `r  mean(interaction_agg_sub$N[interaction_agg_sub$bothSameTable == 0])` in the opposite case. For comparison, I also plot the same interaction for the contrast across vs. within-walls.
+
+```{r}
+interaction_agg_sub2 <- interaction_agg[interaction_agg$context == 'across' | interaction_agg$context == 'within-walls', ]
+ggplot(interaction_agg_sub2, aes(x = context, y = accuracy)) + 
+  facet_wrap( ~ bothSameTable  , ncol = 2) +
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  geom_hline(yintercept = 1/3) +
+  annotate('text', x = 1.5, y = 0.31, label = 'Chance') +
+  labs(y = '3AFC accuracy', x = "Room type", title = 'Across vs. within-walls as function of foils being on same table')
+```
+
+Here is the overall table:
+```{r}
+kable(ddply(temporalOrder_comb, c('context', 'bothSameTable'), summarise, N = length(accuracy), accuracy =  mean(accuracy)))
+```
+
+In addition to testing whether accuracy is worse in the rare case when both foils are from the same table, I also tested whether it makes a difference if only foil 2 is from the same table as the target. 
+
+```{r}
+foil2SameTable <- rep(0, dim(temporalOrder_comb)[1])
+# if both are the same
+foil2SameTable[temporalOrder_comb$targetTable == temporalOrder_comb$foil2Table] <- 1 
+temporalOrder_comb$foil2SameTable <- as.factor(foil2SameTable)
+
+foil2SameTable_agg <- ddply(temporalOrder_comb, c('id', 'foil2SameTable'), summarise, N = length(accuracy), accuracy =  mean(accuracy))
+
+ggplot(foil2SameTable_agg, aes(x = foil2SameTable, y = accuracy)) + 
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) + 
+  geom_jitter(width = 0.1) +
+  geom_hline(yintercept = 1/3) +
+  annotate('text', x = 2, y = 0.31, label = 'Chance') +
+  labs(y = '3AFC accuracy', x = "Foil 2 from the same tables", title = 'Temporal Order (only foil 2)')
+
+diff_foil2SameTable <- foil2SameTable_agg[foil2SameTable_agg$foil2SameTable  == 0, ] - foil2SameTable_agg[foil2SameTable_agg$foil2SameTable  == 1, ] 
+result10            <- t.test(diff_foil2SameTable)
+```
+
+Note that here `r round(mean(foil2SameTable), 2)*100` % of trials have foil 2 and the target on the same table. Again, accuracy is not significantly lower on trials where the foil 2 is from the same table, p `r pValue(result10$p.value)`. If we plug foil2 into our model,
+
+```{r}
+m_context5 <- glmer(accuracy ~ context*foil2SameTable + (1| id ), 
+                    family = binomial, 
+                    data = temporalOrder_comb)
+
+table7 <- createResultTable(m_context5)
+kable(table7)
+```
+
+nothing really changes and there is no interaction. If I enter both distance of foil 2 and whether both objects are on the same table into our model
+
+```{r}
+m_context6 <- glmer(accuracy ~ context*bothSameTable*dist2 + (1| id ), 
+                    family = binomial, 
+                    data = temporalOrder_comb)
+
+table8 <- createResultTable(m_context6)
+kable(table8)
+```
+
+then both contrasts are close to be significant, across vs. within-no-walls p `r pValue(table8$P[2])` and across within-walls p `r  pValue(table8$P[3])` but none of the other main effects or interaction show a trend. 
 
 # Conclusion
-We have robust and strong effect in the within-wall condition and only when we controll for distance between foil 2 to the cue/probe, there is a trend for the contrast between across and within-no-walls. 
+We have robust and strong effect in the within-wall condition and only when we controll for distance between foil 2 to the cue/probe, there is a trend for the contrast between across and within-no-walls. The same is true for whether the foils are on the same table.
