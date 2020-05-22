@@ -1,0 +1,1 @@
+Use: jspysch-6.1.0 and jatos-3.3.6_win_java

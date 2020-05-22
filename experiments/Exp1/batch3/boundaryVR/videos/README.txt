@@ -1,0 +1,19 @@
+The following videos are necessary (included in batch3_videos.zip):
+bear_demo2.mp4
+bear_demo2.ogg
+bear_demo2.webm
+demo.mp4
+demo.ogg
+demo.webm
+video1.mp4
+video1.ogg
+video1.webm
+video2.mp4
+video2.ogg
+video2.webm
+video3.mp4
+video3.ogg
+video3.webm
+video4.mp4
+video4.ogg
+video4.webm

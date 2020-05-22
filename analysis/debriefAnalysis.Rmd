@@ -119,7 +119,7 @@ answerString <- c('Yes, at times I was busy with other things and missed parts o
 
 ```{r parseData}
 nQuestions     <- 13
-prefix         <- 'U:/Projects/boundaryVR/analysis/batch2/debrief/'
+prefix         <- '~/boundaryVR/data/batch2/debrief/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 nSub           <- length(allFiles_paths)
