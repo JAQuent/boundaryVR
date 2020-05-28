@@ -49,7 +49,7 @@ vid1_before          <- objectOrder
 vid1_before$table    <- rep(c(2, 3), rooms/2)
 vid1_before$room     <- rep(1:rooms, each = 2)
 vid1_before$roomType <- rep(c('m', 'm', 'm', 'm'), rooms/2)     # This line is a relic from previous versions and therefore nearly unchanged. 
-vid1_before$target   <- c(NA, vid1_before$objNum[1:(numObj-1)])
+vid1_before$target   <- c(NA, vid1_before$objNum[1:(numObj - 1)])
 
 # Selecting foils that meet constraints above
 foil1 <- rep(NA, numObj)
@@ -207,7 +207,7 @@ targetPos <- c()
 foil1Pos  <- c()
 foil2Pos  <- c()
 for(i in 1:dim(vid1_after)[1]){
-  shuffle        <- sample(1:3)
+  shuffle      <- sample(1:3)
   targetPos[i] <- shuffle[1]
   foil1Pos[i]  <- shuffle[2]
   foil2Pos[i]  <- shuffle[3]
@@ -215,7 +215,7 @@ for(i in 1:dim(vid1_after)[1]){
 vid1_after$targetPos <- targetPos
 vid1_after$foil1Pos  <- foil1Pos
 vid1_after$foil2Pos  <- foil2Pos
-vid1_after$question <- after
+vid1_after$question  <- after
 
 # Get same room and context information
 sameRoom   <- rep(NA, numObj)
@@ -435,7 +435,7 @@ targetPos <- c()
 foil1Pos  <- c()
 foil2Pos  <- c()
 for(i in 1:dim(vid2_after)[1]){
-  shuffle        <- sample(1:3)
+  shuffle      <- sample(1:3)
   targetPos[i] <- shuffle[1]
   foil1Pos[i]  <- shuffle[2]
   foil2Pos[i]  <- shuffle[3]
@@ -611,7 +611,7 @@ vid3_after          <- objectOrder
 vid3_after$table    <- rep(c(2, 3), rooms/2)
 vid3_after$room     <- rep(1:rooms, each = 2)
 vid3_after$roomType <- rep(c('o', 'o', 'o', 'o'), rooms/2)
-vid3_after$target   <- c(vid3_after$objNum[1:(numObj -1) + 1], NA)
+vid3_after$target   <- c(vid3_after$objNum[1:(numObj - 1) + 1], NA)
 
 # Selecting foils that meet constraints above
 foil1 <- rep(NA, numObj)
@@ -659,7 +659,7 @@ targetPos <- c()
 foil1Pos  <- c()
 foil2Pos  <- c()
 for(i in 1:dim(vid3_after)[1]){
-  shuffle        <- sample(1:3)
+  shuffle      <- sample(1:3)
   targetPos[i] <- shuffle[1]
   foil1Pos[i]  <- shuffle[2]
   foil2Pos[i]  <- shuffle[3]
@@ -887,7 +887,7 @@ targetPos <- c()
 foil1Pos  <- c()
 foil2Pos  <- c()
 for(i in 1:dim(vid4_after)[1]){
-  shuffle        <- sample(1:3)
+  shuffle      <- sample(1:3)
   targetPos[i] <- shuffle[1]
   foil1Pos[i]  <- shuffle[2]
   foil2Pos[i]  <- shuffle[3]
@@ -988,7 +988,6 @@ probe <- list(list(paste(prefix, vid1_before$objNum, suffix, sep = ''), paste(pr
               list(paste(prefix, vid2_before$objNum, suffix, sep = ''), paste(prefix, vid2_after$objNum, suffix, sep = '')),
               list(paste(prefix, vid3_before$objNum, suffix, sep = ''), paste(prefix, vid3_after$objNum, suffix, sep = '')),
               list(paste(prefix, vid4_before$objNum, suffix, sep = ''), paste(prefix, vid4_after$objNum, suffix, sep = '')))
-
 probe_string <- create_json_variable_str('probe', probe)
 
 
@@ -997,14 +996,12 @@ target <- list(list(paste(prefix, vid1_before$target, suffix, sep = ''),  paste(
                list(paste(prefix, vid2_before$target, suffix, sep = ''),  paste(prefix, vid2_after$target, suffix, sep = '')),
                list(paste(prefix, vid3_before$target, suffix, sep = ''),  paste(prefix, vid3_after$target, suffix, sep = '')),
                list(paste(prefix, vid4_before$target, suffix, sep = ''),  paste(prefix, vid4_after$target, suffix, sep = '')))
-
 target_string <- create_json_variable_str('target', target)
 
 targetPos <- list(list(vid1_before$targetPos, vid1_after$targetPos),
                   list(vid2_before$targetPos, vid2_after$targetPos),
                   list(vid3_before$targetPos, vid3_after$targetPos),
                   list(vid4_before$targetPos, vid4_after$targetPos))
-
 targetPos_string <- create_json_variable_str('targetPos', targetPos)
 
 
@@ -1012,14 +1009,12 @@ foil1 <- list(list(paste(prefix ,vid1_before$foil1, suffix, sep = ''), paste(pre
               list(paste(prefix ,vid2_before$foil1, suffix, sep = ''), paste(prefix ,vid2_after$foil1, suffix, sep = '')),
               list(paste(prefix ,vid3_before$foil1, suffix, sep = ''), paste(prefix ,vid3_after$foil1, suffix, sep = '')),
               list(paste(prefix ,vid4_before$foil1, suffix, sep = ''), paste(prefix ,vid4_after$foil1, suffix, sep = '')))
-
 foil1_string <- create_json_variable_str('foil1', foil1)
 
 foil1Pos <- list(list(vid1_before$foil1Pos, vid1_after$foil1Pos),
                  list(vid2_before$foil1Pos, vid2_after$foil1Pos),
                  list(vid3_before$foil1Pos, vid3_after$foil1Pos),
                  list(vid4_before$foil1Pos, vid4_after$foil1Pos))
-
 foil1Pos_string <- create_json_variable_str('foil1Pos', foil1Pos)
 
 
@@ -1027,7 +1022,6 @@ foil1Table <- list(list(vid1_before$foil1Table, vid1_after$foil1Table),
                    list(vid2_before$foil1Table, vid2_after$foil1Table),
                    list(vid3_before$foil1Table, vid3_after$foil1Table),
                    list(vid4_before$foil1Table, vid4_after$foil1Table))
-
 foil1Table_string <- create_json_variable_str('foil1Table', foil1Table)
 
 
@@ -1041,21 +1035,18 @@ foil2 <- list(list(paste(prefix, vid1_before$foil2, suffix, sep = ''), paste(pre
               list(paste(prefix, vid2_before$foil2, suffix, sep = ''), paste(prefix, vid2_after$foil2, suffix, sep = '')),
               list(paste(prefix, vid3_before$foil2, suffix, sep = ''), paste(prefix, vid3_after$foil2, suffix, sep = '')),
               list(paste(prefix, vid4_before$foil2, suffix, sep = ''), paste(prefix, vid4_after$foil2, suffix, sep = '')))
-
 foil2_string <- create_json_variable_str('foil2', foil2)
 
 foil2Pos <- list(list(vid1_before$foil2Pos, vid1_after$foil2Pos),
                  list(vid2_before$foil2Pos, vid2_after$foil2Pos),
                  list(vid3_before$foil2Pos, vid3_after$foil2Pos),
                  list(vid4_before$foil2Pos, vid4_after$foil2Pos))
-
 foil2Pos_string <- create_json_variable_str('foil2Pos', foil2Pos)
 
 foil2Table <- list(list(vid1_before$foil2Table, vid1_after$foil2Table),
                    list(vid2_before$foil2Table, vid2_after$foil2Table),
                    list(vid3_before$foil2Table, vid3_after$foil2Table),
                    list(vid4_before$foil2Table, vid4_after$foil2Table))
-
 foil2Table_string <- create_json_variable_str('foil2Table', foil2Table)
 
 
@@ -1063,7 +1054,6 @@ dist2 <- list(list(vid1_before$dist2, vid1_after$dist2),
               list(vid2_before$dist2, vid2_after$dist2),
               list(vid3_before$dist2, vid3_after$dist2),
               list(vid4_before$dist2, vid4_after$dist2))
-
 dist2_string <- create_json_variable_str('dist2', dist2)
 
 
@@ -1071,7 +1061,6 @@ roomNum_probe <- list(list(vid1_before$room, vid1_after$room),
                       list(vid2_before$room, vid2_after$room),
                       list(vid3_before$room, vid3_after$room),
                       list(vid4_before$room, vid4_after$room))
-
 roomNum_probe_string <- create_json_variable_str('roomNum_probe', roomNum_probe)
 
 
@@ -1079,7 +1068,6 @@ roomType <- list(list(vid1_before$roomType, vid1_after$roomType),
                  list(vid2_before$roomType, vid2_after$roomType),
                  list(vid3_before$roomType, vid3_after$roomType),
                  list(vid4_before$roomType, vid4_after$roomType))
-
 roomType_string <- create_json_variable_str('roomType', roomType)
 
 
@@ -1087,21 +1075,18 @@ table  <- list(list(vid1_before$table,  vid1_after$table),
                list(vid2_before$table,  vid2_after$table),
                list(vid3_before$table,  vid3_after$table),
                list(vid4_before$table,  vid4_after$table))
-
 table_string <- create_json_variable_str('table', table)
 
 sameRoom <- list(list(vid1_before$sameRoom, vid1_after$sameRoom),
                  list(vid2_before$sameRoom, vid2_after$sameRoom),
                  list(vid3_before$sameRoom, vid3_after$sameRoom),
                  list(vid4_before$sameRoom, vid4_after$sameRoom))
-
 sameRoom_string <- create_json_variable_str('sameRoom', sameRoom)
 
 context <- list(list(vid1_before$context, vid1_after$context),
                 list(vid2_before$context, vid2_after$context),
                 list(vid3_before$context, vid3_after$context),
                 list(vid4_before$context, vid4_after$context))
-
 context_string <- create_json_variable_str('context', context)
 
 # /* 
