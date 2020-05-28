@@ -1807,7 +1807,7 @@ lay <- rbind(c(1,2,3),
 
 grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
              newpage = FALSE,
-             top =  expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.00)"),
+             top =  grid.text(expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.00)")),
              layout_matrix = lay,
              widths = c(12, 3, 2))
 ```
@@ -1957,7 +1957,7 @@ lay <- rbind(c(1,2,3),
 
 grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
              newpage = FALSE,
-             top =  expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.44)"),
+             top =  grid.text(expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.44)")),
              layout_matrix = lay,
              widths = c(12, 3, 2))
 ```
@@ -2107,7 +2107,7 @@ lay <- rbind(c(1,2,3),
 
 grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
              newpage = FALSE,
-             top = expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.78)"),
+             top = grid.text(expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.78)")),
              layout_matrix = lay,
              widths = c(12, 3, 2))
 ```
@@ -2194,8 +2194,8 @@ for(i in 1:n){
   counterbalance_condition[i] <- resultsList$counterbalance_condition
   num_keyPress[i]             <- length(resultsList$whichKey)
   
-  # Create response data.frame if number of responses is above zero
-  if(num_keyPress[i] > 0){
+  # Create response data.frame if number of responses is above one
+  if(num_keyPress[i] > 1){
     tempDF <- data.frame(worker_id = worker_id[i], 
                          studyResultId = studyResultId[i],
                          keyPressed = resultsList$whichKey, 
