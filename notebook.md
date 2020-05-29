@@ -1,7 +1,7 @@
 Notebook for boundary VR
 ================
 Joern Alexander Quent
-22 May, 2020
+29 Mai, 2020
 
   - [Aim of this project](#aim-of-this-project)
   - [Experiment 1](#experiment-1)
@@ -49,6 +49,7 @@ Joern Alexander Quent
           - [Effect size similar to m-shaped room versus
             across:](#effect-size-similar-to-m-shaped-room-versus-across)
           - [Summary](#summary)
+      - [Updated maximum sample size](#updated-maximum-sample-size)
       - [Planned analysis](#planned-analysis)
       - [Results](#results-4)
           - [Download speed](#download-speed)
@@ -6335,8 +6336,15 @@ As can be seen in the table above expect for the third simulation, the
 evidence rate is not very high and around 60%. Luckily, however the rate
 of misleading evidence is low throughout (\<= 0.03). We will go ahead
 despite the relatively low evidence rate considering that we might not
-need a sample size of 36 for the m-shape room, so that we can use the
+need a sample size of 38 for the m-shape room, so that we can use the
 remaining resources for the open-plane room.
+
+## Updated maximum sample size
+
+Since the actual experiment is shorter than expected in the design
+analysis (30 min instead of 40 min), we can now test 102 participants in
+total and the max. sample size per condition is 48. This is now the
+updated stopping rule.
 
 ## Planned analysis
 

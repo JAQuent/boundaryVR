@@ -2128,12 +2128,27 @@ names(table13) <- c('Effect size', 'Median sample size', 'Evidence rate', 'Misle
 kable(table13, format = 'html', caption = 'Table 13: Summary of design analysis simulation.')
 ```
 
-As can be seen in the table above expect for the third simulation, the evidence rate is not very high and around 60%. Luckily, however the rate of misleading evidence is low throughout (<= 0.03). We will go ahead despite the relatively low evidence rate considering that we might not need a sample size of 36 for the m-shape room, so that we can use the remaining resources for the open-plane room. 
+As can be seen in the table above expect for the third simulation, the evidence rate is not very high and around 60%. Luckily, however the rate of misleading evidence is low throughout (<= 0.03). We will go ahead despite the relatively low evidence rate considering that we might not need a sample size of 38 for the m-shape room, so that we can use the remaining resources for the open-plane room. 
+
+## Updated maximum sample size
+```{r}
+# Money and experiment parameteres
+balance      <- 431.66 # GBP
+payPerHour   <- 6      # GBP
+surcharge    <- 1.4    # GBP Percent from prolific
+expDuration  <- 30/60  # Hours
+costPerSlot  <- expDuration*payPerHour*surcharge # GBP
+maxSlots     <- floor(balance/costPerSlot) # Maximum number of slots with that balance and costs
+slotsPerCond <- floor((floor(maxSlots/2)/4))*4 # Maximum number of slots per between subject condition
+```
+
+Since the actual experiment is shorter than expected in the design analysis (30 min instead of 40 min), we can now test `r maxSlots` participants in total and the max. sample size per condition is `r slotsPerCond`. This is now the updated stopping rule. 
 
 ## Planned analysis
 Our main planned analysis is a paired t-test between within and across room associations for both room types on arcsince transformed accuracy data of the first block. We will use directional t-tests as we expect within room associations to be better than across room associations. We restrict this analysis to data from the first block as it is possible that the second block will not yield an effect due to interference from the first block. This is the analysis informs our stopping criteria. Once we expended all our money or reached the evidence criteria, we will continue with additional analyses. 
 
 As additional analyses we plan to run a Bayesian ANOVA with with factors boundary (within vs across), question (Which object came before? vs. Which object came after?) and block (Block 1 and Block 2). The aim of this analysis is to find whether this is the case. In case, we find no modulation, we will also include data . Furthermore, we will run another ANOVA with boundary and room type as factors to investigate whether the boundary effect (if existing) is stronger comparing both room times. Since, this involves are between subject comparison that is not directional, we might not have sample size that is big enough. Therefore, we do not make this part of our stopping rule. 
+
 
 ## Results
 ```{r}
