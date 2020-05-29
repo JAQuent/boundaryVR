@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Spatial Experiment</title>
+  <script src="/assets/javascripts/jatos.js"></script>
+  <script src = "/study_assets_root/boundaryVR2/jquery-3.3.1.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+    <div align="center" style='marginTop: 200px;'>
+        <p style="font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.6em; vertical-align: middle; text-align: justify; width: 70%;"> <br><br><br>Please press 'Play Video' to play the video and then enter a description of the video in the text box below. After entering the word, please press 'Continue'. If the video does not play, leave the text box empty and press 'Continue'.<br></p>
+        <video id="player">
+          <source src="/study_assets_root/boundaryVR2/videos/bear_demo2.mp4" type="video/mp4" id="mp4">
+          <source src="/study_assets_root/boundaryVR2/videos/bear_demo2.webm" type="video/webm" id="webm">
+          <source src="/study_assets_root/boundaryVR2/videos/bear_demo2.ogg" type="video/ogg" id="mp4">
+        </video><br><br>
+        <button id="play_vid" style="font-size: 22px; padding: 4px 8px; border-radius: 6px; border: 2px solid #6b6b6b;">Play Video</button>
+    </div>
+    <div align="center">
+        <p style="font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.6em; vertical-align:middle">Please enter an animal name that best describes the <b>video</b>: <textarea id="answer_text" rows="1" cols="5" maxlength=5 style="vertical-align:middle; font-size: 18px; line-height: 1.5em;"></textarea></p>
+        <button id="continue_btn" style="font-size: 22px; padding: 4px 8px; border-radius: 6px; border: 2px solid #6b6b6b;">Continue</button>
+    </div>
+
+<script>
+
+    jatos.onLoad(function() {
+
+      var result_data = {};
+      result_data.worker_id = jatos.workerId; 
+      jatos.addJatosIds(result_data);
+
+      $("#answer_text").keypress(function (e) {
+
+        // First gets the extension that worked (the rest of the videos will be presented using the same extension)
+        var videoPlaying = player.currentSrc;
+        jatos.studySessionData.vid_ext = videoPlaying.substr(videoPlaying.lastIndexOf("."));
+
+        if(e.which == 13) { 
+          e.preventDefault();       
+          var txt_val = $("#answer_text").val();
+          result_data.answer_text = txt_val;
+          if (txt_val.trim().toLowerCase()=='lion' || txt_val.trim().toLowerCase()=='lions') {
+            result_data.test_status = "success";
+            result_data.fail_reason = "none";
+            result_json = "[" + JSON.stringify(result_data) + "]";
+            jatos.submitResultData(result_json, jatos.startNextComponent);
+          } else if (txt_val.trim().toLowerCase()=='bear') {
+            result_data.test_status = "fail";
+            result_data.fail_reason = "VID_BEAR";
+            result_json = JSON.stringify(result_data);
+            document.body.innerHTML = "<div id=\"container\" align=\"center\" style=\"display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;\"><div id=\"display_message\" style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.2em;\"><br><br><br>Your browser/computer doesn't support the experiment video format. " +
+              "<br><br>Please press 'Stop without completing'.</div></div>";
+            var err_msg = 'VID_BEAR';
+            if ("prolific_ID" in jatos.studySessionData) {
+                err_msg = err_msg + '_' + jatos.studySessionData.prolific_ID;
+            }
+            jatos.submitResultData(result_json, function() {return jatos.endStudyAjax(false,err_msg);});
+          } else {
+            result_data.test_status = "fail";
+            result_data.fail_reason = "VID";
+            result_json = JSON.stringify(result_data);
+            document.body.innerHTML = "<div id=\"container\" align=\"center\" style=\"display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;\"><div id=\"display_message\" style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.2em;\"><br><br><br>Your browser/computer doesn't support the experiment video format. " +
+              "<br><br>Please press 'Stop without completing' and we'll pay you for your time. You may also wish to try running the experiment on a different browser</div></div>";
+            var err_msg = 'VID';
+            if ("prolific_ID" in jatos.studySessionData) {
+                err_msg = err_msg + '_' + jatos.studySessionData.prolific_ID;
+            }
+            jatos.submitResultData(result_json, function() {return jatos.endStudyAjax(false,err_msg);});
+          }
+        }
+      });
+
+      player = document.getElementById("player");
+      button = document.getElementById("play_vid");
+      button.addEventListener('click', function() {player.load(); player.play();});
+      var txt = document.getElementById("answer_text");
+      continue_btn = document.getElementById("continue_btn");
+      continue_btn.addEventListener('click', function() {
+        var txt_val = txt.value;
+        result_data.answer_text = txt_val;
+        if (txt_val.trim().toLowerCase()=='lion' || txt_val.trim().toLowerCase()=='lions') {
+          result_data.test_status = "success";
+          result_data.fail_reason = "none";
+          result_json = "[" + JSON.stringify(result_data) + "]";
+          jatos.submitResultData(result_json, jatos.startNextComponent);
+        } else if (txt_val.trim().toLowerCase()=='bear') {
+          result_data.test_status = "fail";
+          result_data.fail_reason = "VID_BEAR";
+          result_json = JSON.stringify(result_data);
+          document.body.innerHTML = "<div id=\"container\" align=\"center\" style=\"display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;\"><div id=\"display_message\" style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.2em;\"><br><br><br>Your browser/computer doesn't support the experiment video format. " +
+            "<br><br>Please press 'Stop without completing'.</div></div>";
+          var err_msg = 'VID_BEAR';
+          if ("prolific_ID" in jatos.studySessionData) {
+              err_msg = err_msg + '_' + jatos.studySessionData.prolific_ID;
+          }
+          jatos.submitResultData(result_json, function() {return jatos.endStudyAjax(false,err_msg);});
+        } else {
+          result_data.test_status = "fail";
+          result_data.fail_reason = "VID";
+          result_json = JSON.stringify(result_data);
+          document.body.innerHTML = "<div id=\"container\" align=\"center\" style=\"display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;\"><div id=\"display_message\" style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.2em;\"><br><br><br>Your browser/computer doesn't support the experiment video format. " +
+            "<br><br>Please press 'Stop without completing' and we'll pay you for your time. You may also wish to try running the experiment on a different browser</div></div>";
+          var err_msg = 'VID';
+          if ("prolific_ID" in jatos.studySessionData) {
+              err_msg = err_msg + '_' + jatos.studySessionData.prolific_ID;
+          }
+          jatos.submitResultData(result_json, function() {return jatos.endStudyAjax(false,err_msg);});
+        }
+      });
+    });
+</script>
+</body>

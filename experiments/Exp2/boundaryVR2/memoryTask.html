@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spatial Experiment</title>
+        <script src="jspsych-6.1.0/jspsych.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-fullscreen.js"></script>
+        <script src="trialInformation.js"></script>
+        <script src="memoryTask_functions.js"></script>
+        <script src="/assets/javascripts/jatos.js"></script>
+        <link href="memoryTask_style.css" rel="stylesheet" type="text/css"></link>
+        <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body></body>
+    <script>
+    jatos.onLoad(function(){
+      ///////////////////////////////////////////////////
+      /* create timeline */
+      var timeline = [];
+
+      /* Get subject counter balancing condition*/
+      var subjCond = jatos.studySessionData.subjCond;
+      var questionOrder = jatos.studySessionData.questionOrder;
+      var counterbalance_condition = jatos.studySessionData.counterbalance_condition;
+
+      ///////////////////////////////////////////////////
+      /* Getting information on window size*/
+      var width = window.innerWidth
+          || document.documentElement.clientWidth
+          || document.body.clientWidth;
+
+      var height = window.innerHeight
+          || document.documentElement.clientHeight
+          || document.body.clientHeight; 
+
+      /* Adjusting image sizes if necessary*/
+      hspace   = 5;  // spaces between images
+      margin   = 50; // Space towards the sides
+      true_imgWidth  = 1086;
+      true_imgHeight = 843;
+
+      // Maximum image width
+      widthAvail = width - hspace*4 - margin*2;
+      withCorr   = widthAvail/(true_imgWidth*3);
+
+      // Maximum image height
+      heightAvail = height - hspace*4 - margin*4;
+      heightCorr  = heightAvail/(true_imgHeight*2);
+
+      // Choose the smallest correction value and correct image size accordingly
+      var imageSize = Math.min(withCorr, heightCorr);
+      var disp_imgWidth  = true_imgWidth*imageSize;
+      var disp_imgHeight = true_imgHeight*imageSize;
+
+      ///////////////////////////////////////////////////
+      /* Parse and input and instruction snippets*/
+      if(questionOrder == 1){
+        // First after than before
+        snippet1_1 = "immediately followed";
+        snippet2_1 = "after";
+        snippet1_2 = "immediately preceded";
+        snippet2_2 = "before";
+        qindex1    = 1;
+        qindex2    = 0;
+      } else {
+        // First before than after
+        snippet1_1 = "immediately preceded";
+        snippet2_1 = "before";
+        snippet1_2 = "immediately followed";
+        snippet2_2 = "after";
+        qindex1    = 0;
+        qindex2    = 1;
+      } 
+      // Parse number of trials
+      nTrial = probe[subjCond][qindex1].length;
+      var nComps = (nTrial*2*2) + 4; // Number of components 
+      // (fixation + task) for two blocks + 4 
+
+      ///////////////////////////////////////////////////
+      /* define instructions */
+      /// Block 1
+      var instructions1 = {
+        type: "html-keyboard-response",
+        stimulus: "<div align=\"center\" style='display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;'><div style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.5em;\"><p style=\"width: 90%; text-align: justify\">We will now present you with questions to test your memory for the objects presented in the film you just saw. There will be two blocks in this part of the study. In each block we will ask you the same question for each object presented at the top of the screen. <br>Between the blocks you may pause for 1-2 minutes to catch your breath but please do not pause longer. We will tell you when the first block is over. It's important to note that because the question will change in the second block. The progress bar at the very top will show you how much of the task you already completed.<br><br>Press <strong>space</strong> for the next page.",
+        choices: ['space'],
+        post_trial_gap: 2000,
+        on_finish: function(data){
+          jsPsych.setProgressBar((data.trial_index + 1)/(nComps));
+        }
+      };
+
+      var instructions2 = {
+        type: "html-keyboard-response",
+        stimulus: "<div align=\"center\" style='display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;'><div style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.5em;\"><p style=\"width: 90%; text-align: justify\">The question for the first block is <i>`" + question[qindex1] + "`</i>. Under this question you see an image of an object that you saw during the video along with three additional objects at the bottom of the screen. <br><br>Please indicate which of the three objects at the bottom <strong>" + snippet1_1 + "</strong> that object that is currently probed. The objects at the bottom are labelled 1, 2 and 3. To give your response, please press the respective key on your keyboard.<br><br>Note that it's not enough to just select the object that was presented any time point <strong>" + snippet2_1 + "</strong> the tested object. Please note that for each question there is only one correct answer.<br><br>Press <strong>space</strong> for the next page.",
+        choices: ['space'],
+        post_trial_gap: 2000,
+        on_finish: function(data){
+          jsPsych.setProgressBar((data.trial_index + 1)/(nComps));
+        }
+      };
+
+      var instructions3 = {
+        type: "html-keyboard-response",
+        stimulus: "<div align=\"center\" style='display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;'><div style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.5em;\"><p style=\"width: 90%; text-align: justify\">Please try and give the correct answers to the best of your ability and guess if you do not remember. We are aware that this task is quite challenging but please continue to try to do your best until you have completed the experiment. Don't be discouraged if you feel that you don't remember the correct answers. <br><br>Press <strong>space</strong> to begin the task.",
+        choices: ['space'],
+        post_trial_gap: 2000,
+        on_finish: function(data){
+          jsPsych.setProgressBar((data.trial_index + 1)/(nComps));
+        }
+      };
+
+      var instructions4 = {
+        type: "html-keyboard-response",
+        stimulus: "<div align=\"center\" style='display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;'><div style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.5em;\"><p style=\"width: 90%; text-align: justify\">Congratulations, you've completed the first block! Please note the change that for the second block the question now is <i>`" +  question[qindex2] + "`</i>. <br><br> You therefore have to indicate which of the three objects at the bottom <strong>" + snippet1_2 + "</strong> that object that is currently probed. Again note that it's not enough to just select the object that was presented any time point <strong>" + snippet2_2 + "</strong> the tested object. <br><br>Press <strong>space</strong> to begin the second block.",
+        choices: ['space'],
+        post_trial_gap: 2000,
+        on_finish: function(data){
+          jsPsych.setProgressBar((data.trial_index + 1)/(nComps));
+        }
+      };
+
+      ///////////////////////////////////////////////////
+      /* Creating timeline variables and trial*/
+      /// Block 1
+      var i;
+      var stimuli1 = new Array();
+      for (i = 0; i < nTrial; i++){
+          stimuli1[i] = {temp_stim: create_temporalOrder_stim(probe[subjCond][qindex1][i], 
+                                                              target[subjCond][qindex1][i], 
+                                                              targetPos[subjCond][qindex1][i],  
+                                                              foil1[subjCond][qindex1][i],
+                                                              foil1Pos[subjCond][qindex1][i], 
+                                                              foil2[subjCond][qindex1][i], 
+                                                              foil2Pos[subjCond][qindex1][i], 
+                                                              question[qindex1],
+                                                              disp_imgWidth,
+                                                              disp_imgHeight),
+                        temp_data: {worker_id: jatos.workerId, 
+                                    test_part: 'temporalOrder1', 
+                                    corr_resp: targetPos[subjCond][qindex1][i], 
+                                    probe: objNum[subjCond][qindex1][i], 
+                                    target: target[subjCond][qindex1][i], 
+                                    foil1: foil1[subjCond][qindex1][i], 
+                                    dist1: dist1[subjCond][qindex1][i], 
+                                    foil1Pos: foil1Pos[subjCond][qindex1][i], 
+                                    foil2: foil2[subjCond][qindex1][i], 
+                                    dist2: dist2[subjCond][qindex1][i], 
+                                    foil2Pos: foil2Pos[subjCond][qindex1][i], 
+                                    subjCond: subjCond, 
+                                    questionOrder: questionOrder,
+                                    counterbalance_condition: counterbalance_condition,
+                                    question: question[qindex1], 
+                                    roomNum: roomNum_probe[subjCond][qindex1][i],
+                                    roomType: roomType[subjCond][qindex1][i],
+                                    sameRoom: sameRoom[subjCond][qindex1][i], 
+                                    context: context[subjCond][qindex1][i],
+                                    probeTable: table[subjCond][qindex1][i],
+                                    foil1Table: foil1Table[subjCond][qindex1][i],
+                                    foil2Table: foil2Table[subjCond][qindex1][i],
+                                    imageSize: imageSize}};
+      };
+
+      /// Block 2
+      var stimuli2 = new Array();
+      for (i = 0; i < nTrial; i++){
+          stimuli2[i] = {temp_stim: create_temporalOrder_stim(probe[subjCond][qindex2][i], 
+                                                              target[subjCond][qindex2][i], 
+                                                              targetPos[subjCond][qindex2][i],  
+                                                              foil1[subjCond][qindex2][i],
+                                                              foil1Pos[subjCond][qindex2][i], 
+                                                              foil2[subjCond][qindex2][i], 
+                                                              foil2Pos[subjCond][qindex2][i], 
+                                                              question[qindex2],
+                                                              disp_imgWidth,
+                                                              disp_imgHeight),
+                        temp_data: {worker_id: jatos.workerId, 
+                                    test_part: 'temporalOrder2', 
+                                    corr_resp: targetPos[subjCond][qindex2][i], 
+                                    probe: objNum[subjCond][qindex2][i], 
+                                    target: target[subjCond][qindex2][i], 
+                                    foil1: foil1[subjCond][qindex2][i], 
+                                    dist1: dist1[subjCond][qindex2][i], 
+                                    foil1Pos: foil1Pos[subjCond][qindex2][i], 
+                                    foil2: foil2[subjCond][qindex2][i], 
+                                    dist2: dist2[subjCond][qindex2][i], 
+                                    foil2Pos: foil2Pos[subjCond][qindex2][i], 
+                                    subjCond: subjCond, 
+                                    questionOrder: questionOrder,
+                                    counterbalance_condition: counterbalance_condition,
+                                    question: question[qindex2], 
+                                    roomNum: roomNum_probe[subjCond][qindex2][i],
+                                    roomType: roomType[subjCond][qindex2][i],
+                                    sameRoom: sameRoom[subjCond][qindex2][i], 
+                                    context: context[subjCond][qindex2][i],
+                                    probeTable: table[subjCond][qindex2][i],
+                                    foil1Table: foil1Table[subjCond][qindex2][i],
+                                    foil2Table: foil2Table[subjCond][qindex2][i],
+                                    imageSize: imageSize}}; 
+      };
+
+      //////////////////////////////////////////////////////////////
+      /* define trial components */
+      /// Block 1
+      timeline.push(instructions1);
+      timeline.push(instructions2);
+      timeline.push(instructions3);
+
+      var fixation = {
+        type: 'html-keyboard-response',
+        stimulus: '<div style="font-size:60px;">+</div>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 500,
+        data: {test_part: 'fixation'},
+        on_finish: function(data){
+          jsPsych.setProgressBar((data.trial_index + 1)/(nComps));
+        }
+      };
+
+      var temporalOrder = {
+        type: "html-keyboard-response",
+        stimulus: jsPsych.timelineVariable('temp_stim'),
+        choices: ['1', '2', '3'],
+        data: jsPsych.timelineVariable('temp_data'),
+        on_finish: function(data){
+          jsPsych.setProgressBar((data.trial_index + 1)/(nComps));
+        }
+      };
+
+      /* define procedure for block 1 */
+      var block1 = {
+        timeline: [fixation, temporalOrder],
+        timeline_variables: stimuli1,
+        repetitions: 1,
+        randomize_order: true
+      };
+      timeline.push(block1);
+
+      /// Block 2
+      timeline.push(instructions4);
+      
+      var block2 = {
+        timeline: [fixation, temporalOrder],
+        timeline_variables: stimuli2,
+        repetitions: 1,
+        randomize_order: true
+      };
+      timeline.push(block2);
+
+      // Initialise experiment
+      jsPsych.init({
+          timeline: timeline,
+          show_progress_bar: true,
+          auto_update_progress_bar: false,
+          on_finish: function(){
+           jatos.submitResultData(jsPsych.data.get().csv(), function(){jatos.startNextComponent()}); // Error if I also try to submit the data at the same time. 
+          }
+      });
+    }); 
+    </script>
+</html>
