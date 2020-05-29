@@ -13,6 +13,8 @@ Run 1:
   - targetTable is actually the probeTable \> renamed variable in
     JAVASCRIPT. Target table has to be calculated during analysis.
 
+Run2: \* New run after changes on memoryTask script checked out.
+
 # Download speed data
 
 <table>
@@ -867,26 +869,12 @@ Before
 
 </table>
 
-condition that start with within have 80 and conditions that start with
-accross have 82 trials. The reason why none have the test data has 82,
-is because of an error in the code I therefore changed the respective
-line to this: `nTrial = probe[subjCond][qindex1].length;`. However, I
-also notice that some runs only have 78 or 79 trials. My suspicion is
-that is due to the way that I save the data after each trial. To test
-whether
+Checklist:  
+1\. I checked whether the objects in video do appear in the right
+order.  
+2\. Check of all variables for each participant:
 
-None of the values in between trials are missing, I therefore assume
-that the problem might be that JATOS goes to the next component before
-the data of the last trial(s) are submited. It is a possibility that
-this is only an issue because I clicked very quickly through the example
-or it could be remedied by adding a buffer trial like end of experiment.
-For simplicity I will switch to saving the data at the end of the whole
-experiment instead of after each trial.
-
-Checklist: 1. I checked whether the objects in video do appear in the
-right order. 2. Check of all variables for each participant:
-
-The data passed all tests: FALSE
+The data passed all tests: TRUE
 
 <table>
 
@@ -940,7 +928,7 @@ Passed
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -974,7 +962,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1008,7 +996,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1042,7 +1030,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1076,7 +1064,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1111,7 +1099,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1145,7 +1133,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1179,7 +1167,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1213,7 +1201,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1247,7 +1235,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1281,7 +1269,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1305,7 +1293,7 @@ Correct number of trials?
 
 <td style="text-align:left;">
 
-FALSE
+TRUE
 
 </td>
 
@@ -1315,7 +1303,7 @@ FALSE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1350,7 +1338,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1384,7 +1372,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10378
+10402
 
 </td>
 
@@ -1418,7 +1406,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1430,7 +1418,7 @@ before
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1452,7 +1440,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1464,7 +1452,7 @@ before
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1486,7 +1474,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1498,7 +1486,7 @@ before
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1520,7 +1508,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1532,7 +1520,7 @@ before
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1544,7 +1532,7 @@ Correct number of trials?
 
 <td style="text-align:left;">
 
-FALSE
+TRUE
 
 </td>
 
@@ -1554,7 +1542,7 @@ FALSE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1566,7 +1554,7 @@ before
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1589,7 +1577,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1601,7 +1589,7 @@ before
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1623,7 +1611,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1635,7 +1623,7 @@ before
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1657,7 +1645,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1669,7 +1657,7 @@ after
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1691,7 +1679,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1703,7 +1691,7 @@ after
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1725,7 +1713,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1737,7 +1725,7 @@ after
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1759,7 +1747,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1771,7 +1759,7 @@ after
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1783,7 +1771,7 @@ Correct number of trials?
 
 <td style="text-align:left;">
 
-FALSE
+TRUE
 
 </td>
 
@@ -1793,7 +1781,7 @@ FALSE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1805,7 +1793,7 @@ after
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1828,7 +1816,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1840,7 +1828,7 @@ after
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1862,7 +1850,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10382
+10426
 
 </td>
 
@@ -1874,7 +1862,7 @@ after
 
 <td style="text-align:right;">
 
-7
+2
 
 </td>
 
@@ -1896,485 +1884,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Are the target and foils at the correct location?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Is the correct answer the correct anwser?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Are the distances correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Correct number of trials?
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Is counter\_balance condition (subjCond, question order, room type)
-correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Are the foil tables correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Is the context (within vs. across) coded correctly?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Are the target and foils at the correct location?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Is the correct answer the correct anwser?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Are the distances correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Correct number of trials?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Is counter\_balance condition (subjCond, question order, room type)
-correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Are the foil tables correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10381
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-6
-
-</td>
-
-<td style="text-align:left;">
-
-Is the context (within vs. across) coded correctly?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10380
+10431
 
 </td>
 
@@ -2408,7 +1918,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10431
 
 </td>
 
@@ -2442,7 +1952,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10431
 
 </td>
 
@@ -2476,7 +1986,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10431
 
 </td>
 
@@ -2500,7 +2010,7 @@ Correct number of trials?
 
 <td style="text-align:left;">
 
-FALSE
+TRUE
 
 </td>
 
@@ -2510,7 +2020,7 @@ FALSE
 
 <td style="text-align:right;">
 
-10380
+10431
 
 </td>
 
@@ -2545,7 +2055,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10431
 
 </td>
 
@@ -2579,7 +2089,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10431
 
 </td>
 
@@ -2613,7 +2123,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10431
 
 </td>
 
@@ -2647,7 +2157,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10431
 
 </td>
 
@@ -2681,7 +2191,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10431
 
 </td>
 
@@ -2715,7 +2225,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10431
 
 </td>
 
@@ -2739,7 +2249,7 @@ Correct number of trials?
 
 <td style="text-align:left;">
 
-FALSE
+TRUE
 
 </td>
 
@@ -2749,7 +2259,1441 @@ FALSE
 
 <td style="text-align:right;">
 
-10380
+10431
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Is counter\_balance condition (subjCond, question order, room type)
+correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10431
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Are the foil tables correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10431
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Is the context (within vs. across) coded correctly?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Are the target and foils at the correct location?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Is the correct answer the correct anwser?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Are the distances correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Correct number of trials?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Is counter\_balance condition (subjCond, question order, room type)
+correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Are the foil tables correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Is the context (within vs. across) coded correctly?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Are the target and foils at the correct location?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Is the correct answer the correct anwser?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Are the distances correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Correct number of trials?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Is counter\_balance condition (subjCond, question order, room type)
+correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Are the foil tables correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10450
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:left;">
+
+Is the context (within vs. across) coded correctly?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Are the target and foils at the correct location?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Is the correct answer the correct anwser?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Are the distances correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Correct number of trials?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Is counter\_balance condition (subjCond, question order, room type)
+correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Are the foil tables correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Is the context (within vs. across) coded correctly?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Are the target and foils at the correct location?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Is the correct answer the correct anwser?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Are the distances correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Correct number of trials?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Is counter\_balance condition (subjCond, question order, room type)
+correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Are the foil tables correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10453
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:left;">
+
+Is the context (within vs. across) coded correctly?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Are the target and foils at the correct location?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Is the correct answer the correct anwser?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Are the distances correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Correct number of trials?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Is counter\_balance condition (subjCond, question order, room type)
+correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Are the foil tables correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Is the context (within vs. across) coded correctly?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Are the target and foils at the correct location?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Is the correct answer the correct anwser?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Are the distances correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:left;">
+
+Correct number of trials?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10457
 
 </td>
 
@@ -2784,7 +3728,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10457
 
 </td>
 
@@ -2818,7 +3762,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10380
+10457
 
 </td>
 
@@ -2852,7 +3796,485 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Are the target and foils at the correct location?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Is the correct answer the correct anwser?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Are the distances correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Correct number of trials?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Is counter\_balance condition (subjCond, question order, room type)
+correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Are the foil tables correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+before
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Is the context (within vs. across) coded correctly?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Are the target and foils at the correct location?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Is the correct answer the correct anwser?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Are the distances correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Correct number of trials?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Is counter\_balance condition (subjCond, question order, room type)
+correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Are the foil tables correct?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10455
+
+</td>
+
+<td style="text-align:left;">
+
+after
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:left;">
+
+Is the context (within vs. across) coded correctly?
+
+</td>
+
+<td style="text-align:left;">
+
+TRUE
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+10463
 
 </td>
 
@@ -2886,7 +4308,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -2920,7 +4342,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -2954,7 +4376,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -2988,7 +4410,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -3023,7 +4445,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -3057,7 +4479,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -3091,7 +4513,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -3125,7 +4547,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -3159,7 +4581,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -3193,7 +4615,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -3217,7 +4639,7 @@ Correct number of trials?
 
 <td style="text-align:left;">
 
-FALSE
+TRUE
 
 </td>
 
@@ -3227,7 +4649,7 @@ FALSE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -3262,7 +4684,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -3296,7 +4718,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10383
+10463
 
 </td>
 
@@ -3330,485 +4752,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Are the target and foils at the correct location?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Is the correct answer the correct anwser?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Are the distances correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Correct number of trials?
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Is counter\_balance condition (subjCond, question order, room type)
-correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Are the foil tables correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Is the context (within vs. across) coded correctly?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Are the target and foils at the correct location?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Is the correct answer the correct anwser?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Are the distances correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Correct number of trials?
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Is counter\_balance condition (subjCond, question order, room type)
-correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Are the foil tables correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10385
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-1
-
-</td>
-
-<td style="text-align:left;">
-
-Is the context (within vs. across) coded correctly?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10387
+10466
 
 </td>
 
@@ -3842,7 +4786,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -3876,7 +4820,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -3910,7 +4854,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -3934,7 +4878,7 @@ Correct number of trials?
 
 <td style="text-align:left;">
 
-FALSE
+TRUE
 
 </td>
 
@@ -3944,7 +4888,7 @@ FALSE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -3979,7 +4923,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -4013,7 +4957,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -4047,7 +4991,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -4081,7 +5025,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -4115,7 +5059,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -4149,7 +5093,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -4183,7 +5127,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -4218,7 +5162,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -4252,7 +5196,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10387
+10466
 
 </td>
 
@@ -4286,7 +5230,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4298,7 +5242,7 @@ before
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4320,7 +5264,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4332,7 +5276,7 @@ before
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4354,7 +5298,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4366,7 +5310,7 @@ before
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4388,7 +5332,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4400,7 +5344,7 @@ before
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4412,7 +5356,7 @@ Correct number of trials?
 
 <td style="text-align:left;">
 
-FALSE
+TRUE
 
 </td>
 
@@ -4422,7 +5366,7 @@ FALSE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4434,7 +5378,7 @@ before
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4457,7 +5401,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4469,7 +5413,7 @@ before
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4491,7 +5435,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4503,7 +5447,7 @@ before
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4525,7 +5469,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4537,7 +5481,7 @@ after
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4559,7 +5503,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4571,7 +5515,7 @@ after
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4593,7 +5537,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4605,7 +5549,7 @@ after
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4627,7 +5571,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4639,7 +5583,7 @@ after
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4651,7 +5595,7 @@ Correct number of trials?
 
 <td style="text-align:left;">
 
-FALSE
+TRUE
 
 </td>
 
@@ -4661,7 +5605,7 @@ FALSE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4673,7 +5617,7 @@ after
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4696,7 +5640,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4708,7 +5652,7 @@ after
 
 <td style="text-align:right;">
 
-5
+1
 
 </td>
 
@@ -4730,7 +5674,7 @@ TRUE
 
 <td style="text-align:right;">
 
-10390
+10464
 
 </td>
 
@@ -4742,485 +5686,7 @@ after
 
 <td style="text-align:right;">
 
-5
-
-</td>
-
-<td style="text-align:left;">
-
-Is the context (within vs. across) coded correctly?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Are the target and foils at the correct location?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Is the correct answer the correct anwser?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Are the distances correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Correct number of trials?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Is counter\_balance condition (subjCond, question order, room type)
-correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Are the foil tables correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-before
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Is the context (within vs. across) coded correctly?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Are the target and foils at the correct location?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Is the correct answer the correct anwser?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Are the distances correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Correct number of trials?
-
-</td>
-
-<td style="text-align:left;">
-
-FALSE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Is counter\_balance condition (subjCond, question order, room type)
-correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-0
-
-</td>
-
-<td style="text-align:left;">
-
-Are the foil tables correct?
-
-</td>
-
-<td style="text-align:left;">
-
-TRUE
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-10391
-
-</td>
-
-<td style="text-align:left;">
-
-after
-
-</td>
-
-<td style="text-align:right;">
-
-0
+1
 
 </td>
 
@@ -5241,9 +5707,6 @@ TRUE
 </tbody>
 
 </table>
-
-In this data set, targetTable was actually the probe table, so I
-replaced this variable.
 
 # Debrief
 

@@ -36,6 +36,9 @@ Run 1:
   * Some data sets hat trials missing at the end > now submiting data at the end of JATOS.
   * targetTable is actually the probeTable > renamed variable in JAVASCRIPT. Target table has to be calculated during analysis.
 
+Run2:
+  * New run after changes on memoryTask script checked out. 
+
 ```{r}
 exp2_path      <- "~/boundaryVR/data/Exp2/testData"
 ```
@@ -303,42 +306,9 @@ names(table1)[6:7] <- c('# trials block1', '# trials block2')
 kable(table1, format = 'html', caption = "Table 3: Factorial design for Experiment 2")
 ```
 
-condition that start with within have 80 and conditions that start with accross have 82 trials. The reason why none have the test data has 82, is because of an error in the code I therefore changed the respective line to this: `nTrial = probe[subjCond][qindex1].length;`. However, I also notice that some runs only have 78 or 79 trials. My suspicion is that is due to the way that I save the data after each trial. To test whether 
-
-```{r}
-folder         <- '/memoryTask/'
-allFiles       <- list.files(paste0(exp2_path, folder))
-allFiles_paths <- paste0(exp2_path, folder, allFiles)
-n              <- length(allFiles_paths)
-
-
-missing_list  <- list()
-complete      <- c()
-# Loop
-for(i in 1:n){
-  tempDF     <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
-  
-  
-  max_trial         <- max(tempDF$trial_index)
-  tempSEQ           <- 0:max_trial
-  complete[i]       <- any(tempSEQ %in% tempDF$trial_index)
-  if(!complete[i]){
-    missingTrials <- tempSEQ[!tempSEQ %in% tempDF$trial_index]
-  } else {
-    missingTrials <- c()
-  }
-   missing_list[[i]] <- list(worker_id = tempDF$worker_id[1],
-                             max_trial = max_trial,
-                             complete  = complete[i],
-                             missingTrials = missingTrials)
-}
-```
-
-None of the values in between trials are missing, I therefore assume that the problem might be that JATOS goes to the next component before the data of the last trial(s) are submited. It is a possibility that this is only an issue because I clicked very quickly through the example or it could be remedied by adding a buffer trial like end of experiment. For simplicity I will switch to saving the data at the end of the whole experiment instead of after each trial. 
-
-Checklist:
-1. I checked whether the objects in video do appear in the right order. 
-2. Check of all variables for each participant:
+Checklist:  
+1. I checked whether the objects in video do appear in the right order.  
+2. Check of all variables for each participant:  
 
 ```{r}
 # Thanks to https://stackoverflow.com/questions/62041661/extracting-all-numbers-in-a-string-that-are-surrounded-by-a-certain-pattern-in-r#62041751
@@ -570,7 +540,7 @@ printText2rmarkdown(paste0('    The data passed all tests: ', as.character(all(a
 # Look at all tests
 kable(allChecks, format = 'html', caption = 'Table 4: Checking key variables of memory test')
 ```
-In this data set, targetTable was actually the probe table,  so I replaced this variable. 
+
 
 # Debrief
 ```{r}
