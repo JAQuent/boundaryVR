@@ -2361,7 +2361,7 @@ df_order_exp2$stimulus <- as.character(df_order_exp2$stimulus)
 ```
 
 ```{r}
-agg_order_exp2 <- ddply(df_order_exp2, c('worker_id', 'roomType', 'context', 'test_part', 'questionType'), 
+agg_order_exp2 <- ddply(df_order_exp2, c('worker_id', 'roomType', 'context', 'test_part', 'questionType', 'counterbalance_condition'), 
                         summarise, 
                         acc = mean(accuracy), 
                         rt = mean(rt))
@@ -2394,6 +2394,61 @@ ggplot(agg_order_exp2_sub1, aes(x = context, y = trans_acc)) +
            label = TeX(paste0('$BF_{10} = ', main_BF))) + 
   labs(title = 'First block: within vs. across', y = "arcsine(3AFC accruacy)", x = 'Boundary condition')
 ```
+
+
+```{r,fig.height = 15, fig.width = 10}
+ggplot(agg_order_exp2, aes(x = context, y = trans_acc)) + 
+  facet_grid(counterbalance_condition ~ questionType) + 
+  geom_line(aes(group = worker_id)) +
+  geom_point() +
+  geom_boxplot(width = 0.5, alpha = 0.5) + 
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  annotate('text', x = 0.75, y = arcsine_transform(1/3) -0.06, label = 'Chance')  + 
+  labs(title = 'Counterbalance by question type', y = "arcsine(3AFC accruacy)", x = 'Boundary condition')
+```
+
+If we look at the effect for each question type and counterbalancing condition separately, it seems that the overall trend is relatively consistent except for condition 6. Furthermore, I investigated whether there are systematic differences between the counterbalance conditions with regard to the foils that were used. 
+
+```{r}
+# Calculate targetTable and distances
+df_order_exp2_dist <- ddply(df_order_exp2,
+                              c('id', 'trial_index', 'context', 'questionType', 'counterbalance_condition'),
+                              summarise,
+                              minDist     = min(abs(dist1), abs(dist2)),
+                              maxDist     = max(abs(dist1), abs(dist2)),
+                              meanDist    = mean(abs(dist1), abs(dist2)),
+                              targetTable = setdiff(2:3, probeTable),
+                              probeTable  = probeTable,
+                              foil1Table  = foil1Table,
+                              foil2Table  = foil2Table,
+                              dist1 = dist1,
+                              dist2 = dist2,
+                              accuracy = accuracy)
+
+# Is foil 1 and foil 2 on same table as target?
+df_order_exp2_dist$foil1_sameTable <- df_order_exp2_dist$targetTable == df_order_exp2_dist$foil1Table 
+df_order_exp2_dist$foil2_sameTable <- df_order_exp2_dist$targetTable == df_order_exp2_dist$foil2Table 
+
+df_order_exp2_dist_agg <- ddply(df_order_exp2_dist,
+                                c('context', 'counterbalance_condition'),
+                                summarise,
+                                accuracy = round(mean(accuracy), 2),
+                                minMean = round(mean(minDist), 2),
+                                minSD = round(sd(minDist), 2),
+                                maxMean = round(mean(maxDist), 2),
+                                maxSD = round(sd(maxDist), 2),
+                                meanMean = round(mean(meanDist), 2),
+                                meanSD = round(sd(meanDist), 2),
+                                foil1_sameTable = round(mean(foil1_sameTable), 2),
+                                foil2_sameTable = round(mean(foil2_sameTable), 2))
+
+names(df_order_exp2_dist_agg) <- c('Context', 'Condition', 'Accuracy', 'Mean', 'SD', 'Mean', 'SD', 'Mean', 'SD', 'Same table 1', 'Same table 2')
+
+conditionTable  <- kable(df_order_exp2_dist_agg, format = 'html', 
+                         caption = "Difference between condition with regard to counterbalancing conditions")
+add_header_above(conditionTable, c(" " = 3, "Min. distance" = 2, "Max. distance" = 2, "Mean distance" = 2,  "Foil on" = 2))
+```
+
 
 The picture doesn't really change if I plot both question type of the first block seperately. 
 
@@ -2439,7 +2494,7 @@ ggplot(agg_order_exp2_bothBlocks, aes(x = context, y = trans_acc)) +
   labs(title = 'Both blocks: within vs. across', y = "arcsine(3AFC accruacy)", x = 'Boundary condition')
 ```
 
-As can be seen below, memory performance is well above chance.
+As can be seen below, over all memory performance is well above chance.
 
 ```{r}
 agg_order_exp2_overall <- ddply(df_order_exp2, 
@@ -2468,6 +2523,8 @@ ggplot(agg_order_exp2_overall, aes(y = trans_acc, x = 1)) +
 
 
 ```
+
+Average over all memory performance is `r mean_SD_str(mean(agg_order_exp2_overall$acc), sd(agg_order_exp2_overall$acc))`. 
 
 Because of this really surprising results, I checked _again_ whether the label within and across were correct. For this I checked video 3 and ensured that for towel was indeed preceded by the lamp in the same room as the source data that I created in R stated. An error could have been the reason, but this is not the case. From the source data frame in R, I created a .js file, so it could be that while the soruce data frame in R is correct, but I did an error in here. However, this is also not the case. I checked the same for video 4 (note only video 3 and video 4 were shown this time).
 

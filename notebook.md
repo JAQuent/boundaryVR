@@ -6418,19 +6418,725 @@ question type). and in that case the \(BF_{10}\) is \< 1/6.
 
 ![](notebook_files/figure-gfm/unnamed-chunk-53-1.png)<!-- -->
 
+![](notebook_files/figure-gfm/unnamed-chunk-54-1.png)<!-- -->
+
+If we look at the effect for each question type and counterbalancing
+condition separately, it seems that the overall trend is relatively
+consistent except for condition 6. Furthermore, I investigated whether
+there are systematic differences between the counterbalance conditions
+with regard to the foils that were used.
+
+<table>
+
+<caption>
+
+Difference between condition with regard to counterbalancing conditions
+
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="border-bottom:hidden" colspan="3">
+
+</th>
+
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
+Min. distance
+
+</div>
+
+</th>
+
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
+Max. distance
+
+</div>
+
+</th>
+
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
+Mean distance
+
+</div>
+
+</th>
+
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
+Foil on
+
+</div>
+
+</th>
+
+</tr>
+
+<tr>
+
+<th style="text-align:left;">
+
+Context
+
+</th>
+
+<th style="text-align:right;">
+
+Condition
+
+</th>
+
+<th style="text-align:right;">
+
+Accuracy
+
+</th>
+
+<th style="text-align:right;">
+
+Mean
+
+</th>
+
+<th style="text-align:right;">
+
+SD
+
+</th>
+
+<th style="text-align:right;">
+
+Mean
+
+</th>
+
+<th style="text-align:right;">
+
+SD
+
+</th>
+
+<th style="text-align:right;">
+
+Mean
+
+</th>
+
+<th style="text-align:right;">
+
+SD
+
+</th>
+
+<th style="text-align:right;">
+
+Same table 1
+
+</th>
+
+<th style="text-align:right;">
+
+Same table 2
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+across
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:right;">
+
+0.47
+
+</td>
+
+<td style="text-align:right;">
+
+12.12
+
+</td>
+
+<td style="text-align:right;">
+
+8.25
+
+</td>
+
+<td style="text-align:right;">
+
+33.74
+
+</td>
+
+<td style="text-align:right;">
+
+18.48
+
+</td>
+
+<td style="text-align:right;">
+
+23.23
+
+</td>
+
+<td style="text-align:right;">
+
+18.70
+
+</td>
+
+<td style="text-align:right;">
+
+0.50
+
+</td>
+
+<td style="text-align:right;">
+
+0.54
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+across
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:right;">
+
+0.38
+
+</td>
+
+<td style="text-align:right;">
+
+11.27
+
+</td>
+
+<td style="text-align:right;">
+
+7.53
+
+</td>
+
+<td style="text-align:right;">
+
+34.37
+
+</td>
+
+<td style="text-align:right;">
+
+17.70
+
+</td>
+
+<td style="text-align:right;">
+
+22.95
+
+</td>
+
+<td style="text-align:right;">
+
+17.45
+
+</td>
+
+<td style="text-align:right;">
+
+0.46
+
+</td>
+
+<td style="text-align:right;">
+
+0.51
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+across
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:right;">
+
+0.35
+
+</td>
+
+<td style="text-align:right;">
+
+12.12
+
+</td>
+
+<td style="text-align:right;">
+
+8.26
+
+</td>
+
+<td style="text-align:right;">
+
+33.74
+
+</td>
+
+<td style="text-align:right;">
+
+18.50
+
+</td>
+
+<td style="text-align:right;">
+
+23.23
+
+</td>
+
+<td style="text-align:right;">
+
+18.71
+
+</td>
+
+<td style="text-align:right;">
+
+0.50
+
+</td>
+
+<td style="text-align:right;">
+
+0.54
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+across
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:right;">
+
+0.36
+
+</td>
+
+<td style="text-align:right;">
+
+11.27
+
+</td>
+
+<td style="text-align:right;">
+
+7.53
+
+</td>
+
+<td style="text-align:right;">
+
+34.37
+
+</td>
+
+<td style="text-align:right;">
+
+17.70
+
+</td>
+
+<td style="text-align:right;">
+
+22.95
+
+</td>
+
+<td style="text-align:right;">
+
+17.45
+
+</td>
+
+<td style="text-align:right;">
+
+0.46
+
+</td>
+
+<td style="text-align:right;">
+
+0.51
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+within
+
+</td>
+
+<td style="text-align:right;">
+
+2
+
+</td>
+
+<td style="text-align:right;">
+
+0.42
+
+</td>
+
+<td style="text-align:right;">
+
+11.16
+
+</td>
+
+<td style="text-align:right;">
+
+6.78
+
+</td>
+
+<td style="text-align:right;">
+
+35.36
+
+</td>
+
+<td style="text-align:right;">
+
+16.52
+
+</td>
+
+<td style="text-align:right;">
+
+23.40
+
+</td>
+
+<td style="text-align:right;">
+
+17.43
+
+</td>
+
+<td style="text-align:right;">
+
+0.38
+
+</td>
+
+<td style="text-align:right;">
+
+0.40
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+within
+
+</td>
+
+<td style="text-align:right;">
+
+3
+
+</td>
+
+<td style="text-align:right;">
+
+0.37
+
+</td>
+
+<td style="text-align:right;">
+
+11.24
+
+</td>
+
+<td style="text-align:right;">
+
+7.80
+
+</td>
+
+<td style="text-align:right;">
+
+35.29
+
+</td>
+
+<td style="text-align:right;">
+
+16.63
+
+</td>
+
+<td style="text-align:right;">
+
+22.11
+
+</td>
+
+<td style="text-align:right;">
+
+16.87
+
+</td>
+
+<td style="text-align:right;">
+
+0.50
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+within
+
+</td>
+
+<td style="text-align:right;">
+
+6
+
+</td>
+
+<td style="text-align:right;">
+
+0.41
+
+</td>
+
+<td style="text-align:right;">
+
+11.16
+
+</td>
+
+<td style="text-align:right;">
+
+6.78
+
+</td>
+
+<td style="text-align:right;">
+
+35.36
+
+</td>
+
+<td style="text-align:right;">
+
+16.53
+
+</td>
+
+<td style="text-align:right;">
+
+23.40
+
+</td>
+
+<td style="text-align:right;">
+
+17.45
+
+</td>
+
+<td style="text-align:right;">
+
+0.38
+
+</td>
+
+<td style="text-align:right;">
+
+0.40
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+within
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:right;">
+
+0.29
+
+</td>
+
+<td style="text-align:right;">
+
+11.24
+
+</td>
+
+<td style="text-align:right;">
+
+7.80
+
+</td>
+
+<td style="text-align:right;">
+
+35.29
+
+</td>
+
+<td style="text-align:right;">
+
+16.63
+
+</td>
+
+<td style="text-align:right;">
+
+22.11
+
+</td>
+
+<td style="text-align:right;">
+
+16.87
+
+</td>
+
+<td style="text-align:right;">
+
+0.50
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
 The picture doesn’t really change if I plot both question type of the
 first block seperately.
 
-![](notebook_files/figure-gfm/unnamed-chunk-54-1.png)<!-- -->
+![](notebook_files/figure-gfm/unnamed-chunk-56-1.png)<!-- -->
 
 The effect is even stronger if I take data from both blocks collapsing
 across both question types.
 
-![](notebook_files/figure-gfm/unnamed-chunk-55-1.png)<!-- -->
+![](notebook_files/figure-gfm/unnamed-chunk-57-1.png)<!-- -->
 
-As can be seen below, memory performance is well above chance.
+As can be seen below, over all memory performance is well above chance.
 
-![](notebook_files/figure-gfm/unnamed-chunk-56-1.png)<!-- -->
+![](notebook_files/figure-gfm/unnamed-chunk-58-1.png)<!-- -->
+
+Average over all memory performance is 0.39 (0.07).
 
 Because of this really surprising results, I checked *again* whether the
 label within and across were correct. For this I checked video 3 and
