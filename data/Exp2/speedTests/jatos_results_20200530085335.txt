@@ -1,0 +1,1 @@
+[{"worker_id":"10480","studyId":"372","studyTitle":"Boundary VR - Exp 2","batchId":"477","batchTitle":"Batch 1","componentId":"3445","componentPos":6,"componentTitle":"speed_tests.html","workerId":"10480","studyResultId":"26672","componentResultId":"121438","groupResultId":"null","groupMemberId":null,"speed":"26.48"}]

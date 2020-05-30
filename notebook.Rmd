@@ -24,6 +24,7 @@ library(kableExtra)
 library(MRColour)
 library(jsonlite)
 library(reshape2)
+library(latex2exp)
 library(lmerTest)
 library(ez)
 library(BayesFactor)
@@ -2152,38 +2153,11 @@ As additional analyses we plan to run a Bayesian ANOVA with with factors boundar
 
 ## Results
 ```{r}
-exp2_path      <- "~/boundaryVR/data/Exp2/testData"
-```
-
-### Download speed
-```{r, eval = FALSE}
-folder         <- '/speedTests/'
-allFiles       <- list.files(paste0(exp2_path, folder))
-allFiles_paths <- paste0(exp2_path, folder, allFiles)
-n              <- length(allFiles_paths)
-
-# Var
-worker_id      <- c()
-studyResultId  <- c()
-speedMbps      <- c()
-
-# Loop through all files
-for(i in 1:n){
-  jsonString       <- readChar(allFiles_paths[i], file.info(allFiles_paths[i])$size)
-  resultsList      <- fromJSON(jsonString)
-  worker_id[i]     <- resultsList$worker_id
-  studyResultId[i] <- resultsList$studyResultId
-  speedMbps[i]     <- as.numeric(resultsList$speed)
-}
-
-df_speed_exp2 <- data.frame(worker_id = worker_id, studyResultId = studyResultId, speedMbps = speedMbps)
-
-# In speedMbps
-summary(df_speed_exp2$speedMbps)
+exp2_path      <- "~/boundaryVR/data/Exp2"
 ```
 
 ### Responses during video
-```{r, eval = FALSE}
+```{r}
 # Get files
 folder         <- '/video/'
 allFiles       <- list.files(paste0(exp2_path, folder))
@@ -2191,12 +2165,15 @@ allFiles_paths <- paste0(exp2_path, folder, allFiles)
 n              <- length(allFiles_paths)
 
 # Var
-workder_id               <- c()
+worker_id               <- c()
 studyResultId            <- c()
 vid_ext                  <- c()
 subjCond                 <- c()
 counterbalance_condition <- c()
 num_keyPress             <- c()
+movie                    <- c()
+subjCond_corr            <- c()
+movide_corr              <- c()
 # Add video name
 # Loop through all files
 for(i in 1:n){
@@ -2208,6 +2185,35 @@ for(i in 1:n){
   subjCond[i]                 <- resultsList$subjCond
   counterbalance_condition[i] <- resultsList$counterbalance_condition
   num_keyPress[i]             <- length(resultsList$whichKey)
+  # Extract the the movie number
+  movie[i]                    <- as.numeric(substr(resultsList$movie, nchar(resultsList$movie), nchar(resultsList$movie)))
+  
+  # Check whether correct video was displayed
+  if(counterbalance_condition[i] == 0){
+    subjCond_corr <- subjCond[i] == 0
+    movide_corr   <- movie[i] == subjCond[i] + 1
+  } else if(counterbalance_condition[i] == 1){
+    subjCond_corr <- subjCond[i] == 1
+    movide_corr   <- movie[i] == subjCond[i] + 1
+  } else if(counterbalance_condition[i] == 2){
+    subjCond_corr <- subjCond[i] == 2
+    movide_corr   <- movie[i] == subjCond[i] + 1
+  } else if(counterbalance_condition[i] == 3){
+    subjCond_corr <- subjCond[i] == 3
+    movide_corr   <- movie[i] == subjCond[i] + 1
+  } else if(counterbalance_condition[i] == 4){
+    subjCond_corr <- subjCond[i] == 0
+    movide_corr   <- movie[i] == subjCond[i] + 1
+  } else if(counterbalance_condition[i] == 5){
+    subjCond_corr <- subjCond[i] == 1
+    movide_corr   <- movie[i] == subjCond[i] + 1
+  } else if(counterbalance_condition[i] == 6){
+    subjCond_corr <- subjCond[i] == 2
+    movide_corr   <- movie[i] == subjCond[i] + 1
+  } else if(counterbalance_condition[i] == 7){
+    subjCond_corr <- subjCond[i] == 3
+    movide_corr   <- movie[i] == subjCond[i] + 1
+  }
   
   # Create response data.frame if number of responses is above one
   if(num_keyPress[i] > 1){
@@ -2224,14 +2230,17 @@ for(i in 1:n){
     }
 }
 
+
+
+
 # Create aggregate info df
 df_video_exp2_info <- data.frame(worker_id,
                                  studyResultId, 
                                  vid_ext,
                                  subjCond,
                                  counterbalance_condition,
+                                 movie,
                                  num_keyPress)
-kable(df_video_exp2_info)
 
 # Calculate inter-response intervalls
 df_video_exp2_intervalls <- ddply(df_video_exp2, 
@@ -2244,12 +2253,30 @@ df_video_exp2_intervalls_agg <- ddply(df_video_exp2_intervalls,
                                       meanIRI = mean(IRI, na.rm = TRUE),
                                       sdIRI   = sd(IRI, na.rm = TRUE),
                                       n       = length(IRI))
-
-kable(df_video_exp2_intervalls_agg)
 ```
 
+The response during the video were mostly without anything markworthy apart from the fact that three participants had more than approximately 88 responses (126, 144, 910). My suspicion is that those just pressed more than one because they didn't get any feedback. This is also actually mentioned in the feedback. Apart from those three participants, participants had an expected inter-response intervall of circa 7 secs, which is consistent with the time between objects.
+
+There is actually one thing that I don't understand for the participants with 910 key presses that is the first four entries are extremely high numbers: `r df_video_exp2$timeStamp[df_video_exp2$worker_id == 10507][1]`. However, in the script the time stamp are caculated relative to the video start, see
+```
+		$(document).on('keypress', function(e) {
+		    if (e.which == 115 || e.which == 108) {
+		        e.preventDefault()
+		        var d = new Date();
+		        var n = d.getTime();
+		        whichKey.push(e.which);
+		        timeStamps.push(n - vid_start);
+		    }
+		}) 
+```
+subsequent values are much smaller (`r df_video_exp2$timeStamp[df_video_exp2$worker_id == 10507][5]`). This value is consistent with the first values for other participants. If have no idea how this can work. Where do these large values come from? 
+
+In one video file, there was an error for one of the objects (object was visible before they approached the table) but this shouldn't have too much of an impact. 
+
 ### Memory task
-```{r, eval = FALSE}
+Note that all tests here directional. Our current sample size is 16. 
+
+```{r}
 folder         <- '/memoryTask/'
 allFiles       <- list.files(paste0(exp2_path, folder))
 allFiles_paths <- paste0(exp2_path, folder, allFiles)
@@ -2269,7 +2296,7 @@ for(i in 1:n){
   tempDF$response                  <- response
   
   # Convert RT to numeric  
-  tempDF$rt <- as.numeric(as.character(tempDF$rt))
+  tempDF$rt <- suppressWarnings(as.numeric(as.character(tempDF$rt)))
   
   ############
   # Temporal order memory 1
@@ -2288,7 +2315,7 @@ for(i in 1:n){
   temporalOrder1$choice <- choice
   
   # Direction of question
-  if(temporalOrder1$questionOrder == 0){
+  if(temporalOrder1$questionOrder[1] == 0){
     temporalOrder1$questionType = 'before'
   } else {
     temporalOrder1$questionType = 'after'
@@ -2311,7 +2338,7 @@ for(i in 1:n){
   temporalOrder2$choice <- choice
   
   # Direction of question
-  if(temporalOrder2$questionOrder == 0){
+  if(temporalOrder2$questionOrder[1] == 0){
     temporalOrder2$questionType = 'after'
   } else {
     temporalOrder2$questionType = 'before'
@@ -2319,22 +2346,305 @@ for(i in 1:n){
   
   # Create or bind to data.frame
   if(i == 1){
-    df_order_b3    <- rbind(temporalOrder1, temporalOrder2)
-    df_order_b3$id <- i
+    df_order_exp2    <- rbind(temporalOrder1, temporalOrder2)
+    df_order_exp2$id <- i
   } else {
     temporalOrder1$id <- i
-    df_order_b3      <- rbind(df_order_b3, rbind(temporalOrder1, temporalOrder2))
+    temporalOrder2$id <- i
+    df_order_exp2      <- rbind(df_order_exp2, rbind(temporalOrder1, temporalOrder2))
   }
 }
 
 # Convert to id factor
-df_order_b3$id <- as.factor(df_order_b3$id)
+df_order_exp2$id <- as.factor(df_order_exp2$id)
+df_order_exp2$stimulus <- as.character(df_order_exp2$stimulus)
+```
+
+```{r}
+agg_order_exp2 <- ddply(df_order_exp2, c('worker_id', 'roomType', 'context', 'test_part', 'questionType'), 
+                        summarise, 
+                        acc = mean(accuracy), 
+                        rt = mean(rt))
+
+
+# Transform values
+agg_order_exp2$trans_acc <- arcsine_transform(agg_order_exp2$acc)
+
+agg_order_exp2_sub1 <- subset(agg_order_exp2, test_part  == 'temporalOrder1')
+```
+
+Below, is the main comparison on which I base the stopping rule. This is responses taken from the first block of the experiment (collapsed across question type). and in that case the $BF_{10}$ is < 1/6. 
+
+```{r}
+stoppingTest <- ttestBF(agg_order_exp2_sub1$trans_acc[agg_order_exp2_sub1$context == 'within'],
+                        agg_order_exp2_sub1$trans_acc[agg_order_exp2_sub1$context == 'across'],
+                        paired = TRUE,
+                        nullInterval = c(-Inf, 0))
+
+main_BF <- reportBF(stoppingTest[2])
+
+ggplot(agg_order_exp2_sub1, aes(x = context, y = trans_acc)) + 
+  geom_line(aes(group = worker_id)) +
+  geom_point() +
+  geom_boxplot(width = 0.5, alpha = 0.5) + 
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  annotate('text', x = 0.75, y = arcsine_transform(1/3) -0.06, label = 'Chance') +
+  annotate('text', x = 1.5, 
+           y = max(agg_order_exp2_sub1$trans_acc) + 0.1, 
+           label = TeX(paste0('$BF_{10} = ', main_BF))) + 
+  labs(title = 'First block: within vs. across', y = "arcsine(3AFC accruacy)", x = 'Boundary condition')
+```
+
+The picture doesn't really change if I plot both question type of the first block seperately. 
+
+```{r}
+ggplot(agg_order_exp2, aes(x = context, y = trans_acc)) + 
+  facet_grid(~questionType) +
+  geom_line(aes(group = worker_id)) +
+  geom_point() +
+  geom_boxplot(width = 0.5, alpha = 0.5) + 
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  annotate('text', x = 0.75, y = arcsine_transform(1/3) -0.06, label = 'Chance') + 
+  labs(title = 'First block: within vs. across', y = "arcsine(3AFC accruacy)", x = 'Boundary condition')
+```
+
+The effect is even stronger if I take data from both blocks collapsing across both question types.  
+
+```{r}
+agg_order_exp2_bothBlocks <- ddply(df_order_exp2, 
+                                  c('worker_id', 'roomType', 'context'), 
+                                  summarise, 
+                                  acc = mean(accuracy), 
+                                  rt = mean(rt))
+
+agg_order_exp2_bothBlocks$trans_acc <- arcsine_transform(agg_order_exp2_bothBlocks$acc)
+
+
+stoppingTest <- ttestBF(agg_order_exp2_bothBlocks$trans_acc[agg_order_exp2_bothBlocks$context == 'within'],
+                        agg_order_exp2_bothBlocks$trans_acc[agg_order_exp2_bothBlocks$context == 'across'],
+                        paired = TRUE,
+                        nullInterval = c(-Inf, 0))
+
+main_BF <- reportBF(stoppingTest[2])
+
+ggplot(agg_order_exp2_bothBlocks, aes(x = context, y = trans_acc)) + 
+  geom_line(aes(group = worker_id)) +
+  geom_point() +
+  geom_boxplot(width = 0.5, alpha = 0.5) + 
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  annotate('text', x = 0.75, y = arcsine_transform(1/3) - 0.06, label = 'Chance') +
+  annotate('text', x = 1.5, 
+           y = max(agg_order_exp2_bothBlocks$trans_acc) + 0.1, 
+           label = TeX(paste0('$BF_{10} = ', main_BF))) + 
+  labs(title = 'Both blocks: within vs. across', y = "arcsine(3AFC accruacy)", x = 'Boundary condition')
+```
+
+As can be seen below, memory performance is well above chance.
+
+```{r}
+agg_order_exp2_overall <- ddply(df_order_exp2, 
+                               c('worker_id', 'counterbalance_condition'), 
+                                 summarise, 
+                                 acc = mean(accuracy), 
+                                 rt = mean(rt))
+
+
+agg_order_exp2_overall$trans_acc <- arcsine_transform(agg_order_exp2_overall$acc)
+
+test1 <- ttestBF(agg_order_exp2_overall$trans_acc - arcsine_transform(1/3),
+                    nullInterval = c(-Inf, 0))
+
+overallMemory <- reportBF(test1[2])
+
+ggplot(agg_order_exp2_overall, aes(y = trans_acc, x = 1)) + 
+  geom_point()+
+  geom_boxplot(alpha = 0.5, width = 0.5) +
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  annotate('text', x = 0.9, y = arcsine_transform(1/3) -0.06, label = 'Chance') + 
+  annotate('text', x = 1, 
+           y = max(agg_order_exp2_overall$trans_acc) + 0.1, 
+           label = TeX(paste0('$BF_{10} = ', overallMemory))) +
+  labs(title = 'Overall memory performance', y = "arcsine(3AFC accruacy)")
+
+
+```
+
+Because of this really surprising results, I checked _again_ whether the label within and across were correct. For this I checked video 3 and ensured that for towel was indeed preceded by the lamp in the same room as the source data that I created in R stated. An error could have been the reason, but this is not the case. From the source data frame in R, I created a .js file, so it could be that while the soruce data frame in R is correct, but I did an error in here. However, this is also not the case. I checked the same for video 4 (note only video 3 and video 4 were shown this time).
+
+### Debrief
+```{r}
+# Question and answer string
+q_id <- c('video_viewing', 
+          'q_answering', 
+          'breaks', 
+          'object_recognition',
+          'exp_problems',
+          'navigation',
+          'object_time',
+          'memory1',
+          'strategy1', 
+          'strategy2',
+          'instructions')
+
+questions_string <- c('Did you do anything else while watching the video?',
+  'Did you do your best to answer the questions correctly?',
+  'Did you take breaks during the experiment?',
+  'Did you recognise all objects in the video and in the memory task? (If you can, please try describe the/those object(s) where you had problems briefly e.g. their shape/colour.)',
+  'Did you experience any problems viewing the videos? Or problems in the experiment in general? (If yes, please elaborate.)',
+  'Did the navigation feel too fast?',
+  'Did you think the time the objects were visible was long enough?',
+  'Did you anticipate there would be a memory test on the objects? If so, did you anticipate you would be asked about the order of the objects?',
+  'Did you use any strategy to remember the objects and their order? One strategy for instance could be to recall the table an object was on and then to exclude options on that basis. (If yes, please elaborate.)',
+  'Specifically, did you sometimes make responses based on the general memory when objects appeared in the video but not based on exactly knowing order of objects?',
+  "Now, you've completed the task. Can we somehow improve our instructions? Please describe the instructions for memory task very briefly.")
+
+questions <- data.frame(id = q_id,
+                       question = questions_string)
+
+answerQuestionID <- c(1, 1, 1,
+                      2, 2, 2,
+                      3, 3, 3,
+                      4, 4, 4,
+                      5, 5,
+                      6, 6,
+                      7, 7,
+                      8, 8, 8,
+                      9, 9,
+                      10, 10, 10)
+
+answerValue <- c('other_things', 'unattentive', 'attentive',
+                 "did_best", "partly_random", "random",
+                 "yes", "short_breaks", "no",
+                 "all", "nearlyAll", "manyNot",
+                 "yes", "no",
+                 "yes", "no",
+                 "yes", "no",
+                 "expOrder", "expTest", "expNone",
+                 "yes", "no",
+                 "often", "rare", "no")
+
+answerString <- c("Yes, at times I was busy with other things and missed parts of the video.",
+                  "I didn't do anything else, but did not always watch attentively.",
+                  "No, I watched the whole video attentively.",
+                  "Yes, I tried my best to answer everything correctly.",
+                  "At least some of the time I answered randomly.",
+                  "I answered randomly for the most part.",
+                  "I took longer breaks.",
+                  "I took some, but they were short (up to 2 minutes).",
+                  "No, I completed the experiment in one go.",
+                  "I recognised all.",
+                  "I recognised nearly all.",
+                  "I  didn't recognise many objects.",
+                  "Yes.",
+                  "No.",
+                  "Yes.",
+                  "No.",
+                  "Yes.",
+                  "No.",
+                  "I anticipated I would be tested on order.",
+                  "I anticipated there would be a test, but not which questions would be asked.",
+                  "I didn’t anticipate memory would be tested.",
+                  "Yes.",
+                  "No.",
+                  "Yes, often.",
+                  "Yes but rarely.",
+                  "No.")
 ```
 
 
-### Debrief
-```{r,  eval = FALSE, results = 'asis'}
-text <- "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-bla <- paste(strwrap(text, 120), collapse = "\n")
-printText2rmarkdown(bla)
+```{r parseData2, echo = FALSE}
+nQuestions     <- 10
+folder         <- '/debrief/'
+allFiles       <- list.files(paste0(exp2_path, folder))
+allFiles_paths <- paste0(exp2_path, folder, allFiles)
+nSub           <- length(allFiles_paths)
+
+general_comments <- rep(NA_character_, nSub)
+worker_ids       <- rep(NA, nSub)
+
+for(i in 1:nSub){
+  # Load JSON
+  jsonString  <- readChar(allFiles_paths[i], file.info(allFiles_paths[i])$size)
+  resultsList <- fromJSON(jsonString)
+  
+  # Get questions
+  tempData              <- questions
+  tempData$SubNum       <- i
+  tempData$worker_id    <- resultsList$workerId
+  tempData$answerValue  <- NA
+  tempData$answerString <- NA
+  tempData$survey       <- NA
+  
+  # Go through list of ith participant
+  for(j in 1:nQuestions){
+    # Assign answer value 
+    tempData$answerValue[j] <- resultsList[[paste0('q', j)]]$answer
+    
+    # Get answer string by subsetting answer values belonging to jth question
+    temp_answerStrings       <- answerString[which(answerQuestionID == j)]
+    tempData$answerString[j] <- temp_answerStrings[which(answerValue[which(answerQuestionID == j)] == tempData$answerValue[j])]
+    
+    # Add content of text field if it exists
+    if(!is.null(resultsList[[paste0('q', j)]]$survey)){
+      tempData$survey[j] <- resultsList[[paste0('q', j)]]$survey
+    }
+  }
+  
+  # Bind to df
+  if(i == 1){
+    debriefData <- tempData
+  } else{
+    debriefData <- rbind(debriefData, tempData)
+  }
+  
+  # Get general comments
+  general_comments[i] <- resultsList$general_comments
+  worker_ids[i]      <- resultsList$workerId
+}
+
+```
+
+
+```{r fig12, fig.height = 27, fig.width = 10}
+for(i in 1:nQuestions){
+  tempSubset    <- debriefData[debriefData$id == q_id[i],]
+  tempDF        <- data.frame(table(tempSubset$answerString))
+  names(tempDF) <- c('Answer', 'Freq')
+
+  bp  <- ggplot(tempDF, aes(x = "", y =  Freq, fill = Answer)) + geom_bar(width = 1, stat = "identity")
+  tempPie <- bp + coord_polar("y", start = 0) + scale_fill_mrc() + 
+    labs(x = '', y = '', title = paste(strwrap(questions_string[i], 60), collapse = "\n")) +
+    theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          panel.border = element_blank(),
+          panel.grid = element_blank(),
+          axis.ticks = element_blank(),
+          plot.title = element_text(size = 8, face = "bold", hjust = 0.5),
+          legend.position = "bottom",
+          legend.direction = "vertical")
+  assign(paste0('pie', i), tempPie)
+}
+
+plot_grid(pie1, pie2, pie3, pie4, pie5, pie6, pie7, pie8, pie9, pie10, ncol = 2, align = 'hv')
+```
+
+## Further comments regarding the questions
+```{r, results = 'asis'}
+for(i in 1:nrow(debriefData)){
+  if(!(is.na(debriefData$survey[i]) | debriefData$survey[i] == "")){
+    printText2rmarkdown(paste("<strong>Subject:", debriefData$worker_id[i], "</strong> "))
+    printText2rmarkdown(paste0("<i>", debriefData$question[i], "</i>:\n"))
+    printText2rmarkdown(paste0(debriefData$survey[i], "\n"))
+  }
+}
+```
+
+## General comments
+```{r, results = 'asis'}
+for(i in 1:length(general_comments)){
+  if(!(is.na(general_comments[i]) | general_comments[i] == "")){
+    printText2rmarkdown(paste("<strong>Subject:", worker_ids[i], "</strong>\n"))
+    printText2rmarkdown(paste0(general_comments[i], "\n"))
+  }
+}
 ```

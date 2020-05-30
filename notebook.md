@@ -1,7 +1,7 @@
 Notebook for boundary VR
 ================
 Joern Alexander Quent
-29 Mai, 2020
+30 May, 2020
 
   - [Aim of this project](#aim-of-this-project)
   - [Experiment 1](#experiment-1)
@@ -52,10 +52,12 @@ Joern Alexander Quent
       - [Updated maximum sample size](#updated-maximum-sample-size)
       - [Planned analysis](#planned-analysis)
       - [Results](#results-4)
-          - [Download speed](#download-speed)
           - [Responses during video](#responses-during-video)
           - [Memory task](#memory-task)
           - [Debrief](#debrief)
+      - [Further comments regarding the
+        questions](#further-comments-regarding-the-questions)
+      - [General comments](#general-comments)
 
 # Aim of this project
 
@@ -6371,10 +6373,224 @@ Therefore, we do not make this part of our stopping rule.
 
 ## Results
 
-### Download speed
-
 ### Responses during video
+
+The response during the video were mostly without anything markworthy
+apart from the fact that three participants had more than approximately
+88 responses (126, 144, 910). My suspicion is that those just pressed
+more than one because they didn’t get any feedback. This is also
+actually mentioned in the feedback. Apart from those three participants,
+participants had an expected inter-response intervall of circa 7 secs,
+which is consistent with the time between objects.
+
+There is actually one thing that I don’t understand for the participants
+with 910 key presses that is the first four entries are extremely high
+numbers: 1.590778110^{12}. However, in the script the time stamp are
+caculated relative to the video start, see
+
+``` 
+        $(document).on('keypress', function(e) {
+            if (e.which == 115 || e.which == 108) {
+                e.preventDefault()
+                var d = new Date();
+                var n = d.getTime();
+                whichKey.push(e.which);
+                timeStamps.push(n - vid_start);
+            }
+        }) 
+```
+
+subsequent values are much smaller (3133). This value is consistent with
+the first values for other participants. If have no idea how this can
+work. Where do these large values come from?
+
+In one video file, there was an error for one of the objects (object was
+visible before they approached the table) but this shouldn’t have too
+much of an impact.
 
 ### Memory task
 
+Note that all tests here directional. Our current sample size is 16.
+
+Below, is the main comparison on which I base the stopping rule. This is
+responses taken from the first block of the experiment (collapsed across
+question type). and in that case the \(BF_{10}\) is \< 1/6.
+
+![](notebook_files/figure-gfm/unnamed-chunk-53-1.png)<!-- -->
+
+The picture doesn’t really change if I plot both question type of the
+first block seperately.
+
+![](notebook_files/figure-gfm/unnamed-chunk-54-1.png)<!-- -->
+
+The effect is even stronger if I take data from both blocks collapsing
+across both question types.
+
+![](notebook_files/figure-gfm/unnamed-chunk-55-1.png)<!-- -->
+
+As can be seen below, memory performance is well above chance.
+
+![](notebook_files/figure-gfm/unnamed-chunk-56-1.png)<!-- -->
+
+Because of this really surprising results, I checked *again* whether the
+label within and across were correct. For this I checked video 3 and
+ensured that for towel was indeed preceded by the lamp in the same room
+as the source data that I created in R stated. An error could have been
+the reason, but this is not the case. From the source data frame in R, I
+created a .js file, so it could be that while the soruce data frame in R
+is correct, but I did an error in here. However, this is also not the
+case. I checked the same for video 4 (note only video 3 and video 4 were
+shown this time).
+
 ### Debrief
+
+![](notebook_files/figure-gfm/fig12-1.png)<!-- -->
+
+## Further comments regarding the questions
+
+<strong>Subject: 10476 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+Tried to remember the table the object was on and also imaginate the
+table that the objects in the options was so I could try to assimilate
+but it was very difficult.  
+<strong>Subject: 10477 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I based my opinion on the location of the tables and sometimes
+remembering some key objects  
+<strong>Subject: 10477 </strong> <i>Specifically, did you sometimes make
+responses based on the general memory when objects appeared in the video
+but not based on exactly knowing order of objects?</i>:  
+sometimes i tried to make relations between some objects but i knew that
+most of the times their real world relation was not connected by the
+order they were presented to me  
+<strong>Subject: 10480 </strong> <i>Did you recognise all objects in the
+video and in the memory task? (If you can, please try describe the/those
+object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+I didn’t recognize one of the fans  
+<strong>Subject: 10480 </strong> <i>Did you experience any problems
+viewing the videos? Or problems in the experiment in general? (If yes,
+please elaborate.)</i>:  
+There was visual no feedback when picking L/S so I didn’t know if the
+selection was being correctly recorded  
+<strong>Subject: 10480 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+Tried to remember if the object appeared towards the end or the
+beginning of the video. Also, there were some themes in the object’s
+order (ex.: kitchen)  
+<strong>Subject: 10480 </strong> <i>Specifically, did you sometimes make
+responses based on the general memory when objects appeared in the video
+but not based on exactly knowing order of objects?</i>:  
+Yes, in very few cases I actually remembered the order.  
+<strong>Subject: 10481 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+i try to see in witch position the object was. for example if the object
+was the fist that we see in a room , the box was in my right, so with
+that the object was rotated in a certain way for the viewer can see what
+the object is so we could compare to the 36 inches.so the second object
+in the room was at the left , so it had to be positioned in a certain
+way for the viwer.  
+<strong>Subject: 10484 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I tried to recall if the object was on the table on the left or right,
+and choose accordingly  
+<strong>Subject: 10486 </strong> <i>Did you experience any problems
+viewing the videos? Or problems in the experiment in general? (If yes,
+please elaborate.)</i>:  
+one item without box  
+<strong>Subject: 10488 </strong> <i>Did you recognise all objects in the
+video and in the memory task? (If you can, please try describe the/those
+object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+I cant remember the football, and the larger items.  
+<strong>Subject: 10489 </strong> <i>Did you experience any problems
+viewing the videos? Or problems in the experiment in general? (If yes,
+please elaborate.)</i>:  
+there were times were the box glitched and hid what was showing like the
+headphones.  
+<strong>Subject: 10491 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+Went in with no strategy but i was expecting something fishy\!  
+<strong>Subject: 10499 </strong> <i>Did you recognise all objects in the
+video and in the memory task? (If you can, please try describe the/those
+object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+One object I don’t remember seeing in the video was the wrench as well
+as the fern looking plant. The rest I have a clear memory of seeing them
+in the video.  
+<strong>Subject: 10499 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+While doing the test I tried to remember on which table I saw the
+object, was on the first or second one. I was hoping that in that way it
+would be easier for me to answer correctly about the order the objects
+appeared.  
+<strong>Subject: 10499 </strong> <i>Specifically, did you sometimes make
+responses based on the general memory when objects appeared in the video
+but not based on exactly knowing order of objects?</i>:  
+Yes, I had to rely on my first response. I tried to think harder about
+where I might have seen them, but most of the object I answered by
+visualising parts of the video where I think I’ve seen the objects.  
+<strong>Subject: 10506 </strong> <i>Did you recognise all objects in the
+video and in the memory task? (If you can, please try describe the/those
+object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+I had problems remembering the smaller objects  
+<strong>Subject: 10505 </strong> <i>Did you recognise all objects in the
+video and in the memory task? (If you can, please try describe the/those
+object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+It is hard to say, some of the smallest objects for example measure tape
+looked different in colored background and in the white one while
+answering questions.  
+<strong>Subject: 10505 </strong> <i>Did you experience any problems
+viewing the videos? Or problems in the experiment in general? (If yes,
+please elaborate.)</i>:  
+One of the boxes with dumbbell was flickering and the object appeared
+before “walking” towards it, and then disappeared. When I clicked S
+button it appeared once again.  
+<strong>Subject: 10507 </strong> <i>Did you recognise all objects in the
+video and in the memory task? (If you can, please try describe the/those
+object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+Recipients like trash can or something similar. Books or magazines.  
+<strong>Subject: 10507 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I associated the table the object was on and position of the table
+relative to the room.
+
+## General comments
+
+<strong>Subject: 10477 </strong>  
+At the end i was getting too tired and my memory wasnt so fresh about
+the order of objects so probably i made even more mistakes there.  
+<strong>Subject: 10491 </strong>  
+Instructions were clear, but the test was confusing\! I guess memory
+overload? Splitting the video in 2 maybe would help.  
+<strong>Subject: 10499 </strong>  
+Quite a interesting and engaging test. It really makes your brain work
+and makes your try to remember positions and order of the objects.
+Really pleased.  
+<strong>Subject: 10505 </strong>  
+If you could give a little clue what will be the test about, I think
+more answers would be correct. I realised that our minds just skip some
+informations that we see probably to save space in our brains. For
+example we don’t remember the way of going into university (trees, path,
+if the sky was cloudy or not, if we saw the STOP sign or not) because it
+is not necessary for us to live. We remember most things when something
+is new and it shocks us or when we are really focused on our task.
