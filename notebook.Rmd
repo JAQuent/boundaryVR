@@ -2445,12 +2445,83 @@ df_order_exp2_dist_agg <- ddply(df_order_exp2_dist,
 names(df_order_exp2_dist_agg) <- c('Context', 'Condition', 'Accuracy', 'Mean', 'SD', 'Mean', 'SD', 'Mean', 'SD', 'Same table 1', 'Same table 2')
 
 conditionTable  <- kable(df_order_exp2_dist_agg, format = 'html', 
-                         caption = "Difference between condition with regard to counterbalancing conditions")
+                         caption = "Table: Difference between condition with regard to counterbalancing conditions")
 add_header_above(conditionTable, c(" " = 3, "Min. distance" = 2, "Max. distance" = 2, "Mean distance" = 2,  "Foil on" = 2))
 ```
 
+The last two columns show how often the foils (1 & 2) are on the same table was the target. As a reminder, foil 1 is always from before the target and foil 2 is always after the target. Below it can be seen whether any foil type was chosen more often than the other.
 
-The picture doesn't really change if I plot both question type of the first block seperately. 
+```{r}
+df_order_false_exp2 <- subset(df_order_exp2, accuracy == 0)
+df_order_foils_exp2 <- ddply(df_order_false_exp2, c('id', 'questionType'), 
+                             summarise,
+                             n   = length(choice),
+                             foil1 = table(choice)[1],
+                             foil2 = table(choice)[2])
+
+# Create percentages
+df_order_foils_exp2$foil1 <- df_order_foils_exp2$foil1 / df_order_foils_exp2$n
+df_order_foils_exp2$foil2 <- df_order_foils_exp2$foil2 / df_order_foils_exp2$n
+
+# Melt for plotting
+df_order_foils_exp2 <- melt(df_order_foils_exp2, id.vars =c("id", "questionType"), measure.vars = c('foil1', 'foil2'))
+df_order_foils_exp2$trans_value <- arcsine_transform(df_order_foils_exp2$value)
+
+# Plot
+ggplot(df_order_foils_exp2, aes(x = variable, y = trans_value)) + 
+  facet_grid(~questionType)+
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1, height = 0) +
+  labs(y = 'arcsine(Percentage of choice)', x = '', title = 'Foil choice on incorrect trials')
+  
+choiceBF <- ttestBF(df_order_foils_exp2$trans_value[df_order_foils_exp2$questionType == 'after' & df_order_foils_exp2$variable == "foil1"],
+                    df_order_foils_exp2$trans_value[df_order_foils_exp2$questionType == 'after' & df_order_foils_exp2$variable == "foil2"],
+                    paired = TRUE)
+
+choiceBF <- reportBF(choiceBF)
+```
+
+However the evidence for different choice rates of foil 1 vs. foil 2 for the after question is low (BF10 = `r choiceBF`, two-sided). Furthermore, I checked whether foils being on the same table as the target influences the results.
+
+```{r}
+df_order_table_exp2 <- ddply(df_order_exp2_dist, c('id', 'questionType', 'foil1_sameTable', 'foil2_sameTable'), 
+                             summarise,
+                             acc   = mean(accuracy))
+
+# Making one variable
+sameTable <- rep('none', nrow(df_order_table_exp2))
+sameTable[df_order_table_exp2$foil1_sameTable == TRUE & df_order_table_exp2$foil2_sameTable == FALSE] <- 'Foil 1 only'
+sameTable[df_order_table_exp2$foil1_sameTable == FALSE & df_order_table_exp2$foil2_sameTable == TRUE] <- 'Foil 2 only'
+sameTable[df_order_table_exp2$foil1_sameTable == TRUE & df_order_table_exp2$foil2_sameTable == TRUE] <- 'Both'
+
+df_order_table_exp2$sameTable <- sameTable
+df_order_table_exp2$trans_acc <- arcsine_transform(df_order_table_exp2$acc)
+
+ggplot(df_order_table_exp2, aes(x = sameTable, y = trans_acc, colour = sameTable)) +
+  facet_grid(~questionType)+
+  geom_jitter(width = 0.1, height = 0, show.legend = FALSE) +
+  geom_boxplot(alpha = 0.5, outlier.shape = NA, show.legend = FALSE) +
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  annotate('text', x = 1, y = arcsine_transform(1/3) -0.5, label = 'Chance')  + 
+  labs(y = 'arcsine(3AFC accuracy)', x = 'Foils on same table', title = 'Accuracy by foils on the same table')
+```
+
+```{r}
+df_order_table_exp2$questionType <- as.factor(df_order_table_exp2$questionType)
+df_order_table_exp2$foil1_sameTable <- as.factor(df_order_table_exp2$foil1_sameTable)
+df_order_table_exp2$foil2_sameTable <- as.factor(df_order_table_exp2$foil2_sameTable)
+foilTable_anova <- anovaBF(trans_acc ~ foil1_sameTable*foil2_sameTable*questionType  + id, 
+                           data = df_order_table_exp2, 
+                           whichRandom = "id",
+                           whichModels = 'top', 
+                           progress = FALSE)
+
+questionTypeBF <- reportBF(1/foilTable_anova[7])
+```
+
+In an ANOVA question type (before vs. after), foil1 on the same table and foil 2 on the same table, there is only evidence for a main effect of question type (BF10 = `r questionTypeBF`).
+
+The picture also doesn't really change if I plot both question types of the first block seperately. 
 
 ```{r}
 ggplot(agg_order_exp2, aes(x = context, y = trans_acc)) + 

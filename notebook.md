@@ -6430,7 +6430,8 @@ with regard to the foils that were used.
 
 <caption>
 
-Difference between condition with regard to counterbalancing conditions
+Table: Difference between condition with regard to counterbalancing
+conditions
 
 </caption>
 
@@ -7122,19 +7123,37 @@ within
 
 </table>
 
-The picture doesn’t really change if I plot both question type of the
-first block seperately.
+The last two columns show how often the foils (1 & 2) are on the same
+table was the target. As a reminder, foil 1 is always from before the
+target and foil 2 is always after the target. Below it can be seen
+whether any foil type was chosen more often than the other.
 
 ![](notebook_files/figure-gfm/unnamed-chunk-56-1.png)<!-- -->
+
+However the evidence for different choice rates of foil 1 vs. foil 2 for
+the after question is low (BF10 = 1.15, two-sided). Furthermore, I
+checked whether foils being on the same table as the target influences
+the results.
+
+![](notebook_files/figure-gfm/unnamed-chunk-57-1.png)<!-- -->
+
+In an ANOVA question type (before vs. after), foil1 on the same table
+and foil 2 on the same table, there is only evidence for a main effect
+of question type (BF10 = 23.2).
+
+The picture also doesn’t really change if I plot both question types of
+the first block seperately.
+
+![](notebook_files/figure-gfm/unnamed-chunk-59-1.png)<!-- -->
 
 The effect is even stronger if I take data from both blocks collapsing
 across both question types.
 
-![](notebook_files/figure-gfm/unnamed-chunk-57-1.png)<!-- -->
+![](notebook_files/figure-gfm/unnamed-chunk-60-1.png)<!-- -->
 
 As can be seen below, over all memory performance is well above chance.
 
-![](notebook_files/figure-gfm/unnamed-chunk-58-1.png)<!-- -->
+![](notebook_files/figure-gfm/unnamed-chunk-61-1.png)<!-- -->
 
 Average over all memory performance is 0.39 (0.07).
 
