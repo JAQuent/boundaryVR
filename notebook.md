@@ -1,7 +1,7 @@
 Notebook for boundary VR
 ================
 Joern Alexander Quent
-30 May, 2020
+05 June, 2020
 
   - [Aim of this project](#aim-of-this-project)
   - [Experiment 1](#experiment-1)
@@ -55,9 +55,12 @@ Joern Alexander Quent
           - [Responses during video](#responses-during-video)
           - [Memory task](#memory-task)
           - [Debrief](#debrief)
-      - [Further comments regarding the
-        questions](#further-comments-regarding-the-questions)
-      - [General comments](#general-comments)
+              - [Further comments regarding the
+                questions](#further-comments-regarding-the-questions)
+          - [General comments](#general-comments)
+      - [Discussion](#discussion-4)
+  - [Experiment 3](#experiment-3)
+      - [Planned changes](#planned-changes)
 
 # Aim of this project
 
@@ -79,7 +82,7 @@ evolution of the project.
 
 <div style="width:300px; height:200px; float:right;position: relative; padding: 10px">
 
-![Figure 1](notebook_files/ww_room.PNG)
+![](notebook_files/ww_room.png)
 
 </div>
 
@@ -7171,7 +7174,7 @@ shown this time).
 
 ![](notebook_files/figure-gfm/fig12-1.png)<!-- -->
 
-## Further comments regarding the questions
+#### Further comments regarding the questions
 
 <strong>Subject: 10476 </strong> <i>Did you use any strategy to remember
 the objects and their order? One strategy for instance could be to
@@ -7299,7 +7302,7 @@ basis. (If yes, please elaborate.)</i>:
 I associated the table the object was on and position of the table
 relative to the room.
 
-## General comments
+### General comments
 
 <strong>Subject: 10477 </strong>  
 At the end i was getting too tired and my memory wasnt so fresh about
@@ -7319,3 +7322,44 @@ example we don’t remember the way of going into university (trees, path,
 if the sky was cloudy or not, if we saw the STOP sign or not) because it
 is not necessary for us to live. We remember most things when something
 is new and it shocks us or when we are really focused on our task.
+
+## Discussion
+
+Because of the quite surprising result that there is evidence that
+within room association are **not** better remembered than across room
+association. We could not find any evidence that specific counter
+balancing conditions or errors in the code were responsible for this.
+Especially the latter was excluded as a possibility because I repeatedly
+compared the videos (as the truth) to the respective data that is
+generated and can say that the labels were not just swapped. We decided
+to stop this experiment meaning not collecting data for the m-shaped
+room. Since as the first step we wanted to establish the basic effect
+from Horner et al. (2016) as a baseline we decided to go back to the
+drawing board. We concluded that one of the problems might be that our
+overall memory performance while nominally above chance, is too low to
+allow manipulations to affect any variance.
+
+# Experiment 3
+
+## Planned changes
+
+Surprisingly, we did not find any effect for open-plane rooms so far. In
+discussion, we found that memory performance in Horner et al (2016) was
+slight higher with 0.44 across experiments and conditions than our
+memory performance, which was 0.39. Our aim now is to improve overall
+memory performance and hope that this will allow to find an effect.
+
+To do this, we decided on three major changes a) memory encoding in
+Experiment 3 will be intentional, b) there will be two study-test cycles
+so that only 44 objects at a time will be encoded in block and c) we
+will try to make the rooms more distinct. The latter can be reached in
+myriad ways. In the Experiment 1 & 2, only five different wall colours
+and floor textures were used. I will now try to find many more textures
+in order to make rooms more distinct perceptually. Further options are
+adding more decoration to the rooms (e.g. wall paints or symbols) or
+even adding music or sounds to different rooms. The feasibility of
+latter options will be evaluated. Another change ‘under the hood’ will
+be that a script will know ensure that all objects have the same
+orientation across all videos. In previous version, I still had to
+manually set the positions and orientation, which sometimes led to
+errors.

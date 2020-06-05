@@ -37,7 +37,7 @@ The aim of this document is to log all major results and changes  thereby docume
 
 # Experiment 1
 <div style="width:300px; height:200px; float:right;position: relative; padding: 10px">
-![Figure 1](notebook_files/ww_room.PNG)
+![](notebook_files/ww_room.png)
 </div>
 
 In order to examine which of the factors (see above) are important for spatial boundaries, we created an M-shaped room (see illustration to the right) and an open plane room that did not feature separating walls. The latter one is similar to the one used by Horner et al. (2016). 
@@ -2497,8 +2497,8 @@ sameTable[df_order_table_exp2$foil1_sameTable == TRUE & df_order_table_exp2$foil
 df_order_table_exp2$sameTable <- sameTable
 df_order_table_exp2$trans_acc <- arcsine_transform(df_order_table_exp2$acc)
 
-ggplot(df_order_table_exp2, aes(x = sameTable, y = trans_acc, colour = sameTable)) +
-  facet_grid(~questionType)+
+ggplot(df_order_table_exp2, aes(x = sameTable, y = trans_acc, fill = sameTable)) +
+  facet_grid(~questionType) +
   geom_jitter(width = 0.1, height = 0, show.legend = FALSE) +
   geom_boxplot(alpha = 0.5, outlier.shape = NA, show.legend = FALSE) +
   geom_hline(yintercept = arcsine_transform(1/3)) +
@@ -2756,7 +2756,7 @@ for(i in 1:nQuestions){
 plot_grid(pie1, pie2, pie3, pie4, pie5, pie6, pie7, pie8, pie9, pie10, ncol = 2, align = 'hv')
 ```
 
-## Further comments regarding the questions
+#### Further comments regarding the questions
 ```{r, results = 'asis'}
 for(i in 1:nrow(debriefData)){
   if(!(is.na(debriefData$survey[i]) | debriefData$survey[i] == "")){
@@ -2767,7 +2767,7 @@ for(i in 1:nrow(debriefData)){
 }
 ```
 
-## General comments
+### General comments
 ```{r, results = 'asis'}
 for(i in 1:length(general_comments)){
   if(!(is.na(general_comments[i]) | general_comments[i] == "")){
@@ -2776,3 +2776,22 @@ for(i in 1:length(general_comments)){
   }
 }
 ```
+
+## Discussion
+Because of the quite surprising result that there is evidence that within room association are __not__ better remembered than across room association. We could not find any evidence that specific counter balancing conditions or errors in the code were responsible for this. Especially the latter was excluded as a possibility because I repeatedly compared the videos (as the truth) to the respective data that is generated and can say that the labels were not just swapped. 
+We decided to stop this experiment meaning not collecting data for the m-shaped room. Since as the first step we wanted to establish the basic effect from Horner et al. (2016) as a baseline we decided to go back to the drawing board. We concluded that one of the problems might be that our overall memory performance while nominally above chance, is too low to allow manipulations to affect any variance. 
+
+# Experiment 3
+## Planned changes
+```{r}
+# Just averaging Aidan's table
+aidan_overall <- round(mean(c(aidansData1$accuracy, aidansData2$accuracy)), 2)
+
+# Our overall memory performance
+our_overall <- round(mean(agg_order_exp2_overall$acc), 2)
+```
+
+Surprisingly, we did not find any effect for open-plane rooms so far. In discussion, we found that memory performance in Horner et al (2016) was slight higher with `r aidan_overall` across experiments and conditions than our memory performance, which was `r our_overall`. Our aim now is to improve overall memory performance and hope that this will allow to find an effect.
+
+To do this, we decided on three major changes a) memory encoding in Experiment 3 will be intentional, b) there will be two study-test cycles so that only 44 objects at a time will be encoded in block and c) we will try to make the rooms more distinct. The latter can be reached in myriad ways. In the Experiment 1 & 2, only five different wall colours and floor textures were used. I will now try to find many more textures in order to make rooms more distinct perceptually. Further options are adding more decoration to the rooms (e.g. wall paints or symbols) or even adding music or sounds to different rooms. The feasibility of latter options will be evaluated. Another change 'under the hood' will be that a script will know ensure that all objects have the same orientation across all videos. In previous version, I still had to manually set the positions and orientation, which sometimes led to errors. 
+
