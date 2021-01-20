@@ -1,0 +1,101 @@
+---
+title: "Boundary VR room colour palette"
+author: "Joern Alexander Quent"
+date: "03/12/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+room_num <- 45
+```
+
+# Libraries
+```{r}
+# Libraries
+library(RColorBrewer)
+library(ggplot2)
+library(knitr)
+```
+
+
+I think the best palette for this might be Pastel2 as the colour are probably light enough to be room colours.
+
+```{r, fig.height = 10, fig.width = 6, fig.align = "center"}
+display.brewer.all()
+```
+
+
+The tones of this palette are quite smooth and I expect them to work well as room colours
+
+```{r}
+display.brewer.pal(n = 8, name = 'Pastel2')
+```
+
+Now it's important to interpolate between the colours to create `r room_num` colour for our rooms. For this I follow [this example](https://drsimonj.svbtle.com/creating-corporate-colour-palettes-for-ggplot2).
+
+```{r}
+# Get base colours 
+base_colours <- brewer.pal(8, 'Pastel2')
+
+# Interpolate colours and bind to df
+colour_df <- data.frame(num     = as.factor(1:room_num),
+                        hexcode = colorRampPalette(base_colours)(room_num), 
+                        stringsAsFactors=FALSE)
+```
+
+Now let's display the colours:
+
+```{r, echo = FALSE}
+# Add a value for plotting
+ggplot(colour_df, aes(x = num, y = 1, fill = hexcode)) + 
+  geom_bar(stat = "identity", show.legend = FALSE) + 
+  scale_fill_manual("legend", values = colour_df$hexcode)+
+  coord_cartesian(expand = FALSE) +
+  labs(title = 'Room colour palette for boundaryVR', x = 'Colour number') +
+  theme(legend.position = "none",
+        panel.grid = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+```
+
+I think this actually works quite well. Since they will be scrambled, unsmooth transitions as displayed above, don't matter. 
+
+In the last step, I print all colour values so they can be copied to unity3d:
+
+```{r, echo = FALSE}
+kable(colour_df)
+```
+
+In the last step, I already create the scrambling as used for the rooms. 
+
+
+```{r}
+set.seed(13)
+
+shuffle <- sample(room_num)
+
+colour_df$num <- factor(colour_df$num, levels = shuffle)
+```
+
+```{r, echo = FALSE}
+# Add a value for plotting
+ggplot(colour_df, aes(x = num, y = 1, fill = hexcode)) + 
+  geom_bar(stat = "identity", show.legend = FALSE) + 
+  scale_fill_manual("legend", values = colour_df$hexcode)+
+  coord_cartesian(expand = FALSE) +
+  labs(title = 'Shuffled room colour palette for boundaryVR', x = 'Colour number') +
+  theme(legend.position = "none",
+        panel.grid = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+```
+
+This shuffling looks good, therefore I read it to a file. However as I will use this as an index for C# it needs to start with zero. 
+
+```{r}
+write.table(data.frame(shuffle - 1), file = 'material_index.txt', row.names = FALSE, col.names = FALSE, quote = FALSE)
+```

@@ -1819,7 +1819,7 @@ names(table10) <- c('Support', 'Percent')
 kable(table10, format = 'html', caption = "Table 10: Results of simulation for null effect")
 ```
 
-### Effect size similar to open plane room versus across
+### Effect size similar to open-plane room (within vs. across)
 ```{r}
 df_H1$trans_bf <- NA
 df_H1$trans_bf[df_H1$bf < 1] <- -1/df_H1$bf[df_H1$bf < 1] + 1
@@ -2363,9 +2363,9 @@ df_order_exp2$stimulus <- as.character(df_order_exp2$stimulus)
 ```{r}
 agg_order_exp2 <- ddply(df_order_exp2, c('worker_id', 'roomType', 'context', 'test_part', 'questionType', 'counterbalance_condition'), 
                         summarise, 
+                        n = length(accuracy),
                         acc = mean(accuracy), 
                         rt = mean(rt))
-
 
 # Transform values
 agg_order_exp2$trans_acc <- arcsine_transform(agg_order_exp2$acc)
@@ -2795,3 +2795,4 @@ Surprisingly, we did not find any effect for open-plane rooms so far. In discuss
 
 To do this, we decided on three major changes a) memory encoding in Experiment 3 will be intentional, b) there will be two study-test cycles so that only 44 objects at a time will be encoded in block and c) we will try to make the rooms more distinct. The latter can be reached in myriad ways. In the Experiment 1 & 2, only five different wall colours and floor textures were used. I will now try to find many more textures in order to make rooms more distinct perceptually. Further options are adding more decoration to the rooms (e.g. wall paints or symbols) or even adding music or sounds to different rooms. The feasibility of latter options will be evaluated. Another change 'under the hood' will be that a script will know ensure that all objects have the same orientation across all videos. In previous version, I still had to manually set the positions and orientation, which sometimes led to errors. 
 
+two groups: 1 m- and o-shape room. 

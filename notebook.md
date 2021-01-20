@@ -1,7 +1,7 @@
 Notebook for boundary VR
 ================
 Joern Alexander Quent
-05 June, 2020
+12 January, 2021
 
   - [Aim of this project](#aim-of-this-project)
   - [Experiment 1](#experiment-1)
@@ -7363,3 +7363,5 @@ be that a script will know ensure that all objects have the same
 orientation across all videos. In previous version, I still had to
 manually set the positions and orientation, which sometimes led to
 errors.
+
+two groups: 1 m- and o-shape room.
