@@ -2255,9 +2255,9 @@ df_video_exp2_intervalls_agg <- ddply(df_video_exp2_intervalls,
                                       n       = length(IRI))
 ```
 
-The response during the video were mostly without anything markworthy apart from the fact that three participants had more than approximately 88 responses (126, 144, 910). My suspicion is that those just pressed more than one because they didn't get any feedback. This is also actually mentioned in the feedback. Apart from those three participants, participants had an expected inter-response intervall of circa 7 secs, which is consistent with the time between objects.
+The response during the video were mostly without anything noteworthy apart from the fact that three participants had more than approximately 88 responses (126, 144, 910). My suspicion is that those just pressed more than one because they didn't get any feedback. This is also actually mentioned in the feedback. Apart from those three participants, participants had an expected inter-response interval of circa 7 secs, which is consistent with the time between objects.
 
-There is actually one thing that I don't understand for the participants with 910 key presses that is the first four entries are extremely high numbers: `r df_video_exp2$timeStamp[df_video_exp2$worker_id == 10507][1]`. However, in the script the time stamp are caculated relative to the video start, see
+There is actually one thing that I don't understand for the participants with 910 key presses that is the first four entries are extremely high numbers: `r df_video_exp2$timeStamp[df_video_exp2$worker_id == 10507][1]`. However, in the script the time stamp are calculated relative to the video start, see
 ```
 		$(document).on('keypress', function(e) {
 		    if (e.which == 115 || e.which == 108) {
@@ -2302,7 +2302,7 @@ for(i in 1:n){
   # Temporal order memory 1
   temporalOrder1 <- subset(tempDF, test_part == 'temporalOrder1')
   
-  # Calcalate accuracy 
+  # Calculate accuracy 
   accuracy <- rep(NA, nrow(temporalOrder1))
   accuracy[temporalOrder1$response == temporalOrder1$corr_resp] <- 1
   accuracy[temporalOrder1$response != temporalOrder1$corr_resp] <- 0

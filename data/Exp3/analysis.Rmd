@@ -1,0 +1,176 @@
+---
+title: "Video Anlysis"
+author: "Joern Alexander Quent"
+date: "28/01/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Results
+```{r}
+exp3_path <- "~/boundaryVR/data/Exp3/batch1/"
+```
+
+### Responses during video
+```{r}
+# Get files
+folder         <- '/show_video1/'
+allFiles       <- list.files(paste0(exp3_path, folder))
+allFiles_paths <- paste0(exp3_path, folder, allFiles)
+n              <- length(allFiles_paths)
+
+# Var
+worker_id               <- c()
+studyResultId            <- c()
+vid_ext                  <- c()
+subjCond                 <- c()
+counterbalance_condition <- c()
+num_keyPress             <- c()
+movie                    <- c()
+subjCond_corr            <- c()
+movide_corr              <- c()
+# Add video name
+# Loop through all files
+for(i in 1:n){
+  jsonString                  <- readChar(allFiles_paths[i], file.info(allFiles_paths[i])$size)
+  resultsList                 <- fromJSON(jsonString)
+  worker_id[i]                <- resultsList$workerId
+  studyResultId[i]            <- resultsList$studyResultId
+  vid_ext[i]                  <- resultsList$vid_ext
+  subjCond[i]                 <- resultsList$subjCond
+  counterbalance_condition[i] <- resultsList$counterbalance_condition
+  num_keyPress[i]             <- length(resultsList$whichKey)
+  # Extract the the movie number
+  movie[i]                    <- as.numeric(substr(resultsList$movie, nchar(resultsList$movie), nchar(resultsList$movie)))
+  
+  # Create response data.frame if number of responses is above one
+  if(num_keyPress[i] > 1){
+    tempDF <- data.frame(worker_id = worker_id[i], 
+                         studyResultId = studyResultId[i],
+                         keyPressed = resultsList$whichKey, 
+                         timeStamp = resultsList$timeStamps)
+    
+    if(i == 1 | !exists('df_video_exp3')){
+      df_video_exp3 <- tempDF
+    } else {
+      df_video_exp3 <- rbind(df_video_exp3, tempDF)
+    }
+    }
+}
+
+
+
+
+# Create aggregate info df
+df_video_exp3_info <- data.frame(worker_id,
+                                 studyResultId, 
+                                 vid_ext,
+                                 subjCond,
+                                 counterbalance_condition,
+                                 movie,
+                                 num_keyPress)
+
+# Calculate inter-response intervals
+df_video_exp3_intervalls <- ddply(df_video_exp3, 
+                                  c('worker_id', 'studyResultId'), 
+                                  mutate,
+                                  IRI = c(diff(timeStamp), NA))
+
+df_video_exp3_intervalls_agg <- ddply(df_video_exp3_intervalls, 
+                                      c('worker_id', 'studyResultId'), summarise,
+                                      meanIRI = mean(IRI, na.rm = TRUE),
+                                      sdIRI   = sd(IRI, na.rm = TRUE),
+                                      n       = length(IRI))
+```
+
+
+```{r}
+df_video_exp3$keyPressed <- as.factor(df_video_exp3$keyPressed)
+df_video_exp3 <- df_video_exp3[df_video_exp3$timeStamp < 1.1e+12, ]
+
+ggplot(df_video_exp3, aes(x = timeStamp, y = keyPressed)) + geom_jitter(width = 0) 
+```
+
+
+Let's start with only considering people who have given exactly 44 responses.
+
+```{r}
+# People that have given 44 responses
+include <- df_video_exp3_intervalls_agg$worker_id[df_video_exp3_intervalls_agg$n == 44]
+
+# Create subset
+df_video_exp3_sub <- df_video_exp3[df_video_exp3$worker_id %in% include, ]
+
+# Calculate inter-response intervals
+df_video_exp3_intervalls <- ddply(df_video_exp3_sub, 
+                                  c('worker_id', 'studyResultId'), 
+                                  mutate,
+                                  IRI = c(diff(timeStamp), NA))
+
+df_video_exp3_intervalls_agg <- ddply(df_video_exp3_intervalls, 
+                                      c('worker_id', 'studyResultId'), summarise,
+                                      meanIRI = mean(IRI, na.rm = TRUE),
+                                      sdIRI   = sd(IRI, na.rm = TRUE),
+                                      n       = length(IRI))
+
+```
+
+Now the mean IRI is very similar. 
+
+
+Look for congruency that is correlation between one subject and everyone else. 
+
+```{r}
+# Binarise for correlation
+df_video_exp3_sub$smaller <- 0
+df_video_exp3_sub$smaller[df_video_exp3_sub$keyPressed == 108] <- 1
+
+# Add object id
+df_video_exp3_sub <- ddply(df_video_exp3_sub, c('worker_id '), mutate, obj_id = 1:44)
+
+# Go through all participants and calculate correlation
+workers         <- unique(df_video_exp3_sub$worker_id)
+corr_per_worker <- c()
+
+# Loop through all worker
+for(i in 1:length(workers)){
+  # Calculate correlation for this worker
+  worker <- workers[i]
+  
+  # Calculate average response for everyone else
+  everyone_else    <- df_video_exp3_sub[df_video_exp3_sub$worker_id != worker, ]
+  average_response <- ddply(everyone_else, c('obj_id'), summarise, smaller = mean(smaller))
+  
+  # Calculate correlation with everyone else
+  corr_per_worker[i] <- cor(df_video_exp3_sub$smaller[df_video_exp3_sub$worker_id == worker],
+                            average_response$smaller) 
+}
+
+range(corr_per_worker)
+```
+
+
+Bootstrap:
+
+```{r}
+nIter <- 100000
+
+average_response <- ddply(df_video_exp3_sub, c('obj_id'), summarise, smaller = mean(smaller))
+bootstrap_corr <- c()
+
+for(i in 1:nIter){
+  # Calculate correlation with everyone else
+  bootstrap_corr[i] <- cor(sample(c(0, 1), 44, replace = TRUE),
+                            average_response$smaller) 
+}
+
+ggplot(as.data.frame(bootstrap_corr), aes(bootstrap_corr)) + geom_histogram() + geom_vline(xintercept = range(corr_per_worker)[1])
+quantile(bootstrap_corr, 0.95)
+```
+
+
+Is there any outlier?

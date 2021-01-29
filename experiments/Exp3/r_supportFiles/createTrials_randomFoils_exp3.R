@@ -5,12 +5,12 @@
 # 3. Foils can be repeatedly sampled. 
 # A notable change between Exp 2 and Exp 3, is that task is now split in two parts. 
 #
-# 
 # /* 
 # ----------------------------- General stuff ---------------------------
 # */
 # Setting seed
 set.seed(8142)
+
 
 # Library
 library(rjson)
@@ -55,68 +55,72 @@ vid1_after$target   <- c(vid1_after$objNum[1:(numObj -1) + 1], NA)
 vid1_after_h1 <- vid1_after[1:44,]
 vid1_after_h2 <- vid1_after[45:88,]
 
+# /* 
+# ----------------------------- h1 ---------------------------
+# */
 # Selecting foils that meet constraints above
-foil1 <- rep(NA, numObj)
-dist1 <- rep(NA, numObj)
-foil2 <- rep(NA, numObj)
-dist2 <- rep(NA, numObj)
-for(i in 1:numObj){
-  if(any(vid1_after$room < vid1_after$room[i] - 1)){
+numOj_half <- numObj/2
+foil1 <- rep(NA, numOj_half)
+dist1 <- rep(NA, numOj_half)
+foil2 <- rep(NA, numOj_half)
+dist2 <- rep(NA, numOj_half)
+for(i in 1:nrow(vid1_after_h1)){
+  if(any(vid1_after_h1$room < vid1_after_h1$room[i] - 1)){
     # If there is a room that is after the probe/cue
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
-    availObj <- vid1_after[vid1_after$room < vid1_after$room[i] - 1, 'objNum']
+    availObj <- vid1_after_h1[vid1_after_h1$room < vid1_after_h1$room[i] - 1, 'objNum']
     # Check if there is more than 1 object avail
     if(length(availObj) == 1){
       foil1[i] <- availObj
     } else {
       foil1[i] <- sample(availObj, 1)  
     } 
-    dist1[i] <- which(foil1[i] == vid1_after$objNum) - i
+    dist1[i] <- which(foil1[i] == vid1_after_h1$objNum) - i
   }
   
-  if(any(vid1_after$room > vid1_after$room[i] + 1)){
+  if(any(vid1_after_h1$room > vid1_after_h1$room[i] + 1)){
     # If there is a room that is after the probe/cue
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
-    availObj <- vid1_after[vid1_after$room > vid1_after$room[i] + 1, 'objNum']
+    availObj <- vid1_after_h1[vid1_after_h1$room > vid1_after_h1$room[i] + 1, 'objNum']
     # Check if there is more than 1 object avail
     if(length(availObj) == 1){
       foil2[i] <- availObj
     } else {
       foil2[i] <- sample(availObj, 1)  
     }
-    dist2[i] <- which(foil2[i] == vid1_after$objNum) - i
+    dist2[i] <- which(foil2[i] == vid1_after_h1$objNum) - i
   }
 }
 
 # Assign to data.frame
-vid1_after$foil1 <- foil1
-vid1_after$foil2 <- foil2
-vid1_after$dist1 <- dist1
-vid1_after$dist2 <- dist2
+vid1_after_h1$foil1 <- foil1
+vid1_after_h1$foil2 <- foil2
+vid1_after_h1$dist1 <- dist1
+vid1_after_h1$dist2 <- dist2
 
 # Add position of target and foils on the screen during 3AFC task
 targetPos <- c()
 foil1Pos  <- c()
 foil2Pos  <- c()
-for(i in 1:dim(vid1_after)[1]){
+for(i in 1:dim(vid1_after_h1)[1]){
   shuffle      <- sample(1:3)
   targetPos[i] <- shuffle[1]
   foil1Pos[i]  <- shuffle[2]
   foil2Pos[i]  <- shuffle[3]
 }
-vid1_after$targetPos <- targetPos
-vid1_after$foil1Pos  <- foil1Pos
-vid1_after$foil2Pos  <- foil2Pos
-vid1_after$question  <- after
+vid1_after_h1$targetPos <- targetPos
+vid1_after_h1$foil1Pos  <- foil1Pos
+vid1_after_h1$foil2Pos  <- foil2Pos
+vid1_after_h1$question  <- after
 
 # Get same room and context information
-sameRoom   <- rep(NA, numObj)
-for(i in 1:numObj){
-  if(vid1_after$question[i] == after){
-    if(i + 1 < 89){
-      if(vid1_after$room[i + 1] == vid1_after$room[i]){
+sameRoom   <- rep(NA, numOj_half)
+for(i in 1:numOj_half){
+  if(vid1_after_h1$question[i] == after){
+    if(i + 1 < numOj_half + 1){
+      if(vid1_after_h1$room[i + 1] == vid1_after_h1$room[i]){
         sameRoom[i] <- 1
       } else {
         sameRoom[i] <- 0
@@ -124,7 +128,7 @@ for(i in 1:numObj){
     }
   } else {
     if(i - 1 > 0){
-      if(vid1_after$room[i - 1] == vid1_after$room[i]){
+      if(vid1_after_h1$room[i - 1] == vid1_after_h1$room[i]){
         sameRoom[i] <- 1
       } else {
         sameRoom[i] <- 0
@@ -132,28 +136,133 @@ for(i in 1:numObj){
     }
   }
 }
-vid1_after$sameRoom   <- sameRoom
-context <- rep(NA, numObj)
-context[vid1_after$sameRoom == 0] <- 'across'
-context[vid1_after$sameRoom == 1] <- 'within'
-vid1_after$context <- context
+
+vid1_after_h1$sameRoom   <- sameRoom
+context <- rep(NA, numOj_half)
+context[vid1_after_h1$sameRoom == 0] <- 'across'
+context[vid1_after_h1$sameRoom == 1] <- 'within'
+vid1_after_h1$context <- context
 
 # Get the table of the foils
-foil1Table <- rep(NA, nrow(vid1_after))
-foil2Table <- rep(NA, nrow(vid1_after))
-for(i in 1:nrow(vid1_after)){
+foil1Table <- rep(NA, nrow(vid1_after_h1))
+foil2Table <- rep(NA, nrow(vid1_after_h1))
+for(i in 1:nrow(vid1_after_h1)){
   # Foil 1
-  if(!is.na(vid1_after$foil1[i])){
-    foil1Table[i] <- vid1_after[vid1_after$objNum == vid1_after$foil1[i], 'table']
+  if(!is.na(vid1_after_h1$foil1[i])){
+    foil1Table[i] <- vid1_after_h1[vid1_after_h1$objNum == vid1_after_h1$foil1[i], 'table']
   }
   
   # Foil 2
-  if(!is.na(vid1_after$foil2[i])){
-    foil2Table[i] <- vid1_after[vid1_after$objNum == vid1_after$foil2[i], 'table']
+  if(!is.na(vid1_after_h1$foil2[i])){
+    foil2Table[i] <- vid1_after_h1[vid1_after_h1$objNum == vid1_after_h1$foil2[i], 'table']
   }
 }
-vid1_after$foil1Table <- foil1Table
-vid1_after$foil2Table <- foil2Table
+vid1_after_h1$foil1Table <- foil1Table
+vid1_after_h1$foil2Table <- foil2Table
+
+# /* 
+# ----------------------------- h2 ---------------------------
+# */
+# Selecting foils that meet constraints above
+numOj_half <- numObj/2
+foil1 <- rep(NA, numOj_half)
+dist1 <- rep(NA, numOj_half)
+foil2 <- rep(NA, numOj_half)
+dist2 <- rep(NA, numOj_half)
+for(i in 1:nrow(vid1_after_h2)){
+  if(any(vid1_after_h2$room < vid1_after_h2$room[i] - 1)){
+    # If there is a room that is after the probe/cue
+    availObj <- c() # Reset var
+    # Find object that meet the constraints and then select random sample
+    availObj <- vid1_after_h2[vid1_after_h2$room < vid1_after_h2$room[i] - 1, 'objNum']
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    } 
+    dist1[i] <- which(foil1[i] == vid1_after_h2$objNum) - i
+  }
+  
+  if(any(vid1_after_h2$room > vid1_after_h2$room[i] + 1)){
+    # If there is a room that is after the probe/cue
+    availObj <- c() # Reset var
+    # Find object that meet the constraints and then select random sample
+    availObj <- vid1_after_h2[vid1_after_h2$room > vid1_after_h2$room[i] + 1, 'objNum']
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
+    dist2[i] <- which(foil2[i] == vid1_after_h2$objNum) - i
+  }
+}
+
+# Assign to data.frame
+vid1_after_h2$foil1 <- foil1
+vid1_after_h2$foil2 <- foil2
+vid1_after_h2$dist1 <- dist1
+vid1_after_h2$dist2 <- dist2
+
+# Add position of target and foils on the screen during 3AFC task
+targetPos <- c()
+foil1Pos  <- c()
+foil2Pos  <- c()
+for(i in 1:dim(vid1_after_h2)[1]){
+  shuffle      <- sample(1:3)
+  targetPos[i] <- shuffle[1]
+  foil1Pos[i]  <- shuffle[2]
+  foil2Pos[i]  <- shuffle[3]
+}
+vid1_after_h2$targetPos <- targetPos
+vid1_after_h2$foil1Pos  <- foil1Pos
+vid1_after_h2$foil2Pos  <- foil2Pos
+vid1_after_h2$question  <- after
+
+# Get same room and context information
+sameRoom   <- rep(NA, numOj_half)
+for(i in 1:numOj_half){
+  if(vid1_after_h2$question[i] == after){
+    if(i + 1 < numOj_half +1){
+      if(vid1_after_h2$room[i + 1] == vid1_after_h2$room[i]){
+        sameRoom[i] <- 1
+      } else {
+        sameRoom[i] <- 0
+      }
+    }
+  } else {
+    if(i - 1 > 0){
+      if(vid1_after_h2$room[i - 1] == vid1_after_h2$room[i]){
+        sameRoom[i] <- 1
+      } else {
+        sameRoom[i] <- 0
+      }
+    }
+  }
+}
+vid1_after_h2$sameRoom   <- sameRoom
+context <- rep(NA, numOj_half)
+context[vid1_after_h2$sameRoom == 0] <- 'across'
+context[vid1_after_h2$sameRoom == 1] <- 'within'
+vid1_after_h2$context <- context
+
+# Get the table of the foils
+foil1Table <- rep(NA, nrow(vid1_after_h2))
+foil2Table <- rep(NA, nrow(vid1_after_h2))
+for(i in 1:nrow(vid1_after_h2)){
+  # Foil 1
+  if(!is.na(vid1_after_h2$foil1[i])){
+    foil1Table[i] <- vid1_after_h2[vid1_after_h2$objNum == vid1_after_h2$foil1[i], 'table']
+  }
+  
+  # Foil 2
+  if(!is.na(vid1_after_h2$foil2[i])){
+    foil2Table[i] <- vid1_after_h2[vid1_after_h2$objNum == vid1_after_h2$foil2[i], 'table']
+  }
+}
+vid1_after_h2$foil1Table <- foil1Table
+vid1_after_h2$foil2Table <- foil2Table
 
 # /* 
 # ----------------------------- Video 2 ---------------------------
@@ -172,68 +281,75 @@ roomType            <- rep(c('m', 'm', 'm', 'm'),21)
 vid2_after$roomType <- c('m', roomType, 'm', 'm', 'm')
 vid2_after$target   <- c(vid2_after$objNum[1:(numObj -1) + 1], NA)
 
+vid2_after_h1 <- vid2_after[1:44,]
+vid2_after_h2 <- vid2_after[45:88,]
+
+# /* 
+# ----------------------------- h1 ---------------------------
+# */
 # Selecting foils that meet constraints above
-foil1 <- rep(NA, numObj)
-dist1 <- rep(NA, numObj)
-foil2 <- rep(NA, numObj)
-dist2 <- rep(NA, numObj)
-for(i in 1:numObj){
-  if(any(vid2_after$room < vid2_after$room[i] - 1)){
+numOj_half <- numObj/2
+foil1 <- rep(NA, numOj_half)
+dist1 <- rep(NA, numOj_half)
+foil2 <- rep(NA, numOj_half)
+dist2 <- rep(NA, numOj_half)
+for(i in 1:nrow(vid2_after_h1)){
+  if(any(vid2_after_h1$room < vid2_after_h1$room[i] - 1)){
     # If there is a room that is after the probe/cue
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
-    availObj <- vid2_after[vid2_after$room < vid2_after$room[i] - 1, 'objNum']
+    availObj <- vid2_after_h1[vid2_after_h1$room < vid2_after_h1$room[i] - 1, 'objNum']
     # Check if there is more than 1 object avail
     if(length(availObj) == 1){
       foil1[i] <- availObj
     } else {
       foil1[i] <- sample(availObj, 1)  
-    }
-    dist1[i] <- which(foil1[i] == vid2_after$objNum) - i
+    } 
+    dist1[i] <- which(foil1[i] == vid2_after_h1$objNum) - i
   }
   
-  if(any(vid2_after$room > vid2_after$room[i] + 1)){
+  if(any(vid2_after_h1$room > vid2_after_h1$room[i] + 1)){
     # If there is a room that is after the probe/cue
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
-    availObj <- vid2_after[vid2_after$room > vid2_after$room[i] + 1, 'objNum']
+    availObj <- vid2_after_h1[vid2_after_h1$room > vid2_after_h1$room[i] + 1, 'objNum']
     # Check if there is more than 1 object avail
     if(length(availObj) == 1){
       foil2[i] <- availObj
     } else {
       foil2[i] <- sample(availObj, 1)  
     }
-    dist2[i] <- which(foil2[i] == vid2_after$objNum) - i
+    dist2[i] <- which(foil2[i] == vid2_after_h1$objNum) - i
   }
 }
 
 # Assign to data.frame
-vid2_after$foil1 <- foil1
-vid2_after$foil2 <- foil2
-vid2_after$dist1 <- dist1
-vid2_after$dist2 <- dist2
+vid2_after_h1$foil1 <- foil1
+vid2_after_h1$foil2 <- foil2
+vid2_after_h1$dist1 <- dist1
+vid2_after_h1$dist2 <- dist2
 
 # Add position of target and foils on the screen during 3AFC task
 targetPos <- c()
 foil1Pos  <- c()
 foil2Pos  <- c()
-for(i in 1:dim(vid2_after)[1]){
+for(i in 1:dim(vid2_after_h1)[1]){
   shuffle      <- sample(1:3)
   targetPos[i] <- shuffle[1]
   foil1Pos[i]  <- shuffle[2]
   foil2Pos[i]  <- shuffle[3]
 }
-vid2_after$targetPos <- targetPos
-vid2_after$foil1Pos  <- foil1Pos
-vid2_after$foil2Pos  <- foil2Pos
-vid2_after$question  <- after
+vid2_after_h1$targetPos <- targetPos
+vid2_after_h1$foil1Pos  <- foil1Pos
+vid2_after_h1$foil2Pos  <- foil2Pos
+vid2_after_h1$question  <- after
 
 # Get same room and context information
-sameRoom   <- rep(NA, numObj)
-for(i in 1:numObj){
-  if(vid2_after$question[i] == after){
-    if(i + 1 < 89){
-      if(vid2_after$room[i + 1] == vid2_after$room[i]){
+sameRoom   <- rep(NA, numOj_half)
+for(i in 1:numOj_half){
+  if(vid2_after_h1$question[i] == after){
+    if(i + 1 < numOj_half + 1){
+      if(vid2_after_h1$room[i + 1] == vid2_after_h1$room[i]){
         sameRoom[i] <- 1
       } else {
         sameRoom[i] <- 0
@@ -241,7 +357,7 @@ for(i in 1:numObj){
     }
   } else {
     if(i - 1 > 0){
-      if(vid2_after$room[i - 1] == vid2_after$room[i]){
+      if(vid2_after_h1$room[i - 1] == vid2_after_h1$room[i]){
         sameRoom[i] <- 1
       } else {
         sameRoom[i] <- 0
@@ -249,28 +365,132 @@ for(i in 1:numObj){
     }
   }
 }
-vid2_after$sameRoom   <- sameRoom
-context <- rep(NA, numObj)
-context[vid2_after$sameRoom == 0] <- 'across'
-context[vid2_after$sameRoom == 1] <- 'within'
-vid2_after$context <- context
+vid2_after_h1$sameRoom   <- sameRoom
+context <- rep(NA, numOj_half)
+context[vid2_after_h1$sameRoom == 0] <- 'across'
+context[vid2_after_h1$sameRoom == 1] <- 'within'
+vid2_after_h1$context <- context
 
 # Get the table of the foils
-foil1Table <- rep(NA, nrow(vid2_after))
-foil2Table <- rep(NA, nrow(vid2_after))
-for(i in 1:nrow(vid2_after)){
+foil1Table <- rep(NA, nrow(vid2_after_h1))
+foil2Table <- rep(NA, nrow(vid2_after_h1))
+for(i in 1:nrow(vid2_after_h1)){
   # Foil 1
-  if(!is.na(vid2_after$foil1[i])){
-    foil1Table[i] <- vid2_after[vid2_after$objNum == vid2_after$foil1[i], 'table']
+  if(!is.na(vid2_after_h1$foil1[i])){
+    foil1Table[i] <- vid2_after_h1[vid2_after_h1$objNum == vid2_after_h1$foil1[i], 'table']
   }
   
   # Foil 2
-  if(!is.na(vid2_after$foil2[i])){
-    foil2Table[i] <- vid2_after[vid2_after$objNum == vid2_after$foil2[i], 'table']
+  if(!is.na(vid2_after_h1$foil2[i])){
+    foil2Table[i] <- vid2_after_h1[vid2_after_h1$objNum == vid2_after_h1$foil2[i], 'table']
   }
 }
-vid2_after$foil1Table <- foil1Table
-vid2_after$foil2Table <- foil2Table
+vid2_after_h1$foil1Table <- foil1Table
+vid2_after_h1$foil2Table <- foil2Table
+
+# /* 
+# ----------------------------- h2 ---------------------------
+# */
+# Selecting foils that meet constraints above
+numOj_half <- numObj/2
+foil1 <- rep(NA, numOj_half)
+dist1 <- rep(NA, numOj_half)
+foil2 <- rep(NA, numOj_half)
+dist2 <- rep(NA, numOj_half)
+for(i in 1:nrow(vid2_after_h2)){
+  if(any(vid2_after_h2$room < vid2_after_h2$room[i] - 1)){
+    # If there is a room that is after the probe/cue
+    availObj <- c() # Reset var
+    # Find object that meet the constraints and then select random sample
+    availObj <- vid2_after_h2[vid2_after_h2$room < vid2_after_h2$room[i] - 1, 'objNum']
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    } 
+    dist1[i] <- which(foil1[i] == vid2_after_h2$objNum) - i
+  }
+  
+  if(any(vid2_after_h2$room > vid2_after_h2$room[i] + 1)){
+    # If there is a room that is after the probe/cue
+    availObj <- c() # Reset var
+    # Find object that meet the constraints and then select random sample
+    availObj <- vid2_after_h2[vid2_after_h2$room > vid2_after_h2$room[i] + 1, 'objNum']
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
+    dist2[i] <- which(foil2[i] == vid2_after_h2$objNum) - i
+  }
+}
+
+# Assign to data.frame
+vid2_after_h2$foil1 <- foil1
+vid2_after_h2$foil2 <- foil2
+vid2_after_h2$dist1 <- dist1
+vid2_after_h2$dist2 <- dist2
+
+# Add position of target and foils on the screen during 3AFC task
+targetPos <- c()
+foil1Pos  <- c()
+foil2Pos  <- c()
+for(i in 1:dim(vid2_after_h2)[1]){
+  shuffle      <- sample(1:3)
+  targetPos[i] <- shuffle[1]
+  foil1Pos[i]  <- shuffle[2]
+  foil2Pos[i]  <- shuffle[3]
+}
+vid2_after_h2$targetPos <- targetPos
+vid2_after_h2$foil1Pos  <- foil1Pos
+vid2_after_h2$foil2Pos  <- foil2Pos
+vid2_after_h2$question  <- after
+
+# Get same room and context information
+sameRoom   <- rep(NA, numOj_half)
+for(i in 1:numOj_half){
+  if(vid2_after_h2$question[i] == after){
+    if(i + 1 < numOj_half +1){
+      if(vid2_after_h2$room[i + 1] == vid2_after_h2$room[i]){
+        sameRoom[i] <- 1
+      } else {
+        sameRoom[i] <- 0
+      }
+    }
+  } else {
+    if(i - 1 > 0){
+      if(vid2_after_h2$room[i - 1] == vid2_after_h2$room[i]){
+        sameRoom[i] <- 1
+      } else {
+        sameRoom[i] <- 0
+      }
+    }
+  }
+}
+vid2_after_h2$sameRoom   <- sameRoom
+context <- rep(NA, numOj_half)
+context[vid2_after_h2$sameRoom == 0] <- 'across'
+context[vid2_after_h2$sameRoom == 1] <- 'within'
+vid2_after_h2$context <- context
+
+# Get the table of the foils
+foil1Table <- rep(NA, nrow(vid2_after_h2))
+foil2Table <- rep(NA, nrow(vid2_after_h2))
+for(i in 1:nrow(vid2_after_h2)){
+  # Foil 1
+  if(!is.na(vid2_after_h2$foil1[i])){
+    foil1Table[i] <- vid2_after_h2[vid2_after_h2$objNum == vid2_after_h2$foil1[i], 'table']
+  }
+  
+  # Foil 2
+  if(!is.na(vid2_after_h2$foil2[i])){
+    foil2Table[i] <- vid2_after_h2[vid2_after_h2$objNum == vid2_after_h2$foil2[i], 'table']
+  }
+}
+vid2_after_h2$foil1Table <- foil1Table
+vid2_after_h2$foil2Table <- foil2Table
 
 # /* 
 # ----------------------------- Video 3 ---------------------------
@@ -287,68 +507,75 @@ vid3_after$room     <- rep(1:rooms, each = 2)
 vid3_after$roomType <- rep(c('o', 'o', 'o', 'o'), rooms/2)
 vid3_after$target   <- c(vid3_after$objNum[1:(numObj - 1) + 1], NA)
 
+vid3_after_h1 <- vid3_after[1:44,]
+vid3_after_h2 <- vid3_after[45:88,]
+
+# /* 
+# ----------------------------- h1 ---------------------------
+# */
 # Selecting foils that meet constraints above
-foil1 <- rep(NA, numObj)
-dist1 <- rep(NA, numObj)
-foil2 <- rep(NA, numObj)
-dist2 <- rep(NA, numObj)
-for(i in 1:numObj){
-  if(any(vid3_after$room < vid3_after$room[i] - 1)){
+numOj_half <- numObj/2
+foil1 <- rep(NA, numOj_half)
+dist1 <- rep(NA, numOj_half)
+foil2 <- rep(NA, numOj_half)
+dist2 <- rep(NA, numOj_half)
+for(i in 1:nrow(vid3_after_h1)){
+  if(any(vid3_after_h1$room < vid3_after_h1$room[i] - 1)){
     # If there is a room that is after the probe/cue
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
-    availObj <- vid3_after[vid3_after$room < vid3_after$room[i] - 1, 'objNum']
+    availObj <- vid3_after_h1[vid3_after_h1$room < vid3_after_h1$room[i] - 1, 'objNum']
     # Check if there is more than 1 object avail
     if(length(availObj) == 1){
       foil1[i] <- availObj
     } else {
       foil1[i] <- sample(availObj, 1)  
-    }
-    dist1[i] <- which(foil1[i] == vid3_after$objNum) - i
+    } 
+    dist1[i] <- which(foil1[i] == vid3_after_h1$objNum) - i
   }
   
-  if(any(vid3_after$room > vid3_after$room[i] + 1)){
+  if(any(vid3_after_h1$room > vid3_after_h1$room[i] + 1)){
     # If there is a room that is after the probe/cue
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
-    availObj <- vid3_after[vid3_after$room > vid3_after$room[i] + 1, 'objNum']
+    availObj <- vid3_after_h1[vid3_after_h1$room > vid3_after_h1$room[i] + 1, 'objNum']
     # Check if there is more than 1 object avail
     if(length(availObj) == 1){
       foil2[i] <- availObj
     } else {
       foil2[i] <- sample(availObj, 1)  
     }
-    dist2[i] <- which(foil2[i] == vid3_after$objNum) - i
+    dist2[i] <- which(foil2[i] == vid3_after_h1$objNum) - i
   }
 }
 
 # Assign to data.frame
-vid3_after$foil1 <- foil1
-vid3_after$foil2 <- foil2
-vid3_after$dist1 <- dist1
-vid3_after$dist2 <- dist2
+vid3_after_h1$foil1 <- foil1
+vid3_after_h1$foil2 <- foil2
+vid3_after_h1$dist1 <- dist1
+vid3_after_h1$dist2 <- dist2
 
 # Add position of target and foils on the screen during 3AFC task
 targetPos <- c()
 foil1Pos  <- c()
 foil2Pos  <- c()
-for(i in 1:dim(vid3_after)[1]){
+for(i in 1:dim(vid3_after_h1)[1]){
   shuffle      <- sample(1:3)
   targetPos[i] <- shuffle[1]
   foil1Pos[i]  <- shuffle[2]
   foil2Pos[i]  <- shuffle[3]
 }
-vid3_after$targetPos <- targetPos
-vid3_after$foil1Pos  <- foil1Pos
-vid3_after$foil2Pos  <- foil2Pos
-vid3_after$question  <- after
+vid3_after_h1$targetPos <- targetPos
+vid3_after_h1$foil1Pos  <- foil1Pos
+vid3_after_h1$foil2Pos  <- foil2Pos
+vid3_after_h1$question  <- after
 
 # Get same room and context information
-sameRoom   <- rep(NA, numObj)
-for(i in 1:numObj){
-  if(vid3_after$question[i] == after){
-    if(i + 1 < 89){
-      if(vid3_after$room[i + 1] == vid3_after$room[i]){
+sameRoom   <- rep(NA, numOj_half)
+for(i in 1:numOj_half){
+  if(vid3_after_h1$question[i] == after){
+    if(i + 1 < numOj_half +1){
+      if(vid3_after_h1$room[i + 1] == vid3_after_h1$room[i]){
         sameRoom[i] <- 1
       } else {
         sameRoom[i] <- 0
@@ -356,7 +583,7 @@ for(i in 1:numObj){
     }
   } else {
     if(i - 1 > 0){
-      if(vid3_after$room[i - 1] == vid3_after$room[i]){
+      if(vid3_after_h1$room[i - 1] == vid3_after_h1$room[i]){
         sameRoom[i] <- 1
       } else {
         sameRoom[i] <- 0
@@ -364,28 +591,132 @@ for(i in 1:numObj){
     }
   }
 }
-vid3_after$sameRoom   <- sameRoom
-context <- rep(NA, numObj)
-context[vid3_after$sameRoom == 0] <- 'across'
-context[vid3_after$sameRoom == 1] <- 'within'
-vid3_after$context <- context
+vid3_after_h1$sameRoom   <- sameRoom
+context <- rep(NA, numOj_half)
+context[vid3_after_h1$sameRoom == 0] <- 'across'
+context[vid3_after_h1$sameRoom == 1] <- 'within'
+vid3_after_h1$context <- context
 
 # Get the table of the foils
-foil1Table <- rep(NA, nrow(vid3_after))
-foil2Table <- rep(NA, nrow(vid3_after))
-for(i in 1:nrow(vid3_after)){
+foil1Table <- rep(NA, nrow(vid3_after_h1))
+foil2Table <- rep(NA, nrow(vid3_after_h1))
+for(i in 1:nrow(vid3_after_h1)){
   # Foil 1
-  if(!is.na(vid3_after$foil1[i])){
-    foil1Table[i] <- vid3_after[vid3_after$objNum == vid3_after$foil1[i], 'table']
+  if(!is.na(vid3_after_h1$foil1[i])){
+    foil1Table[i] <- vid3_after_h1[vid3_after_h1$objNum == vid3_after_h1$foil1[i], 'table']
   }
   
   # Foil 2
-  if(!is.na(vid3_after$foil2[i])){
-    foil2Table[i] <- vid3_after[vid3_after$objNum == vid3_after$foil2[i], 'table']
+  if(!is.na(vid3_after_h1$foil2[i])){
+    foil2Table[i] <- vid3_after_h1[vid3_after_h1$objNum == vid3_after_h1$foil2[i], 'table']
   }
 }
-vid3_after$foil1Table <- foil1Table
-vid3_after$foil2Table <- foil2Table
+vid3_after_h1$foil1Table <- foil1Table
+vid3_after_h1$foil2Table <- foil2Table
+
+# /* 
+# ----------------------------- h2 ---------------------------
+# */
+# Selecting foils that meet constraints above
+numOj_half <- numObj/2
+foil1 <- rep(NA, numOj_half)
+dist1 <- rep(NA, numOj_half)
+foil2 <- rep(NA, numOj_half)
+dist2 <- rep(NA, numOj_half)
+for(i in 1:nrow(vid3_after_h2)){
+  if(any(vid3_after_h2$room < vid3_after_h2$room[i] - 1)){
+    # If there is a room that is after the probe/cue
+    availObj <- c() # Reset var
+    # Find object that meet the constraints and then select random sample
+    availObj <- vid3_after_h2[vid3_after_h2$room < vid3_after_h2$room[i] - 1, 'objNum']
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    } 
+    dist1[i] <- which(foil1[i] == vid3_after_h2$objNum) - i
+  }
+  
+  if(any(vid3_after_h2$room > vid3_after_h2$room[i] + 1)){
+    # If there is a room that is after the probe/cue
+    availObj <- c() # Reset var
+    # Find object that meet the constraints and then select random sample
+    availObj <- vid3_after_h2[vid3_after_h2$room > vid3_after_h2$room[i] + 1, 'objNum']
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
+    dist2[i] <- which(foil2[i] == vid3_after_h2$objNum) - i
+  }
+}
+
+# Assign to data.frame
+vid3_after_h2$foil1 <- foil1
+vid3_after_h2$foil2 <- foil2
+vid3_after_h2$dist1 <- dist1
+vid3_after_h2$dist2 <- dist2
+
+# Add position of target and foils on the screen during 3AFC task
+targetPos <- c()
+foil1Pos  <- c()
+foil2Pos  <- c()
+for(i in 1:dim(vid3_after_h2)[1]){
+  shuffle      <- sample(1:3)
+  targetPos[i] <- shuffle[1]
+  foil1Pos[i]  <- shuffle[2]
+  foil2Pos[i]  <- shuffle[3]
+}
+vid3_after_h2$targetPos <- targetPos
+vid3_after_h2$foil1Pos  <- foil1Pos
+vid3_after_h2$foil2Pos  <- foil2Pos
+vid3_after_h2$question  <- after
+
+# Get same room and context information
+sameRoom   <- rep(NA, numOj_half)
+for(i in 1:numOj_half){
+  if(vid3_after_h2$question[i] == after){
+    if(i + 1 < numOj_half +1){
+      if(vid3_after_h2$room[i + 1] == vid3_after_h2$room[i]){
+        sameRoom[i] <- 1
+      } else {
+        sameRoom[i] <- 0
+      }
+    }
+  } else {
+    if(i - 1 > 0){
+      if(vid3_after_h2$room[i - 1] == vid3_after_h2$room[i]){
+        sameRoom[i] <- 1
+      } else {
+        sameRoom[i] <- 0
+      }
+    }
+  }
+}
+vid3_after_h2$sameRoom   <- sameRoom
+context <- rep(NA, numOj_half)
+context[vid3_after_h2$sameRoom == 0] <- 'across'
+context[vid3_after_h2$sameRoom == 1] <- 'within'
+vid3_after_h2$context <- context
+
+# Get the table of the foils
+foil1Table <- rep(NA, nrow(vid3_after_h2))
+foil2Table <- rep(NA, nrow(vid3_after_h2))
+for(i in 1:nrow(vid3_after_h2)){
+  # Foil 1
+  if(!is.na(vid3_after_h2$foil1[i])){
+    foil1Table[i] <- vid3_after_h2[vid3_after_h2$objNum == vid3_after_h2$foil1[i], 'table']
+  }
+  
+  # Foil 2
+  if(!is.na(vid3_after_h2$foil2[i])){
+    foil2Table[i] <- vid3_after_h2[vid3_after_h2$objNum == vid3_after_h2$foil2[i], 'table']
+  }
+}
+vid3_after_h2$foil1Table <- foil1Table
+vid3_after_h2$foil2Table <- foil2Table
 
 # /* 
 # ----------------------------- Video 4 ---------------------------
@@ -405,68 +736,75 @@ roomType            <- rep(c('o', 'o', 'o', 'o'), 21)
 vid4_after$roomType <- c('o', roomType, 'o', 'o', 'o')
 vid4_after$target   <- c(vid4_after$objNum[1:(numObj -1) + 1], NA)
 
+vid4_after_h1 <- vid4_after[1:44,]
+vid4_after_h2 <- vid4_after[45:88,]
+
+# /* 
+# ----------------------------- h1 ---------------------------
+# */
 # Selecting foils that meet constraints above
-foil1 <- rep(NA, numObj)
-dist1 <- rep(NA, numObj)
-foil2 <- rep(NA, numObj)
-dist2 <- rep(NA, numObj)
-for(i in 1:numObj){
-  if(any(vid4_after$room < vid4_after$room[i] - 1)){
+numOj_half <- numObj/2
+foil1 <- rep(NA, numOj_half)
+dist1 <- rep(NA, numOj_half)
+foil2 <- rep(NA, numOj_half)
+dist2 <- rep(NA, numOj_half)
+for(i in 1:nrow(vid4_after_h1)){
+  if(any(vid4_after_h1$room < vid4_after_h1$room[i] - 1)){
     # If there is a room that is after the probe/cue
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
-    availObj <- vid4_after[vid4_after$room < vid4_after$room[i] - 1, 'objNum']
+    availObj <- vid4_after_h1[vid4_after_h1$room < vid4_after_h1$room[i] - 1, 'objNum']
     # Check if there is more than 1 object avail
     if(length(availObj) == 1){
       foil1[i] <- availObj
     } else {
       foil1[i] <- sample(availObj, 1)  
-    }
-    dist1[i] <- which(foil1[i] == vid4_after$objNum) - i
+    } 
+    dist1[i] <- which(foil1[i] == vid4_after_h1$objNum) - i
   }
   
-  if(any(vid4_after$room > vid4_after$room[i] + 1)){
+  if(any(vid4_after_h1$room > vid4_after_h1$room[i] + 1)){
     # If there is a room that is after the probe/cue
     availObj <- c() # Reset var
     # Find object that meet the constraints and then select random sample
-    availObj <- vid4_after[vid4_after$room > vid4_after$room[i] + 1, 'objNum']
+    availObj <- vid4_after_h1[vid4_after_h1$room > vid4_after_h1$room[i] + 1, 'objNum']
     # Check if there is more than 1 object avail
     if(length(availObj) == 1){
       foil2[i] <- availObj
     } else {
       foil2[i] <- sample(availObj, 1)  
     }
-    dist2[i] <- which(foil2[i] == vid4_after$objNum) - i
+    dist2[i] <- which(foil2[i] == vid4_after_h1$objNum) - i
   }
 }
 
 # Assign to data.frame
-vid4_after$foil1 <- foil1
-vid4_after$foil2 <- foil2
-vid4_after$dist1 <- dist1
-vid4_after$dist2 <- dist2
+vid4_after_h1$foil1 <- foil1
+vid4_after_h1$foil2 <- foil2
+vid4_after_h1$dist1 <- dist1
+vid4_after_h1$dist2 <- dist2
 
 # Add position of target and foils on the screen during 3AFC task
 targetPos <- c()
 foil1Pos  <- c()
 foil2Pos  <- c()
-for(i in 1:dim(vid4_after)[1]){
+for(i in 1:dim(vid4_after_h1)[1]){
   shuffle      <- sample(1:3)
   targetPos[i] <- shuffle[1]
   foil1Pos[i]  <- shuffle[2]
   foil2Pos[i]  <- shuffle[3]
 }
-vid4_after$targetPos <- targetPos
-vid4_after$foil1Pos  <- foil1Pos
-vid4_after$foil2Pos  <- foil2Pos
-vid4_after$question  <- after
+vid4_after_h1$targetPos <- targetPos
+vid4_after_h1$foil1Pos  <- foil1Pos
+vid4_after_h1$foil2Pos  <- foil2Pos
+vid4_after_h1$question  <- after
 
 # Get same room and context information
-sameRoom   <- rep(NA, numObj)
-for(i in 1:numObj){
-  if(vid4_after$question[i] == after){
-    if(i + 1 < 89){
-      if(vid4_after$room[i + 1] == vid4_after$room[i]){
+sameRoom   <- rep(NA, numOj_half)
+for(i in 1:numOj_half){
+  if(vid4_after_h1$question[i] == after){
+    if(i + 1 < numOj_half +1){
+      if(vid4_after_h1$room[i + 1] == vid4_after_h1$room[i]){
         sameRoom[i] <- 1
       } else {
         sameRoom[i] <- 0
@@ -474,7 +812,7 @@ for(i in 1:numObj){
     }
   } else {
     if(i - 1 > 0){
-      if(vid4_after$room[i - 1] == vid4_after$room[i]){
+      if(vid4_after_h1$room[i - 1] == vid4_after_h1$room[i]){
         sameRoom[i] <- 1
       } else {
         sameRoom[i] <- 0
@@ -482,53 +820,158 @@ for(i in 1:numObj){
     }
   }
 }
-vid4_after$sameRoom   <- sameRoom
-context <- rep(NA, numObj)
-context[vid4_after$sameRoom == 0] <- 'across'
-context[vid4_after$sameRoom == 1] <- 'within'
-vid4_after$context <- context
+vid4_after_h1$sameRoom   <- sameRoom
+context <- rep(NA, numOj_half)
+context[vid4_after_h1$sameRoom == 0] <- 'across'
+context[vid4_after_h1$sameRoom == 1] <- 'within'
+vid4_after_h1$context <- context
 
 # Get the table of the foils
-foil1Table <- rep(NA, nrow(vid4_after))
-foil2Table <- rep(NA, nrow(vid4_after))
-for(i in 1:nrow(vid4_after)){
+foil1Table <- rep(NA, nrow(vid4_after_h1))
+foil2Table <- rep(NA, nrow(vid4_after_h1))
+for(i in 1:nrow(vid4_after_h1)){
   # Foil 1
-  if(!is.na(vid4_after$foil1[i])){
-    foil1Table[i] <- vid4_after[vid4_after$objNum == vid4_after$foil1[i], 'table']
+  if(!is.na(vid4_after_h1$foil1[i])){
+    foil1Table[i] <- vid4_after_h1[vid4_after_h1$objNum == vid4_after_h1$foil1[i], 'table']
   }
   
   # Foil 2
-  if(!is.na(vid4_after$foil2[i])){
-    foil2Table[i] <- vid4_after[vid4_after$objNum == vid4_after$foil2[i], 'table']
+  if(!is.na(vid4_after_h1$foil2[i])){
+    foil2Table[i] <- vid4_after_h1[vid4_after_h1$objNum == vid4_after_h1$foil2[i], 'table']
   }
 }
-vid4_after$foil1Table <- foil1Table
-vid4_after$foil2Table <- foil2Table
+vid4_after_h1$foil1Table <- foil1Table
+vid4_after_h1$foil2Table <- foil2Table
+
+# /* 
+# ----------------------------- h2 ---------------------------
+# */
+# Selecting foils that meet constraints above
+numOj_half <- numObj/2
+foil1 <- rep(NA, numOj_half)
+dist1 <- rep(NA, numOj_half)
+foil2 <- rep(NA, numOj_half)
+dist2 <- rep(NA, numOj_half)
+for(i in 1:nrow(vid4_after_h2)){
+  if(any(vid4_after_h2$room < vid4_after_h2$room[i] - 1)){
+    # If there is a room that is after the probe/cue
+    availObj <- c() # Reset var
+    # Find object that meet the constraints and then select random sample
+    availObj <- vid4_after_h2[vid4_after_h2$room < vid4_after_h2$room[i] - 1, 'objNum']
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil1[i] <- availObj
+    } else {
+      foil1[i] <- sample(availObj, 1)  
+    } 
+    dist1[i] <- which(foil1[i] == vid4_after_h2$objNum) - i
+  }
+  
+  if(any(vid4_after_h2$room > vid4_after_h2$room[i] + 1)){
+    # If there is a room that is after the probe/cue
+    availObj <- c() # Reset var
+    # Find object that meet the constraints and then select random sample
+    availObj <- vid4_after_h2[vid4_after_h2$room > vid4_after_h2$room[i] + 1, 'objNum']
+    # Check if there is more than 1 object avail
+    if(length(availObj) == 1){
+      foil2[i] <- availObj
+    } else {
+      foil2[i] <- sample(availObj, 1)  
+    }
+    dist2[i] <- which(foil2[i] == vid4_after_h2$objNum) - i
+  }
+}
+
+# Assign to data.frame
+vid4_after_h2$foil1 <- foil1
+vid4_after_h2$foil2 <- foil2
+vid4_after_h2$dist1 <- dist1
+vid4_after_h2$dist2 <- dist2
+
+# Add position of target and foils on the screen during 3AFC task
+targetPos <- c()
+foil1Pos  <- c()
+foil2Pos  <- c()
+for(i in 1:dim(vid4_after_h2)[1]){
+  shuffle      <- sample(1:3)
+  targetPos[i] <- shuffle[1]
+  foil1Pos[i]  <- shuffle[2]
+  foil2Pos[i]  <- shuffle[3]
+}
+vid4_after_h2$targetPos <- targetPos
+vid4_after_h2$foil1Pos  <- foil1Pos
+vid4_after_h2$foil2Pos  <- foil2Pos
+vid4_after_h2$question  <- after
+
+# Get same room and context information
+sameRoom   <- rep(NA, numOj_half)
+for(i in 1:numOj_half){
+  if(vid4_after_h2$question[i] == after){
+    if(i + 1 < numOj_half +1){
+      if(vid4_after_h2$room[i + 1] == vid4_after_h2$room[i]){
+        sameRoom[i] <- 1
+      } else {
+        sameRoom[i] <- 0
+      }
+    }
+  } else {
+    if(i - 1 > 0){
+      if(vid4_after_h2$room[i - 1] == vid4_after_h2$room[i]){
+        sameRoom[i] <- 1
+      } else {
+        sameRoom[i] <- 0
+      }
+    }
+  }
+}
+vid4_after_h2$sameRoom   <- sameRoom
+context <- rep(NA, numOj_half)
+context[vid4_after_h2$sameRoom == 0] <- 'across'
+context[vid4_after_h2$sameRoom == 1] <- 'within'
+vid4_after_h2$context <- context
+
+# Get the table of the foils
+foil1Table <- rep(NA, nrow(vid4_after_h2))
+foil2Table <- rep(NA, nrow(vid4_after_h2))
+for(i in 1:nrow(vid4_after_h2)){
+  # Foil 1
+  if(!is.na(vid4_after_h2$foil1[i])){
+    foil1Table[i] <- vid4_after_h2[vid4_after_h2$objNum == vid4_after_h2$foil1[i], 'table']
+  }
+  
+  # Foil 2
+  if(!is.na(vid4_after_h2$foil2[i])){
+    foil2Table[i] <- vid4_after_h2[vid4_after_h2$objNum == vid4_after_h2$foil2[i], 'table']
+  }
+}
+vid4_after_h2$foil1Table <- foil1Table
+vid4_after_h2$foil2Table <- foil2Table
+
 
 # /* 
 # ----------------------------- Excluding trials without possible foils ---------------------------
 # */
 # Create df that containt all objects (important for getting table information)
-vid1_before_full <- vid1_before
-vid2_before_full <- vid2_before
-vid3_before_full <- vid3_before
-vid4_before_full <- vid4_before
+vid1_after_h1_full <- vid1_after_h1
+vid2_after_h1_full <- vid2_after_h1
+vid3_after_h1_full <- vid3_after_h1
+vid4_after_h1_full <- vid4_after_h1
 
-vid1_after_full <- vid1_after
-vid2_after_full <- vid2_after
-vid3_after_full <- vid3_after
-vid4_after_full <- vid4_after
+vid1_after_h2_full <- vid1_after_h2
+vid2_after_h2_full <- vid2_after_h2
+vid3_after_h2_full <- vid3_after_h2
+vid4_after_h2_full <- vid4_after_h2
 
 # Omit NA for all
-vid1_before <- na.omit(vid1_before)
-vid2_before <- na.omit(vid2_before)
-vid3_before <- na.omit(vid3_before)
-vid4_before <- na.omit(vid4_before)
+vid1_after_h1 <- na.omit(vid1_after_h1)
+vid2_after_h1 <- na.omit(vid2_after_h1)
+vid3_after_h1 <- na.omit(vid3_after_h1)
+vid4_after_h1 <- na.omit(vid4_after_h1)
 
-vid1_after <- na.omit(vid1_after)
-vid2_after <- na.omit(vid2_after)
-vid3_after <- na.omit(vid3_after)
-vid4_after <- na.omit(vid4_after)
+vid1_after_h2 <- na.omit(vid1_after_h2)
+vid2_after_h2 <- na.omit(vid2_after_h2)
+vid3_after_h2 <- na.omit(vid3_after_h2)
+vid4_after_h2 <- na.omit(vid4_after_h2)
 
 # /* 
 # ----------------------------- Creating JSON strings ---------------------------
@@ -537,120 +980,120 @@ vid4_after <- na.omit(vid4_after)
 prefix <- 'images/stimuli/'
 suffix <- '.png'
 
-question        <- list(before, after)
+question        <- list(after)
 
 question_string <- create_json_variable_str('question', question)
 
-objNum <- list(list(vid1_before$objNum, vid1_after$objNum),
-               list(vid2_before$objNum, vid2_after$objNum),
-               list(vid3_before$objNum, vid3_after$objNum),
-               list(vid4_before$objNum, vid4_after$objNum))
+objNum <- list(list(vid1_after_h1$objNum, vid1_after_h2$objNum),
+               list(vid2_after_h1$objNum, vid2_after_h2$objNum),
+               list(vid3_after_h1$objNum, vid3_after_h2$objNum),
+               list(vid4_after_h1$objNum, vid4_after_h2$objNum))
 objNum_string <- create_json_variable_str('objNum', objNum)
 
 
-probe <- list(list(paste(prefix, vid1_before$objNum, suffix, sep = ''), paste(prefix, vid1_after$objNum, suffix, sep = '')),
-              list(paste(prefix, vid2_before$objNum, suffix, sep = ''), paste(prefix, vid2_after$objNum, suffix, sep = '')),
-              list(paste(prefix, vid3_before$objNum, suffix, sep = ''), paste(prefix, vid3_after$objNum, suffix, sep = '')),
-              list(paste(prefix, vid4_before$objNum, suffix, sep = ''), paste(prefix, vid4_after$objNum, suffix, sep = '')))
+probe <- list(list(paste(prefix, vid1_after_h1$objNum, suffix, sep = ''), paste(prefix, vid1_after_h2$objNum, suffix, sep = '')),
+              list(paste(prefix, vid2_after_h1$objNum, suffix, sep = ''), paste(prefix, vid2_after_h2$objNum, suffix, sep = '')),
+              list(paste(prefix, vid3_after_h1$objNum, suffix, sep = ''), paste(prefix, vid3_after_h2$objNum, suffix, sep = '')),
+              list(paste(prefix, vid4_after_h1$objNum, suffix, sep = ''), paste(prefix, vid4_after_h2$objNum, suffix, sep = '')))
 probe_string <- create_json_variable_str('probe', probe)
 
 
 
-target <- list(list(paste(prefix, vid1_before$target, suffix, sep = ''),  paste(prefix, vid1_after$target, suffix, sep = '')),
-               list(paste(prefix, vid2_before$target, suffix, sep = ''),  paste(prefix, vid2_after$target, suffix, sep = '')),
-               list(paste(prefix, vid3_before$target, suffix, sep = ''),  paste(prefix, vid3_after$target, suffix, sep = '')),
-               list(paste(prefix, vid4_before$target, suffix, sep = ''),  paste(prefix, vid4_after$target, suffix, sep = '')))
+target <- list(list(paste(prefix, vid1_after_h1$target, suffix, sep = ''),  paste(prefix, vid1_after_h2$target, suffix, sep = '')),
+               list(paste(prefix, vid2_after_h1$target, suffix, sep = ''),  paste(prefix, vid2_after_h2$target, suffix, sep = '')),
+               list(paste(prefix, vid3_after_h1$target, suffix, sep = ''),  paste(prefix, vid3_after_h2$target, suffix, sep = '')),
+               list(paste(prefix, vid4_after_h1$target, suffix, sep = ''),  paste(prefix, vid4_after_h2$target, suffix, sep = '')))
 target_string <- create_json_variable_str('target', target)
 
-targetPos <- list(list(vid1_before$targetPos, vid1_after$targetPos),
-                  list(vid2_before$targetPos, vid2_after$targetPos),
-                  list(vid3_before$targetPos, vid3_after$targetPos),
-                  list(vid4_before$targetPos, vid4_after$targetPos))
+targetPos <- list(list(vid1_after_h1$targetPos, vid1_after_h2$targetPos),
+                  list(vid2_after_h1$targetPos, vid2_after_h2$targetPos),
+                  list(vid3_after_h1$targetPos, vid3_after_h2$targetPos),
+                  list(vid4_after_h1$targetPos, vid4_after_h2$targetPos))
 targetPos_string <- create_json_variable_str('targetPos', targetPos)
 
 
-foil1 <- list(list(paste(prefix ,vid1_before$foil1, suffix, sep = ''), paste(prefix ,vid1_after$foil1, suffix, sep = '')),
-              list(paste(prefix ,vid2_before$foil1, suffix, sep = ''), paste(prefix ,vid2_after$foil1, suffix, sep = '')),
-              list(paste(prefix ,vid3_before$foil1, suffix, sep = ''), paste(prefix ,vid3_after$foil1, suffix, sep = '')),
-              list(paste(prefix ,vid4_before$foil1, suffix, sep = ''), paste(prefix ,vid4_after$foil1, suffix, sep = '')))
+foil1 <- list(list(paste(prefix ,vid1_after_h1$foil1, suffix, sep = ''), paste(prefix ,vid1_after_h2$foil1, suffix, sep = '')),
+              list(paste(prefix ,vid2_after_h1$foil1, suffix, sep = ''), paste(prefix ,vid2_after_h2$foil1, suffix, sep = '')),
+              list(paste(prefix ,vid3_after_h1$foil1, suffix, sep = ''), paste(prefix ,vid3_after_h2$foil1, suffix, sep = '')),
+              list(paste(prefix ,vid4_after_h1$foil1, suffix, sep = ''), paste(prefix ,vid4_after_h2$foil1, suffix, sep = '')))
 foil1_string <- create_json_variable_str('foil1', foil1)
 
-foil1Pos <- list(list(vid1_before$foil1Pos, vid1_after$foil1Pos),
-                 list(vid2_before$foil1Pos, vid2_after$foil1Pos),
-                 list(vid3_before$foil1Pos, vid3_after$foil1Pos),
-                 list(vid4_before$foil1Pos, vid4_after$foil1Pos))
+foil1Pos <- list(list(vid1_after_h1$foil1Pos, vid1_after_h2$foil1Pos),
+                 list(vid2_after_h1$foil1Pos, vid2_after_h2$foil1Pos),
+                 list(vid3_after_h1$foil1Pos, vid3_after_h2$foil1Pos),
+                 list(vid4_after_h1$foil1Pos, vid4_after_h2$foil1Pos))
 foil1Pos_string <- create_json_variable_str('foil1Pos', foil1Pos)
 
 
-foil1Table <- list(list(vid1_before$foil1Table, vid1_after$foil1Table),
-                   list(vid2_before$foil1Table, vid2_after$foil1Table),
-                   list(vid3_before$foil1Table, vid3_after$foil1Table),
-                   list(vid4_before$foil1Table, vid4_after$foil1Table))
+foil1Table <- list(list(vid1_after_h1$foil1Table, vid1_after_h2$foil1Table),
+                   list(vid2_after_h1$foil1Table, vid2_after_h2$foil1Table),
+                   list(vid3_after_h1$foil1Table, vid3_after_h2$foil1Table),
+                   list(vid4_after_h1$foil1Table, vid4_after_h2$foil1Table))
 foil1Table_string <- create_json_variable_str('foil1Table', foil1Table)
 
 
-dist1 <- list(list(vid1_before$dist1,  vid1_after$dist1),
-              list(vid2_before$dist1,  vid2_after$dist1),
-              list(vid3_before$dist1,  vid3_after$dist1),
-              list(vid4_before$dist1,  vid4_after$dist1))
+dist1 <- list(list(vid1_after_h1$dist1,  vid1_after_h2$dist1),
+              list(vid2_after_h1$dist1,  vid2_after_h2$dist1),
+              list(vid3_after_h1$dist1,  vid3_after_h2$dist1),
+              list(vid4_after_h1$dist1,  vid4_after_h2$dist1))
 dist1_string <- create_json_variable_str('dist1', dist1)
 
-foil2 <- list(list(paste(prefix, vid1_before$foil2, suffix, sep = ''), paste(prefix, vid1_after$foil2, suffix, sep = '')),
-              list(paste(prefix, vid2_before$foil2, suffix, sep = ''), paste(prefix, vid2_after$foil2, suffix, sep = '')),
-              list(paste(prefix, vid3_before$foil2, suffix, sep = ''), paste(prefix, vid3_after$foil2, suffix, sep = '')),
-              list(paste(prefix, vid4_before$foil2, suffix, sep = ''), paste(prefix, vid4_after$foil2, suffix, sep = '')))
+foil2 <- list(list(paste(prefix, vid1_after_h1$foil2, suffix, sep = ''), paste(prefix, vid1_after_h2$foil2, suffix, sep = '')),
+              list(paste(prefix, vid2_after_h1$foil2, suffix, sep = ''), paste(prefix, vid2_after_h2$foil2, suffix, sep = '')),
+              list(paste(prefix, vid3_after_h1$foil2, suffix, sep = ''), paste(prefix, vid3_after_h2$foil2, suffix, sep = '')),
+              list(paste(prefix, vid4_after_h1$foil2, suffix, sep = ''), paste(prefix, vid4_after_h2$foil2, suffix, sep = '')))
 foil2_string <- create_json_variable_str('foil2', foil2)
 
-foil2Pos <- list(list(vid1_before$foil2Pos, vid1_after$foil2Pos),
-                 list(vid2_before$foil2Pos, vid2_after$foil2Pos),
-                 list(vid3_before$foil2Pos, vid3_after$foil2Pos),
-                 list(vid4_before$foil2Pos, vid4_after$foil2Pos))
+foil2Pos <- list(list(vid1_after_h1$foil2Pos, vid1_after_h2$foil2Pos),
+                 list(vid2_after_h1$foil2Pos, vid2_after_h2$foil2Pos),
+                 list(vid3_after_h1$foil2Pos, vid3_after_h2$foil2Pos),
+                 list(vid4_after_h1$foil2Pos, vid4_after_h2$foil2Pos))
 foil2Pos_string <- create_json_variable_str('foil2Pos', foil2Pos)
 
-foil2Table <- list(list(vid1_before$foil2Table, vid1_after$foil2Table),
-                   list(vid2_before$foil2Table, vid2_after$foil2Table),
-                   list(vid3_before$foil2Table, vid3_after$foil2Table),
-                   list(vid4_before$foil2Table, vid4_after$foil2Table))
+foil2Table <- list(list(vid1_after_h1$foil2Table, vid1_after_h2$foil2Table),
+                   list(vid2_after_h1$foil2Table, vid2_after_h2$foil2Table),
+                   list(vid3_after_h1$foil2Table, vid3_after_h2$foil2Table),
+                   list(vid4_after_h1$foil2Table, vid4_after_h2$foil2Table))
 foil2Table_string <- create_json_variable_str('foil2Table', foil2Table)
 
 
-dist2 <- list(list(vid1_before$dist2, vid1_after$dist2),
-              list(vid2_before$dist2, vid2_after$dist2),
-              list(vid3_before$dist2, vid3_after$dist2),
-              list(vid4_before$dist2, vid4_after$dist2))
+dist2 <- list(list(vid1_after_h1$dist2, vid1_after_h2$dist2),
+              list(vid2_after_h1$dist2, vid2_after_h2$dist2),
+              list(vid3_after_h1$dist2, vid3_after_h2$dist2),
+              list(vid4_after_h1$dist2, vid4_after_h2$dist2))
 dist2_string <- create_json_variable_str('dist2', dist2)
 
 
-roomNum_probe <- list(list(vid1_before$room, vid1_after$room),
-                      list(vid2_before$room, vid2_after$room),
-                      list(vid3_before$room, vid3_after$room),
-                      list(vid4_before$room, vid4_after$room))
+roomNum_probe <- list(list(vid1_after_h1$room, vid1_after_h2$room),
+                      list(vid2_after_h1$room, vid2_after_h2$room),
+                      list(vid3_after_h1$room, vid3_after_h2$room),
+                      list(vid4_after_h1$room, vid4_after_h2$room))
 roomNum_probe_string <- create_json_variable_str('roomNum_probe', roomNum_probe)
 
 
-roomType <- list(list(vid1_before$roomType, vid1_after$roomType),
-                 list(vid2_before$roomType, vid2_after$roomType),
-                 list(vid3_before$roomType, vid3_after$roomType),
-                 list(vid4_before$roomType, vid4_after$roomType))
+roomType <- list(list(vid1_after_h1$roomType, vid1_after_h2$roomType),
+                 list(vid2_after_h1$roomType, vid2_after_h2$roomType),
+                 list(vid3_after_h1$roomType, vid3_after_h2$roomType),
+                 list(vid4_after_h1$roomType, vid4_after_h2$roomType))
 roomType_string <- create_json_variable_str('roomType', roomType)
 
 
-table  <- list(list(vid1_before$table,  vid1_after$table),
-               list(vid2_before$table,  vid2_after$table),
-               list(vid3_before$table,  vid3_after$table),
-               list(vid4_before$table,  vid4_after$table))
+table  <- list(list(vid1_after_h1$table,  vid1_after_h2$table),
+               list(vid2_after_h1$table,  vid2_after_h2$table),
+               list(vid3_after_h1$table,  vid3_after_h2$table),
+               list(vid4_after_h1$table,  vid4_after_h2$table))
 table_string <- create_json_variable_str('table', table)
 
-sameRoom <- list(list(vid1_before$sameRoom, vid1_after$sameRoom),
-                 list(vid2_before$sameRoom, vid2_after$sameRoom),
-                 list(vid3_before$sameRoom, vid3_after$sameRoom),
-                 list(vid4_before$sameRoom, vid4_after$sameRoom))
+sameRoom <- list(list(vid1_after_h1$sameRoom, vid1_after_h2$sameRoom),
+                 list(vid2_after_h1$sameRoom, vid2_after_h2$sameRoom),
+                 list(vid3_after_h1$sameRoom, vid3_after_h2$sameRoom),
+                 list(vid4_after_h1$sameRoom, vid4_after_h2$sameRoom))
 sameRoom_string <- create_json_variable_str('sameRoom', sameRoom)
 
-context <- list(list(vid1_before$context, vid1_after$context),
-                list(vid2_before$context, vid2_after$context),
-                list(vid3_before$context, vid3_after$context),
-                list(vid4_before$context, vid4_after$context))
+context <- list(list(vid1_after_h1$context, vid1_after_h2$context),
+                list(vid2_after_h1$context, vid2_after_h2$context),
+                list(vid3_after_h1$context, vid3_after_h2$context),
+                list(vid4_after_h1$context, vid4_after_h2$context))
 context_string <- create_json_variable_str('context', context)
 
 # /* 
@@ -733,4 +1176,4 @@ sink()
 # /* 
 # ----------------------------- Save image ---------------------------
 # */
-save.image('trialData_randomFoils_exp2.RData')
+save.image('trialData_randomFoils_exp3.RData')

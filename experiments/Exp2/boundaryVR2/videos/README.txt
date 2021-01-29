@@ -14,4 +14,4 @@ video3.webm
 video4.mp4
 video4.ogg
 
-Note this folder need the following videos to work. They can be request but due to their size, they could not be uploaded to GitHub.
+Note this folder need the following videos to work. They can be requested but due to their size, they could not be uploaded to GitHub.

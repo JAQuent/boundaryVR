@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <script src="/study_assets_root/event_seg/jspsych-6.0.1/jspsych.js"></script>
+  <script src="/study_assets_root/event_seg/jspsych-6.0.1/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src = "/study_assets_root/event_seg/jquery-3.3.1.min.js" type="text/javascript"></script>
+  <script src="/assets/javascripts/jatos.js"></script>
+  <script src="/study_assets_root/event_seg/movie_var.js"></script>
+  <title>Movie Segmentation</title>
+</head>
+<body>
+	<div align="center" >
+        <p id="instructions" style="font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.6em; vertical-align: middle; text-align: justify; width: 70%;"> <br>After the film finishes loading, 
+        	press 'Play Film'. During the film, please press SPACE whenever, in your experience, one event ends and a new one begins. Try to press SPACE as soon as possible after you notice a transition to a new event. When the film ends, a 'Continue' button will appear below it.<br></p>
+        <div id="bar" style="display: flex; width: 500px; background-color: #ddd"><div id="progress" style="width: 1%; height: 30px; background-color: #4CAF50"></div></div><br>
+        <div id="video_wrapper"><video id="player" style="padding: 0px; " type="video/mp4"></video></div><br><br>
+        <button id="play_vid" style="display: none; font-size: 22px; padding: 4px 8px; border-radius: 6px; border: 2px solid #6b6b6b;">Play Film</button>
+        <button id="continue" style="display: none; font-size: 22px; padding: 4px 8px; border-radius: 6px; border: 2px solid #6b6b6b;">Continue</button>
+    </div>
+</body>
+<script>
+
+	jatos.onLoad(function() {
+
+		/* Definitions of trials and nodes for the question-answering post each movie */
+
+		/* post-questions message indicating the next movie is about to begin */
+		var post_q_trial = {
+			type: "html-keyboard-response",
+			stimulus: "<div align=\"center\" style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; padding-top: 100px;\"><p style=\"font-family: 'Arial', sans-serif; font-size: 120%;\">Press any key to start the next film.</p></div>",
+			data: {transition_screen: 'post_validation_q'}
+		};
+
+		/* post-questions message indicating the test questions are about to start */
+		var post_last_q_trial = {
+			type: "html-keyboard-response",
+			stimulus: "<div align=\"center\" style='display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;'><div style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.5em;\"><p style=\"width: 90%; text-align: justify\"><br><br><br>That concludes the film viewing part of the experiment. There will now be an additional sequence of questions about all three films. In each question, you will be asked whether a given action occurred and how confident you are. Even if you find it hard, try your best to remember whether the action occurred.<br><br>Press any key to start the test session.</p></div></div>",
+			data: {transition_screen: 'post_validation_q'}
+
+			/* stimulus: "<div align=\"center\" style='display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;'><div style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.5em;\"><p style=\"width: 90%; text-align: justify\"><br><br><br>That concludes the film viewing part of the experiment. There will now be an additional sequence of questions about all three films. In each question you will be asked whether a given action occurred, followed by a rating of your confidence in your answer. When answering the questions, please answer 'Yes' only when you remember seeing the action in the film, and not when you think it's likely to have occurred but do not actually remember seeing it.<br><br>Press any key to start the test session.</p></div></div>", */
+			/*stimulus: "<div align=\"center\" style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; padding-top: 100px;\"><p style=\"font-family: 'Arial', sans-serif; font-size: 120%;\">Press any key to start the test phase.</p></div>"*/
+		};
+
+		var yes_no_q_trial = {
+			type: "html-keyboard-response",
+			stimulus: "",
+			choices: ['1', '2', '3', '4', '5'], //49 50 51 52 53
+			data: function(){ 
+				return {scene_name: jsPsych.timelineVariable('scene_name', true), scene_num: jsPsych.timelineVariable('scene_num', true), foil: jsPsych.timelineVariable('foil', true), question: jsPsych.timelineVariable('question', true), trial_name: "validation_question", q_idx: jsPsych.timelineVariable('q_idx', true), mov_q_idx: jsPsych.timelineVariable('mov_q_idx', true), mov_num: jsPsych.timelineVariable('mov_num', true), mov_idx: jsPsych.timelineVariable('mov_idx', true), q_num: jsPsych.timelineVariable('q_num', true), non_foil_q: jsPsych.timelineVariable('non_foil_q', true)};
+				
+			},
+			on_start: function(yes_no_q_trial){
+				var foil = jsPsych.timelineVariable('foil', true);
+				var scene_name = jsPsych.timelineVariable('scene_name', true);
+				var question = jsPsych.timelineVariable('question', true);
+				var q_num = jsPsych.timelineVariable('q_num', true);
+				var non_foil_q = jsPsych.timelineVariable('non_foil_q', true);
+				yes_no_q_trial.data.guess_response = 51;
+				if (foil) {
+	   				yes_no_q_trial.data.correct_responses = [52,53];
+	   			} else {
+	   				yes_no_q_trial.data.correct_responses = [49,50];
+	   			}
+   				
+   				yes_no_q_trial.stimulus = "<div align='center' style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; padding-top: 100px;\"><p style='text-align: center'>" + question +"?</p><br><br><table style='width: 60%;'><tr><td style='float:center;'><p style='text-align:center;'>Confident this<br>occurred<br>(1)</p></td><td style='float:center;'><p align=right style='text-align:center;'>Think this<br>occurred<br>(2)</p></td><td style='float:center;'><p style='text-align:center;'>Don't<br>remember<br>(3)</p></td><td style='float:center;'><p style='text-align:center;'>Think this<br><u>didn't</u> occur<br>(4)</p></td><td style='float:center;'><p style='text-align:center;'>Confident this<br><u>didn't</u> occur<br>(5)</p></td></tr></table></div>";
+  			},
+  			on_finish: function(data){
+  				data.guess = false;
+			    if(data.correct_responses.includes(data.key_press)){
+			    	data.correct = true;
+			    } else {
+			    	data.correct = false;
+			    }
+			    if (data.key_press == data.guess_response) {
+			    	data.guess = true;
+			    }
+			    data.conf_level = 51-data.key_press;
+  			}
+		};
+
+	    // Defines movie extension if it hasn't been define (for debugging purposes, in actual experiment should always be defined)
+	    if (!('vid_ext' in jatos.studySessionData)) {
+	    	jatos.studySessionData.vid_ext = '.mp4'
+	    }
+
+		var result_data = {};
+		var i = jatos.studySessionData.mov_idx;
+		var subjCond = jatos.studySessionData.subjCond;
+
+
+		var mov_name;
+		if (i==0) {
+			mov_name = movies[jatos.studySessionData.movie_order[i]].mov_name+jatos.studySessionData.vid_ext;
+			//mov_name = '/study_assets_root/event_seg/vid/bear_demo2'+jatos.studySessionData.vid_ext;
+			document.getElementById("instructions").innerHTML = "During the demo, the frame below will alternate between blue and orange. Please press SPACE whenever the colour changes. Press 'Play Film' to start the demo. When the demo film ends, a 'Continue' button will appear below it.";
+		} else{
+			mov_name = movies[jatos.studySessionData.movie_order[i]].mov_name+'_'+subjCond+jatos.studySessionData.vid_ext;
+			//mov_name = '/study_assets_root/event_seg/vid/bear_demo2'+jatos.studySessionData.vid_ext;
+
+			/* Initialises timeline for questions, only if this isn't the demo */
+			var n_validation_qs = movies[jatos.studySessionData.movie_order[i]].validation_questions.length;
+			var question_order = jsPsych.randomization.repeat(Array.from(new Array(n_validation_qs), (v, k) => k), 1, false);
+			var correct_left = jsPsych.randomization.repeat([0,1], Math.ceil(n_validation_qs/2), false); /* May be one longer than the actual array */
+
+			var timeline = [];
+			var validation_n_correct = [];
+			if (i>1) {
+				validation_n_correct = jatos.studySessionData.validation_n_correct;
+			}
+
+			for (var j in movies[jatos.studySessionData.movie_order[i]].validation_questions) {
+				timeline.push({
+					timeline: [yes_no_q_trial],
+					timeline_variables: [Object.assign({mov_q_idx: j, mov_idx: i, mov_num: jatos.studySessionData.movie_order[i]}, movies[jatos.studySessionData.movie_order[i]].validation_questions[question_order[j]])]
+				});
+			}
+
+			if (i<jatos.studySessionData.n_movies-1) {
+				timeline.push(post_q_trial);
+			} else {
+				timeline.push(post_last_q_trial);
+			}
+		}
+
+		player = document.getElementById("player");
+		button = document.getElementById("play_vid");
+		cont_button = document.getElementById("continue");
+
+		player.width = movies[jatos.studySessionData.movie_order[i]].mov_width;
+		player.height = movies[jatos.studySessionData.movie_order[i]].mov_height;
+
+		var request = new XMLHttpRequest();
+		request.open('GET', mov_name, true);
+		request.responseType = 'blob';
+		var vid_loaded = -1;
+		request.onload = function() {
+			if (this.status === 200) {
+				var d = new Date();
+		    	vid_loaded = d.getTime();
+		    	var videoBlob = this.response;
+		    	var vid = URL.createObjectURL(videoBlob);
+		    	player.src = vid;
+		    	player.style.border = "25px solid #25253b";
+		    	button.style.display = "block";
+		    	document.getElementById("progress").style.display = "none";
+		    } else {
+		    }
+		};
+		request.onprogress = function(e) {
+			document.getElementById("progress").style.width = 100*e.loaded/e.total + '%'; 
+		}
+		request.onerror = function() {
+			console.log('error')
+		}
+		request.send();
+		
+   		var vid_start = -1;
+   		var boundaries = [];
+		button.addEventListener('click', function() {
+			var d = new Date();
+		    vid_start = d.getTime();
+			player.load();
+			player.play();
+			button.disabled = true;
+			button.style.display = "none";
+		});
+
+		$(document).on('keypress', function(e) {
+		    if (e.which == 32) {
+		        e.preventDefault()
+		        var d = new Date();
+		        var n = d.getTime();
+		        boundaries.push(n-vid_start);
+		        player.style.borderColor = "#7d7d94";
+		        var intVar = setInterval(function() {player.style.borderColor = "#25253b"; clearInterval(intVar);}, 1000);
+		    }
+		}) 
+
+		var img = document.createElement("IMG");
+		if (i==0) {
+			img.src = "/study_assets_root/event_seg/demo_end_new.jpg";
+		} else {
+			img.src = "/study_assets_root/event_seg/film_end_new.jpg";
+		}
+    	
+    	img.height = movies[jatos.studySessionData.movie_order[i]].mov_height;
+    	img.width = movies[jatos.studySessionData.movie_order[i]].mov_width;
+    	img.style.border = "25px solid #7d7d94"; 
+    	
+    	img_html =  '<img src="'+img.src+'" height="'+img.height+'" width="'+img.width+'" style="border: 25px solid #7d7d94;">'
+
+
+		player.addEventListener("ended", function() {
+			cont_button.style.display = "block";
+
+			// In Edge replacewith for video doesn't seem to work, so if this is edge,
+			// uses the div wrapper (otherwise uses replacewith for smoother transition)
+			if (jatos.studySessionData.browser == 'edge') {
+				$("#video_wrapper").html(img_html);
+			} else {
+				player.replaceWith(img);
+			}
+
+			var d = new Date();
+			var vid_ended = d.getTime();
+			cont_button.addEventListener('click', function() {
+				var d = new Date();
+				result_data.result_type = 'mov_boundaries';
+				result_data.boundaries = boundaries;
+				result_data.vid_loaded_time = vid_loaded;
+				result_data.vid_start_time = vid_start;
+				result_data.vid_ended_time = vid_ended;
+				result_data.vid_pressed_cont_time = d.getTime();
+				result_data.subjCond = subjCond;
+				result_data.movie_order = jatos.studySessionData.movie_order;
+				result_data.mov_idx = i;
+				result_data.mov_num = jatos.studySessionData.movie_order[i];
+				result_data.prolific_ID = jatos.studySessionData.prolific_ID;
+				result_data.vid_ext = jatos.studySessionData.vid_ext;
+
+				jatos.addJatosIds(result_data);
+
+				var result_json = JSON.stringify(result_data);
+
+				/* If this is the demo, repeats the current component. Otherwise, runs timeline with the questions */
+
+				/* Either repeats current component or jumps to next, depending on whether all movies have been viewed */
+				if (i==0) {
+					jatos.studySessionData.mov_idx = jatos.studySessionData.mov_idx+1;
+					jatos.submitResultData(result_json, function () {jatos.startComponentByPos(jatos.componentPos);});
+				} else {
+
+
+					jsPsych.init({
+						timeline: timeline,
+						max_load_time: 10000,
+						exclusions: {
+							min_width: jatos.studySessionData.min_width,
+        					min_height: jatos.studySessionData.min_height
+						},
+						on_finish: function(){ 
+							var jspsych_result_data = jsPsych.data.get().json();
+							validation_n_correct.push(jsPsych.data.get().filter({correct: true}).count());
+							jatos.studySessionData.validation_n_correct = validation_n_correct;
+							result_data.mov_validation_n_correct = jsPsych.data.get().filter({correct: true}).count();
+							var d = new Date();
+							result_data.validation_q_end_time = d.getTime();
+
+							/* Either repeats current component or jumps to next, depending on whether all movies have been viewed */
+							if (i<jatos.studySessionData.n_movies-1) {
+								var result_json = "[" + JSON.stringify(result_data) +","+ jspsych_result_data.substr(1, jspsych_result_data.length-2) +"]";
+								jatos.studySessionData.mov_idx = jatos.studySessionData.mov_idx+1;
+								jatos.submitResultData(result_json, function () {jatos.startComponentByPos(jatos.componentPos);});
+							} else {
+								var total_validation_n_correct = validation_n_correct.reduce((a,b) => a + b, 0)
+								jatos.studySessionData.total_validation_n_correct = total_validation_n_correct;
+								result_data.total_validation_n_correct = total_validation_n_correct;
+								var result_json = "[" + JSON.stringify(result_data) +","+ jspsych_result_data.substr(1, jspsych_result_data.length-2) +"]";
+								jatos.submitResultData(result_json, jatos.startNextComponent);
+							}
+						}
+					})
+				}
+
+			});
+		});
+
+	});
+
+</script>
