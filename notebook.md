@@ -1,7 +1,7 @@
 Notebook for boundary VR
 ================
 Joern Alexander Quent
-12 January, 2021
+03 February, 2021
 
   - [Aim of this project](#aim-of-this-project)
   - [Experiment 1](#experiment-1)
@@ -44,8 +44,8 @@ Joern Alexander Quent
       - [Design analysis of sequential
         design](#design-analysis-of-sequential-design)
           - [Null effect](#null-effect)
-          - [Effect size similar to open plane room versus
-            across](#effect-size-similar-to-open-plane-room-versus-across)
+          - [Effect size similar to open-plane room (within
+            vs. across)](#effect-size-similar-to-open-plane-room-within-vs.-across)
           - [Effect size similar to m-shaped room versus
             across:](#effect-size-similar-to-m-shaped-room-versus-across)
           - [Summary](#summary)
@@ -5871,7 +5871,7 @@ Percent
 
 </table>
 
-### Effect size similar to open plane room versus across
+### Effect size similar to open-plane room (within vs. across)
 
 ![](notebook_files/figure-gfm/unnamed-chunk-43-1.png)<!-- -->
 
@@ -6378,18 +6378,18 @@ Therefore, we do not make this part of our stopping rule.
 
 ### Responses during video
 
-The response during the video were mostly without anything markworthy
+The response during the video were mostly without anything noteworthy
 apart from the fact that three participants had more than approximately
 88 responses (126, 144, 910). My suspicion is that those just pressed
 more than one because they didn’t get any feedback. This is also
 actually mentioned in the feedback. Apart from those three participants,
-participants had an expected inter-response intervall of circa 7 secs,
+participants had an expected inter-response interval of circa 7 secs,
 which is consistent with the time between objects.
 
 There is actually one thing that I don’t understand for the participants
 with 910 key presses that is the first four entries are extremely high
 numbers: 1.590778110^{12}. However, in the script the time stamp are
-caculated relative to the video start, see
+calculated relative to the video start, see
 
 ``` 
         $(document).on('keypress', function(e) {
@@ -7142,7 +7142,7 @@ the results.
 
 In an ANOVA question type (before vs. after), foil1 on the same table
 and foil 2 on the same table, there is only evidence for a main effect
-of question type (BF10 = 23.2).
+of question type (BF10 = 1.77).
 
 The picture also doesn’t really change if I plot both question types of
 the first block seperately.

@@ -30,6 +30,8 @@
 
 library(ggplot2)
 library(BayesFactor)
+library(plyr)
+library(assortedRFunctions)
 
 ###################################################################
 # Path
@@ -142,41 +144,37 @@ outlier_data$trans_acc_outlier <- mad_outlier(outlier_data$trans_acc, 2)
 outlier_data$rt_outlier        <- mad_outlier(outlier_data$rt, 3)
 
 # Outlier removal
-#df_order_exp3 <- df_order_exp3[!(df_order_exp3$worker_id %in% c(15177, outlier_data[outlier_data$trans_acc_outlier == 1, 'worker_id'])), ] 
+df_order_exp3 <- df_order_exp3[!(df_order_exp3$worker_id %in% c(15177, outlier_data[outlier_data$trans_acc_outlier == 1, 'worker_id'])), ] 
 # 15177 Didn't do whole task
 
-df_order_exp3 <- df_order_exp3[df_order_exp3$worker_id %in% include, ] 
-include
 
 agg1 <- ddply(df_order_exp3, c('worker_id', 'subjCond', 'half','context'), summarise, accuracy = mean(accuracy), rt = mean(rt))
 agg2 <- ddply(df_order_exp3, c('worker_id', 'subjCond','context'), summarise, accuracy = mean(accuracy), rt = mean(rt))
 
+agg2$trans_acc         <- arcsine_transform(agg2$accuracy)
 
-ggplot(agg2, aes(x = context, y = arcsine_transform(accuracy))) + geom_boxplot() + geom_hline(yintercept = arcsine_transform(1/3)) +
+ggplot(agg2, aes(x = context, y = rt)) + geom_hline(yintercept = arcsine_transform(1/3)) +
   geom_line(aes(group = worker_id)) +
-  geom_point()
+  geom_point() + 
+  geom_boxplot() 
 
-ttestBF(arcsine_transform(agg2[agg2$context == 'within', "accuracy"]), 
-        arcsine_transform(agg2[agg2$context == 'across', "accuracy"]), paired = TRUE, nullInterval = c(-Inf, 0))
-t.test(agg2[agg2$context == 'within', "accuracy"], agg2[agg2$context == 'across', "accuracy"], alternative = 'greater')$p.value
+ggplot(agg2, aes(x = context, y = trans_acc)) + geom_hline(yintercept = arcsine_transform(1/3)) +
+  #facet_grid(~ subjCond) +
+  geom_line(aes(group = worker_id)) +
+  geom_point() + 
+  geom_boxplot() 
+
+ttestBF(agg2[agg2$context == 'within', "trans_acc"], 
+        agg2[agg2$context == 'across', "trans_acc"], 
+        paired = TRUE, 
+        nullInterval = c(-Inf, 0))
+
+
+
+t.test(agg2[agg2$context == 'within', "trans_acc"], agg2[agg2$context == 'across', "trans_acc"], alternative = 'greater')$p.value
 #ggplot(agg2, aes(x = context, y = rt)) + geom_boxplot() + geom_line(aes(group = worker_id)) + geom_point()
 
 table(agg1$worker_id)
-length(unique(agg1$worker_id))
+length(unique(agg2$worker_id))
 
 ddply(df_order_exp3, c('context'), summarise, accuracy = arcsine_transform(mean(accuracy)), rt = mean(rt))
-
-# Correlation between corr and performance
-general_per               <- ddply(df_order_exp3, c('worker_id'), summarise, accuracy = mean(accuracy), rt = mean(rt))
-general_per$trans_acc     <- arcsine_transform(general_per$accuracy)
-
-# Get the corr coefs
-general_per$corr <- NA
-
-for(i in 1:nrow(general_per)){
-  general_per$corr[i] <- corr_per_worker[which(workers == general_per$worker_id[i])]
-}
-
-cor.test(general_per$trans_acc, general_per$corr)
-
-plot(general_per$trans_acc, general_per$corr)

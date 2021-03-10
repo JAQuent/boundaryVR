@@ -74,12 +74,12 @@ For this pilot, we only tested one video. For this early version of the experime
 ### Results
 ```{r}
 # Load trial information
-load("~/boundaryVR/data/batch0/trialData_video2.RData")
+load("~/boundaryVR/data/Exp1/batch0/trialData_video2.RData")
 trialData_video2 <- trialData_video2[order(trialData_video2$objNum),]
 
 # Load all data
 folder         <- 'memoryTask/'
-prefix         <- "~/boundaryVR/data/batch0/"
+prefix         <- "~/boundaryVR/data/Exp1/batch0/"
 allFiles       <- list.files(paste(prefix, folder, sep = ''))
 allFiles_paths <- paste(prefix, folder, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -216,7 +216,7 @@ Instead of context memory, we ask participant to choose the but room type and ta
 ### Results
 ```{r}
 # Load all data
-prefix         <- "~/boundaryVR/data/batch1/memoryTask/"
+prefix         <- "~/boundaryVR/data/Exp1/batch1/memoryTask/"
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -393,7 +393,7 @@ trials_cond7 <- trials_cond7[order(trials_cond7$objNum),]
 trials_cond8 <- trials_cond8[order(trials_cond8$objNum),]
 
 # Load all data
-prefix         <- "~/boundaryVR/data/batch1/memoryTask/"
+prefix         <- "~/boundaryVR/data/Exp1/batch1/memoryTask/"
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -499,7 +499,7 @@ trials_cond7 <- trials_cond7[order(trials_cond7$objNum),]
 trials_cond8 <- trials_cond8[order(trials_cond8$objNum),]
 
 # Load all data
-prefix         <- '~/boundaryVR/data/batch2/memoryTask/'
+prefix         <- '~/boundaryVR/data/Exp1/batch2/memoryTask/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -949,7 +949,7 @@ answerString <- c('Yes, at times I was busy with other things and missed parts o
 
 ```{r parseData, echo = FALSE}
 nQuestions     <- 13
-prefix         <- '~/boundaryVR/data/batch2/debrief/'
+prefix         <- '~/boundaryVR/data/Exp1/batch2/debrief/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 nSub           <- length(allFiles_paths)
@@ -1060,7 +1060,7 @@ Since our additional analysis did not produce any explanations why we observe th
 ### Results
 ```{r}
 # Load all data
-prefix         <- '~/boundaryVR/data/batch3/memoryTask/'
+prefix         <- '~/boundaryVR/data/Exp1/batch3/memoryTask/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -2484,7 +2484,7 @@ choiceBF <- reportBF(choiceBF)
 However the evidence for different choice rates of foil 1 vs. foil 2 for the after question is low (BF10 = `r choiceBF`, two-sided). Furthermore, I checked whether foils being on the same table as the target influences the results.
 
 ```{r}
-df_order_table_exp2 <- ddply(df_order_exp2_dist, c('id', 'questionType', 'foil1_sameTable', 'foil2_sameTable'), 
+df_order_table_exp2 <- ddply(df_order_exp2_dist, c('id', 'context', 'questionType', 'foil1_sameTable', 'foil2_sameTable'), 
                              summarise,
                              acc   = mean(accuracy))
 
@@ -2498,7 +2498,7 @@ df_order_table_exp2$sameTable <- sameTable
 df_order_table_exp2$trans_acc <- arcsine_transform(df_order_table_exp2$acc)
 
 ggplot(df_order_table_exp2, aes(x = sameTable, y = trans_acc, fill = sameTable)) +
-  facet_grid(~questionType) +
+  facet_grid(questionType~context) +
   geom_jitter(width = 0.1, height = 0, show.legend = FALSE) +
   geom_boxplot(alpha = 0.5, outlier.shape = NA, show.legend = FALSE) +
   geom_hline(yintercept = arcsine_transform(1/3)) +
