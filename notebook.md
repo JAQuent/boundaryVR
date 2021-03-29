@@ -1,7 +1,7 @@
 Notebook for boundary VR
 ================
 Joern Alexander Quent
-03 February, 2021
+29 March, 2021
 
   - [Aim of this project](#aim-of-this-project)
   - [Experiment 1](#experiment-1)
