@@ -1,7 +1,7 @@
 Notebook for boundary VR
 ================
 Joern Alexander Quent
-29 March, 2021
+30 March, 2021
 
   - [Aim of this project](#aim-of-this-project)
   - [Experiment 1](#experiment-1)
@@ -61,6 +61,15 @@ Joern Alexander Quent
       - [Discussion](#discussion-4)
   - [Experiment 3](#experiment-3)
       - [Planned changes](#planned-changes)
+  - [Results](#results-5)
+      - [Responses during video](#responses-during-video-1)
+          - [Video 1](#video-1)
+      - [Memory task](#memory-task-1)
+          - [Additional memory analysis](#additional-memory-analysis)
+      - [Debrief](#debrief-1)
+          - [Further comments regarding the
+            questions](#further-comments-regarding-the-questions-1)
+          - [General comments](#general-comments-1)
 
 # Aim of this project
 
@@ -7365,3 +7374,649 @@ manually set the positions and orientation, which sometimes led to
 errors.
 
 two groups: 1 m- and o-shape room.
+
+# Results
+
+## Responses during video
+
+### Video 1
+
+For 44.8 % of participants we didn’t register the 44 responses. Some of
+this issue due to the fact that if the key is pressed to long multiple
+response are registered. Only 3.4 of all, gave fewer than 44 responses.
+Therefore it seems that compliance is quite good. Also note that here we
+also include people who might not did or might be excluded from the
+memory analysis.
+
+As expected, those people who gave 44 response give around the same
+time. The average inter-response-interval (IRI) is 7857 (36) msec (SD in
+brackets). This tiny SD is not unexpected as the time between objects
+was the same for all participants.
+
+One way of checking whether participants are paying attention to the
+video is to correlate their responses to the responses of everyone else.
+To make things easier, I just do this with people who have given exactly
+44 responses as I don’t want to fiddle around with removing multiple
+responses.
+
+This procedure works quite well. The correlations for this subset of all
+participants who watch the video ranges between r = .67 and r = .94.
+
+If I bootstrap responses by randomly sampling 0 and 1, the upper 95%
+value is r = .25, which means that each subject for which I estimated
+this congruency is well above that.
+
+## Memory task
+
+Average transformed (overall) accuracy is treated as an outlier if it’s
+above/below 2 median absolute deviations from the median. The let to the
+exclusion of 6.4 % of the data.
+
+![](notebook_files/figure-gfm/memory_analysis1-1.png)<!-- -->
+
+I analyse the data (N = 43) above with a paired and directed t-test. For
+accuracy the result is \(BF_{01}\) = 4.72 and for RT the result is
+\(BF_{01}\) = 1.09. So there is small evidence against an effect.
+
+![](notebook_files/figure-gfm/unnamed-chunk-67-1.png)<!-- -->
+
+The distribution of difference seems to be fairly focussed around zero.
+
+In the following, I am trying to dissect the memory effect a bit. First,
+there is no difference between the counterbalancing conditions.
+
+![](notebook_files/figure-gfm/memory_analysis3-1.png)<!-- -->
+
+Furthermore, there doesn’t seems to be a difference between first memory
+test and the second memory test.
+
+![](notebook_files/figure-gfm/memory_analysis4-1.png)<!-- -->
+
+There is a correlation between average RT and average accuracy r = .349,
+p = .02.
+
+![](notebook_files/figure-gfm/unnamed-chunk-68-1.png)<!-- -->
+
+### Additional memory analysis
+
+![](notebook_files/figure-gfm/tableAnlysis-1.png)<!-- -->
+
+<table>
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+</th>
+
+<th style="text-align:right;">
+
+Estimate
+
+</th>
+
+<th style="text-align:right;">
+
+SE
+
+</th>
+
+<th style="text-align:right;">
+
+Z
+
+</th>
+
+<th style="text-align:right;">
+
+P
+
+</th>
+
+<th style="text-align:left;">
+
+Sig
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+(Intercept)
+
+</td>
+
+<td style="text-align:right;">
+
+0.04
+
+</td>
+
+<td style="text-align:right;">
+
+0.12
+
+</td>
+
+<td style="text-align:right;">
+
+0.33
+
+</td>
+
+<td style="text-align:right;">
+
+0.7442
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+contextwithin
+
+</td>
+
+<td style="text-align:right;">
+
+\-0.18
+
+</td>
+
+<td style="text-align:right;">
+
+0.13
+
+</td>
+
+<td style="text-align:right;">
+
+\-1.30
+
+</td>
+
+<td style="text-align:right;">
+
+0.1937
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+foil1\_sameTableTRUE
+
+</td>
+
+<td style="text-align:right;">
+
+0.03
+
+</td>
+
+<td style="text-align:right;">
+
+0.14
+
+</td>
+
+<td style="text-align:right;">
+
+0.20
+
+</td>
+
+<td style="text-align:right;">
+
+0.8442
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+foil2\_sameTableTRUE
+
+</td>
+
+<td style="text-align:right;">
+
+\-0.20
+
+</td>
+
+<td style="text-align:right;">
+
+0.14
+
+</td>
+
+<td style="text-align:right;">
+
+\-1.48
+
+</td>
+
+<td style="text-align:right;">
+
+0.1394
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+contextwithin:foil1\_sameTableTRUE
+
+</td>
+
+<td style="text-align:right;">
+
+0.24
+
+</td>
+
+<td style="text-align:right;">
+
+0.19
+
+</td>
+
+<td style="text-align:right;">
+
+1.25
+
+</td>
+
+<td style="text-align:right;">
+
+0.2096
+
+</td>
+
+<td style="text-align:left;">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+contextwithin:foil2\_sameTableTRUE
+
+</td>
+
+<td style="text-align:right;">
+
+0.49
+
+</td>
+
+<td style="text-align:right;">
+
+0.22
+
+</td>
+
+<td style="text-align:right;">
+
+2.28
+
+</td>
+
+<td style="text-align:right;">
+
+0.0228
+
+</td>
+
+<td style="text-align:left;">
+
+  - 
+    
+    </td>
+    
+    </tr>
+    
+    <tr>
+    
+    <td style="text-align:left;">
+    
+    foil1\_sameTableTRUE:foil2\_sameTableTRUE
+    
+    </td>
+    
+    <td style="text-align:right;">
+    
+    0.03
+    
+    </td>
+    
+    <td style="text-align:right;">
+    
+    0.20
+    
+    </td>
+    
+    <td style="text-align:right;">
+    
+    0.16
+    
+    </td>
+    
+    <td style="text-align:right;">
+    
+    0.8692
+    
+    </td>
+    
+    <td style="text-align:left;">
+    
+    </td>
+    
+    </tr>
+    
+    <tr>
+    
+    <td style="text-align:left;">
+    
+    contextwithin:foil1\_sameTableTRUE:foil2\_sameTableTRUE
+    
+    </td>
+    
+    <td style="text-align:right;">
+    
+    \-0.72
+    
+    </td>
+    
+    <td style="text-align:right;">
+    
+    0.29
+    
+    </td>
+    
+    <td style="text-align:right;">
+    
+    \-2.49
+    
+    </td>
+    
+    <td style="text-align:right;">
+    
+    0.0128
+    
+    </td>
+    
+    <td style="text-align:left;">
+    
+      - 
+        
+        </td>
+        
+        </tr>
+        
+        </tbody>
+        
+        </table>
+
+![](notebook_files/figure-gfm/analyseInteraction-1.png)<!-- -->
+
+## Debrief
+
+![](notebook_files/figure-gfm/fig14-1.png)<!-- -->
+
+### Further comments regarding the questions
+
+<strong>Subject: 15168 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+story telling with objects  
+<strong>Subject: 15175 </strong> <i>Did you recognise all objects in the
+videos and in the memory task? (If you can, please try describe
+the/those object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+I don’t remember seeing a football  
+<strong>Subject: 15176 </strong> <i>Did you recognise all objects in the
+videos and in the memory task? (If you can, please try describe
+the/those object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+Mostly the smaller object such as the red mug and the jar of pencils  
+<strong>Subject: 15184 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I tried to remember on which side the object was  
+<strong>Subject: 15180 </strong> <i>Did you recognise all objects in the
+videos and in the memory task? (If you can, please try describe
+the/those object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+yellow duck, futball ball, skateboard.  
+<strong>Subject: 15200 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I tried to make pairs of objects
+
+<strong>Subject: 15205 </strong> <i>Did you experience any problems
+viewing the videos? Or problems in the experiment in general? (If yes,
+please elaborate.)</i>:  
+Yes, at first there was a delay in moving forward after the verification
+video but it was just a matter of waiting a little longer. After that
+all went well.  
+<strong>Subject: 15206 </strong> <i>Did you recognise all objects in the
+videos and in the memory task? (If you can, please try describe
+the/those object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+Green pots or watering cans  
+<strong>Subject: 15206 </strong> <i>Did you experience any problems
+viewing the videos? Or problems in the experiment in general? (If yes,
+please elaborate.)</i>:  
+The first video started before I could read the instructions properly.  
+<strong>Subject: 15210 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I tried to make a little phrase in my head. Like I thought “business
+sucks reversed” to remember that a vacuum cleaner (sucks) came before
+the briefcase.  
+<strong>Subject: 15207 </strong> <i>Did you recognise all objects in the
+videos and in the memory task? (If you can, please try describe
+the/those object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+a small black and white rectangular object  
+<strong>Subject: 15207 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I tried to logically link the objects, for example : duck in basket,
+piano on basket… Or : I put my shoes on, I take the sweeper and I pick
+the toy up…  
+<strong>Subject: 15330 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+trying to find a connection between the objects, but it almost never
+worked or I couldn’t find it  
+<strong>Subject: 15328 </strong> <i>Did you recognise all objects in the
+videos and in the memory task? (If you can, please try describe
+the/those object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+I don’t have a good memory so was kinda hard to remember the sequence of
+the objects.  
+<strong>Subject: 15326 </strong> <i>Did you recognise all objects in the
+videos and in the memory task? (If you can, please try describe
+the/those object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+Couldn’t remember the red mug from the first batch  
+<strong>Subject: 15340 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+In the second set of experiments I tried to make a story fit the
+sequence, eg the workers had their ‘yellow hard-hat’ on playing
+‘football’ then they knocked over the ‘statue head’, but there were
+too many items to carry this on for very long.  
+<strong>Subject: 15340 </strong> <i>Specifically, did you sometimes make
+responses based on the general memory when objects appeared in the video
+but not based on exactly knowing order of objects?</i>:  
+I tried to remember a sequence firstly but it got too hard  
+<strong>Subject: 15337 </strong> <i>Did you recognise all objects in the
+videos and in the memory task? (If you can, please try describe
+the/those object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+There was one small white kettle looking thing that I wasn’t sure what
+it was. (Not the obvious kettle but a slightly smaller one)  
+<strong>Subject: 15337 </strong> <i>Did you experience any problems
+viewing the videos? Or problems in the experiment in general? (If yes,
+please elaborate.)</i>:  
+N/A  
+<strong>Subject: 15337 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+Sometimes if the objects started with the same letter i’d remember they
+were in the same room such as tennis racket/telescope.  
+<strong>Subject: 15337 </strong> <i>Specifically, did you sometimes make
+responses based on the general memory when objects appeared in the video
+but not based on exactly knowing order of objects?</i>:  
+I often didn’t remember exact order so I tried to rule out objects I
+thought came a bit earlier/later  
+<strong>Subject: 15333 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I tried to memorize which objects appeared in which table and tried to
+“connect” them in my head by repeating the objects i was seeing out
+loud.  
+<strong>Subject: 15329 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I was creating a story around the objects to relate them one after the
+other. I was particularly looking for strong connections that later one
+would help me guess which one follows. For example, I related dumbbells
+and pillow which both relate to fitness like training and resting. For
+some it was easier for others it was harder I did not make any
+connection so I moved on with these ones.  
+<strong>Subject: 15329 </strong> <i>Specifically, did you sometimes make
+responses based on the general memory when objects appeared in the video
+but not based on exactly knowing order of objects?</i>:  
+I think Yes I based my guess on the objects I recalled were in order.
+However, I’m not sure if I have fully understood this questions.  
+<strong>Subject: 15334 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:
+
+I hammered what I see  
+<strong>Subject: 15320 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+If I could group the items togtether in some way then I would, like
+pencils and books for example.  
+<strong>Subject: 15345 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+On the second try I tried do to that strategy of remembering in which
+table of the room the object was, and remembering at least one item of
+each room  
+<strong>Subject: 15347 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I tried to associate the objects and their order with a story: so for
+when the coffee pot, fire extinguisher, and sandals appeared, I made up
+a story that a man made coffee, burned the coffee and needed a fire
+extinguisher, and had to wear sandals because he also burned his
+shoes.  
+<strong>Subject: 15358 </strong> <i>Did you recognise all objects in the
+videos and in the memory task? (If you can, please try describe
+the/those object(s) where you had problems briefly e.g. their
+shape/colour.)</i>:  
+I had problem with small objects.  
+<strong>Subject: 15358 </strong> <i>Did you experience any problems
+viewing the videos? Or problems in the experiment in general? (If yes,
+please elaborate.)</i>:  
+yes and I had to reset the experiment but that was in the beginning  
+<strong>Subject: 15358 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+No, i didn’t use any strategy.  
+<strong>Subject: 15323 </strong> <i>Did you use any strategy to remember
+the objects and their order? One strategy for instance could be to
+recall the table an object was on and then to exclude options on that
+basis. (If yes, please elaborate.)</i>:  
+I associate the object with some arguments
+
+### General comments
+
+<strong>Subject: 15201 </strong>  
+It was a big challenge for me. I feel I should start memory exercises.  
+<strong>Subject: 15200 </strong>  
+None  
+<strong>Subject: 15206 </strong>  
+At first I didnt know that I needed to press L for bigger objects. And
+even now I am unclear about the instructions. Thank you for the
+study\!  
+<strong>Subject: 15209 </strong>  
+No comment.  
+<strong>Subject: 15207 </strong>  
+Very difficult memory task\!  
+<strong>Subject: 15330 </strong>  
+the navigation is too slow  
+<strong>Subject: 15340 </strong>  
+No thanks  
+<strong>Subject: 15337 </strong>  
+N/A, it was a good study :)  
+<strong>Subject: 15331 </strong>  
+nothing at this point  
+<strong>Subject: 15329 </strong>  
+All good. Took me around 33 minutes to complete all this study.  
+<strong>Subject: 15358 </strong>  
+I only want to wish you a nice day :)  
+<strong>Subject: 15362 </strong>  
+No, Have a nice day
