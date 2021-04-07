@@ -40,12 +40,756 @@ The first step in this study was a pilot study to verify that crossing to the se
 In three experiments, I describe how I failed to replicate the boundary effect on memory (i.e. within > across) while successively removing possible confounds. 
 
 # Experiment 1
-## Batch 1
-## Batch 2
-## Batch 3
+## Method
+### Participant pool
+In all experiments, we recruited participants from the website https://www.prolific.co/. 
+
+<!-- Add demographics etc. -->
+### Procedure
+Participants first saw a video of another camera navigating through a series of rooms. Note that Horner et al. (2016), participants navigated through the virtual environment themselves. After watching the video, participants completed a memory task (see below for details).
+
+### Virtual environment and stimuli
+The rooms were build with SketchUp (https://www.sketchup.com) and then imported into unity3d (https://unity.com/). 88  everyday objects were downloaded (e.g. guitar, toys, household items etc.) from archive3d (https://archive3d.net/) and edited them either in blender (https://www.blender.org/) or in unity3d itself. I tried to find as many 3D versions of objects as possible that were also used in Horner et al. (2016). The object sizes were kept to be scaled realistically to the other feature of the environment. 
+
+In contrast to Horner et al., the layouts of all rooms of the same type were always identical including the positions of the tables differing only in wall colour and floor material (wood or carpet textures). 
+
+In Experiment 1, M-room and O-room alternated so that each participant saw the both types of rooms. Four videos were created where the order of the objects presented was always the same (i.e. the pencils were always presented as the first object).
+
+Video 1 and 2 two objects were presented in the first room. The first object-object sequence was hence within-boundaries. Video 3 and 4 showed only one object in the first room. The next object was therefore presented across a spatial boundary (i.e. door). The first room in video 1 and 3 was M-shaped, while the first room in video 2 and 4 was an open plane room. The reason for this was to create four counter-balancing conditions that control for the sequences of the boundary conditions (within vs. across) and which room began the series. 
+
+Like the order of the objects, the wall colours and floor materials of the rooms were constant across the videos. The only exception to this rule was that video 3 and 4 featured 45 rooms to presented all objects. The number of wall colours (blue, brown, green, grey, orange, pink, purple, red, turquoise and yellow) and floor materials (5 different carpets and 5 different wood floors) allowed us to construct 45 unique rooms. 
+
+Both types of rooms contained three tables, however only two were used in the experiments discussed here. The first table in the room as added for future version of the experiment that I never ran. All of tables had a cardboard box placed on top of it. If the camera approached two of the tables (see labels 1 and 2 in figure above), the cardboard boxes disappeared.
+
+While watching the video, participants in this tasks were required to judge whether an object was smaller or bigger than a reference as soon as the object appeared. In this and all subsequent versions of the Experiment the object was visible for 3 seconds. After the 3 seconds, the object disappeared and the cardboard box that was covering the object re-appeared. This controlled the time during which the object could be seen by the participant. 
+
+### Batch 1
+#### Description of memory task
+To asses the boundary effect, I showed participants a cue object with three images under it one of which was the target object and the other two were foils. The question the participants had to answer was "What came before this object?".
+
+The foils were +/- 4 positions away from the target object (see Figure). This was done to implement tighter control of the foils than it was done in Horner et al. (2016). This ensured that the two foils were always from the same room type and on the same table as the target. 
+
+An in-lab pilot experiment has shown that participants could not identify the exact room a particular objects was in based on as still image that showed wall colour and floor texture. This memory question was therefore not used again. However, I asked participants to choose the but room type and table type in a 2AFC task.  
+
+#### Sample
+In this batch, I collected data of 10 participants. 
+
+#### Statistical analysis
+<!-- add description -->
+
+#### Results
+```{r exp1_batch1_loadData}
+# Load all data
+prefix         <- "~/boundaryVR/data/Exp1/batch1/memoryTask/"
+allFiles       <- list.files(paste(prefix, sep = ''))
+allFiles_paths <- paste(prefix, allFiles, sep = '')
+n              <- length(allFiles_paths)
+
+for(i in 1:n){
+  ############
+  # Load data files
+  tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
+  
+  # Recode key presses
+  response      <- rep(NA, dim(tempDF)[1])
+  response[tempDF$key_press == 49] <- 1
+  response[tempDF$key_press == 50] <- 2
+  response[tempDF$key_press == 51] <- 3
+  tempDF$response <- response
+  
+  ############
+  # Temporal order
+  temporalOrder    <- subset(tempDF, test_part == 'temporalOrder')
+  temporalOrder$rt <- as.numeric(as.character(temporalOrder$rt))
+  
+  # Calculate accuracy
+  accuracy <- rep(NA, dim(temporalOrder)[1])
+  accuracy[temporalOrder$response == temporalOrder$corr_resp] <- 1
+  accuracy[temporalOrder$response != temporalOrder$corr_resp] <- 0
+  temporalOrder$accuracy <- accuracy
+
+  ############
+  # Room type question
+  roomType      <- subset(tempDF, test_part == 'roomType')
+  roomType$rt   <- as.numeric(as.character(roomType$rt))
+  
+  # Calculate accuracy
+  accuracy <- rep(NA, dim(roomType)[1])
+  accuracy[roomType$response == roomType$corr_resp] <- 1
+  accuracy[roomType$response != roomType$corr_resp] <- 0
+  roomType$accuracy <- accuracy
+  
+  ############
+  # Table question
+  tableNum      <- subset(tempDF, test_part == 'tableNum')
+  tableNum$rt   <- as.numeric(as.character(tableNum$rt))
+  
+  # Recode because tables are named 2 and 3 in input data
+  tableNum$response[tableNum$key_press == 49] <- 3 # for key press 1
+  tableNum$response[tableNum$key_press == 50] <- 2 # for key press 2
+  
+  # Calculate accuracy
+  accuracy <- rep(NA, dim(tableNum)[1])
+  accuracy[tableNum$response == tableNum$corr_resp] <- 1
+  accuracy[tableNum$response != tableNum$corr_resp] <- 0
+  tableNum$accuracy <- accuracy
+  
+  # Add subject ID and concatenate to 1 data.frame
+  if(i == 1){
+    df_order    <- temporalOrder
+    df_order$id <- i
+    df_room     <- roomType
+    df_room$id  <- i
+    df_table    <- tableNum
+    df_table$id <- i
+  } else {
+    temporalOrder$id <- i
+    df_order         <- rbind(df_order, temporalOrder)
+    roomType$id      <- i
+    df_room          <- rbind(df_room, roomType)
+    tableNum$id      <- i
+    df_table         <- rbind(df_table, tableNum)
+  }
+}
+
+# Rename according for batch1
+df_order_b1 <- df_order 
+df_room_b1  <- df_room
+df_table_b1 <- df_table
+
+# Convert ID to factor
+df_order_b1$id <- as.factor(df_order_b1$id)
+df_room_b1$id  <- as.factor(df_room_b1$id)
+df_table_b1$id <- as.factor(df_table_b1$id)
+
+# Recode factor levels
+levels(df_order_b1$context) <- c('across', 'within-open plane', 'within-M-shape')
+
+# Calculate mean accuracy
+agg_order_b1 <- ddply(df_order_b1, c('id', 'context'), summarise, acc = mean(accuracy), rt = mean(rt))
+agg_room_b1  <- ddply(df_room_b1, c('id'), summarise, acc = mean(accuracy))
+agg_table_b1 <- ddply(df_table_b1, c('id'), summarise, acc = mean(accuracy))
+
+# Do arcsine transformation
+agg_order_b1$trans_acc <- arcsine_transform(agg_order_b1$acc)
+agg_room_b1$trans_acc  <- arcsine_transform(agg_room_b1$acc)
+agg_table_b1$trans_acc <- arcsine_transform(agg_table_b1$acc)
+
+# Rename factor
+agg_order_b1$boundary <- ifelse(agg_order_b1$context == 'across', 'across', 'within')
+agg_order_b1$Condition <- 'across'
+agg_order_b1$Condition[agg_order_b1$context == 'within-open plane'] <- 'O-room'
+agg_order_b1$Condition[agg_order_b1$context == 'within-M-shape']    <- 'M-room'
+```
+
+```{r exp1_batch1_plot1}
+# /* 
+# ----------------------------- Exp 1 Batch 1: Plots ---------------------------
+# */
+plt1 <- ggplot(agg_order_b1, aes(x = boundary, y = trans_acc, group = Condition, colour = Condition)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA, key_glyph = "rect") + 
+  geom_point(position = position_jitterdodge(jitter.width = 0.2)) + 
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, aes(fill = Condition),
+               position=position_dodge(width =  0.75),
+               key_glyph = "rect") + 
+  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.75, yend= arcsine_transform(1/3)),colour = 'black',
+               arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
+  annotate('text', x = 1.5, y = - 0.75 - 0.03, label = 'Chance') +
+  scale_color_mrc(palette = 'secondary') + 
+  scale_fill_mrc(palette = 'secondary') +
+  labs(y = 'arcsine(3AFC accuracy)', x = "Boundary", title = 'Temporal Order') + 
+  theme(legend.justification = c(0, 1), 
+        legend.position = c(0, 1),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 9),
+        legend.key.size = unit(0.5,"line"))
+
+# Bind room and table together
+roomTable_b1 <- data.frame(id = rep(1:n, 2),
+                           Type = rep(c('Room', 'Table'), each = n),
+                           acc = c(agg_room_b1$acc, agg_table_b1$acc),
+                           trans_acc = c(agg_room_b1$trans_acc, agg_table_b1$trans_acc))
+
+plt2 <- ggplot(roomTable_b1, aes(x = Type, y = trans_acc)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1, height = 0) +
+  geom_hline(yintercept = arcsine_transform(0.5)) +
+  stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red') +
+  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.2, yend= arcsine_transform(0.5)),colour = 'black',
+               arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
+  annotate('text', x = 1.5, y = - 0.2 - 0.03, label = 'Chance') +
+  labs(y = 'arcsine(2AFC accuracy)', x = "Memory type", title = 'Room type and table')
+
+# Combine 2 1 figure
+plot_grid(plt1, plt2)
+```
+
+
+```{r exp1_batch1_test1}
+# Temporal order question
+# Overall memory performance
+agg_order_overall_b1           <- ddply(df_order_b1, c('id'), summarise, acc = mean(accuracy), rt = mean(rt))
+agg_order_overall_b1$trans_acc <- arcsine_transform(agg_order_overall_b1$acc)
+
+test1 <- ttestBF(agg_order_overall_b1$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
+test1 <- reportBF(1/test1[2])
+
+# Examine the boundary effect
+## Memory
+### Across versus M-room
+val1  <- agg_order_b1[agg_order_b1$Condition == 'across', 'trans_acc']
+val2  <- agg_order_b1[agg_order_b1$boundary  == 'within' & agg_order_b1$Condition  == 'M-room', 'trans_acc']
+test2 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test2 <- reportBF(1/test2[1])
+
+### Across versus O-room
+val1  <- agg_order_b1[agg_order_b1$Condition == 'across', 'trans_acc']
+val2  <- agg_order_b1[agg_order_b1$boundary  == 'within' & agg_order_b1$Condition  == 'O-room', 'trans_acc']
+test3 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test3 <- reportBF(1/test3[1])
+
+## RT
+### Across versus M-room
+val1  <- agg_order_b1[agg_order_b1$Condition == 'across', 'rt']
+val2  <- agg_order_b1[agg_order_b1$boundary  == 'within' & agg_order_b1$Condition  == 'M-room', 'rt']
+test4 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test4 <- reportBF(1/test4[2])
+
+### Across versus O-room
+val1  <- agg_order_b1[agg_order_b1$Condition == 'across', 'rt']
+val2  <- agg_order_b1[agg_order_b1$boundary  == 'within' & agg_order_b1$Condition  == 'O-room', 'rt']
+test5 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test5 <- reportBF(1/test5[2])
+
+# Room question
+test6 <- ttestBF(agg_room_b1$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+test6 <- reportBF(1/test6[2])
+
+# Table question
+test7 <- ttestBF(agg_table_b1$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+test7 <- reportBF(test7[2])
+```
+
+There was considerable evidence that memory performance was not above chance ($BF_{01}$ = `r test1`) for the temporal memory question. Furthermore, I did not find a boundary effect for M-rooms (across vs. within) for accuracy, $BF_{01}$ = `r test2`, and for RT, $BF_{01}$ = `r test4`, but I did not find an effect for O-rooms for accuracy, $BF_{01}$ = `r test3`, and for RT, $BF_{01}$ = `r test5`. 
+
+Participants also did not show above chance performance for remembering in which room type a cue object was presented in ($BF_{01}$ = `r test6`). However, there was weak evidence that participants did remember on which table type a cue object was presented ($BF_{10}$ = `r test7`).
+
+#### Discussion
+In contrast to my expectations, I did not find boundary effect for either room type. After consultation in a lab meeting, I considered whether the question "What came before this object?" could be interpreted in a way that participants thought that both objects that appeared before the cue object (i.e. the target as well as one of the foils) would be a valid answer. 
+
+Another notable concern was that memory performance was not above chance, which might have been another reason why I did not fnd the boundary effect. 
+
+### Batch 2
+#### Description of memory task
+In order to avoid confusion I improved the instructions and the specific wording of the temporal order question. Participants were now asked "In the video you just watched, which one of the three objects at the bottom of the screen appeared immediately before this object?" in order to make sure that there is no misunderstanding. Besides other small changes to the instruction of this task, no significant changes were made. 
+
+#### Sample
+In this batch, I collected data of 12 participants. 
+
+#### Results
+```{r exp1_batch2_loadData}
+# Load trial information
+load("~/boundaryVR/experiments/Exp1/batch2/r_supportFiles/trialData_20200522_182214.RData")
+# Note that counterbalancing in that images goes from 1 to 8, while it goes from 0 to 7 in the javascript
+# files.
+
+# Order trial information
+trials_cond5 <- trials_cond5[order(trials_cond5$objNum),]
+trials_cond6 <- trials_cond6[order(trials_cond6$objNum),]
+trials_cond7 <- trials_cond7[order(trials_cond7$objNum),]
+trials_cond8 <- trials_cond8[order(trials_cond8$objNum),]
+
+# Load all data
+prefix         <- '~/boundaryVR/data/Exp1/batch2/memoryTask/'
+allFiles       <- list.files(paste(prefix, sep = ''))
+allFiles_paths <- paste(prefix, allFiles, sep = '')
+n              <- length(allFiles_paths)
+
+for(i in 1:n){
+  ############
+  # Loading daya
+  tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
+  
+  # Recode key presses
+  response      <- rep(NA, dim(tempDF)[1])
+  response[tempDF$key_press == 49] <- 1
+  response[tempDF$key_press == 50] <- 2
+  response[tempDF$key_press == 51] <- 3
+  tempDF$response                  <- response
+  
+  ############
+  # Temporal order memory
+  temporalOrder <- subset(tempDF, test_part == 'temporalOrder')
+  
+  # Sort by objectNumber
+  temporalOrder <- temporalOrder[order(temporalOrder$probe),]
+  
+  # get trialinfo and add to temporalOrder
+  cond <- temporalOrder$condition[1] + 1 # to correct for difference
+  temporalOrder$foil1Pos <- get(paste0("trials_cond", cond))$foil1Pos
+  temporalOrder$foil2Pos <- get(paste0("trials_cond", cond))$foil2Pos
+  
+  temporalOrder$rt <- as.numeric(as.character(temporalOrder$rt))
+
+  # Calcalate accuracy 
+  accuracy <- rep(NA, dim(temporalOrder)[1])
+  accuracy[temporalOrder$response == temporalOrder$corr_resp] <- 1
+  accuracy[temporalOrder$response != temporalOrder$corr_resp] <- 0
+  temporalOrder$accuracy <- accuracy
+  
+  # Create variable that desribe whether target, foil1, foil2 was choosen
+  choice <- rep('Target', dim(temporalOrder)[1])
+  choice[temporalOrder$response == temporalOrder$foil1Pos] <- 'Foil 1'
+  choice[temporalOrder$response == temporalOrder$foil2Pos] <- 'Foil 2'
+  temporalOrder$choice <- choice
+  
+  ############
+  # Room type question
+  roomType      <- subset(tempDF, test_part == 'roomType')
+  roomType$rt   <- as.numeric(as.character(roomType$rt))
+  
+  # get trialinfo and add to roomType
+  cond               <- roomType$condition[1] + 1 # to correct for difference
+  roomType$roomType  <- get(paste0("trials_cond", cond))$roomType
+  
+  corr_room <- rep(NA, nrow(roomType))
+  corr_room[roomType$roomType  == "nw"] <- 1
+  corr_room[roomType$roomType  == "ww"] <- 2
+  roomType$corr_room <- corr_room
+  
+  # Calculate accuracy
+  accuracy <- rep(NA, dim(roomType)[1])
+  accuracy[roomType$response == roomType$corr_room] <- 1
+  accuracy[roomType$response != roomType$corr_room] <- 0
+  roomType$accuracy <- accuracy
+  
+  ############
+  # Table question
+  tableNum      <- subset(tempDF, test_part == 'tableNum')
+  tableNum$rt   <- as.numeric(as.character(tableNum$rt))
+  
+  # Recode keypresses
+  response      <- rep(NA, dim(tableNum)[1])
+  response[tableNum$key_press == 49] <- 3 # for key press 1
+  response[tableNum$key_press == 50] <- 2 # for key press 2
+  tableNum$response                  <- response
+  
+  # Calculate accuracy
+  accuracy <- rep(NA, dim(tableNum)[1])
+  accuracy[tableNum$response == tableNum$corr_resp] <- 1
+  accuracy[tableNum$response != tableNum$corr_resp] <- 0
+  tableNum$accuracy <- accuracy
+  
+  # Create or bind to data.frame
+  if(i == 1){
+    df_order_b2    <- temporalOrder
+    df_order_b2$id <- i
+    df_room_b2     <- roomType
+    df_room_b2$id  <- i
+    df_table_b2    <- tableNum
+    df_table_b2$id <- i
+  } else {
+    temporalOrder$id <- i
+    df_order_b2      <- rbind(df_order_b2, temporalOrder)
+    roomType$id      <- i
+    df_room_b2       <- rbind(df_room_b2, roomType)
+    tableNum$id      <- i
+    df_table_b2      <- rbind(df_table_b2, tableNum)
+  }
+}
+
+# Convert to id factor
+df_order_b2$id <- as.factor(df_order_b2$id)
+df_room_b2$id  <- as.factor(df_room_b2$id)
+df_table_b2$id <- as.factor(df_table_b2$id)
+
+# Recode factor levels
+levels(df_order_b2$context) <- c('across', 'within-open plane', 'within-M-shape')
+
+# Calculate mean accuracy
+agg_order_b2 <- ddply(df_order_b2, c('id', 'context'), summarise, acc = mean(accuracy), rt = mean(rt))
+agg_room_b2  <- ddply(df_room_b2, c('id'), summarise, acc = mean(accuracy))
+agg_table_b2 <- ddply(df_table_b2, c('id'), summarise, acc = mean(accuracy))
+
+# Transform accuracy
+agg_order_b2$trans_acc <- arcsine_transform(agg_order_b2$acc)
+agg_room_b2$trans_acc  <- arcsine_transform(agg_room_b2$acc)
+agg_table_b2$trans_acc <- arcsine_transform(agg_table_b2$acc)
+
+# Rename factor
+agg_order_b2$boundary <- ifelse(agg_order_b2$context == 'across', 'across', 'within')
+agg_order_b2$Condition <- 'across'
+agg_order_b2$Condition[agg_order_b1$context == 'within-open plane'] <- 'O-room'
+agg_order_b2$Condition[agg_order_b1$context == 'within-M-shape']    <- 'M-room'
+```
+
+
+```{r exp1_batch2_plot1}
+# /* 
+# ----------------------------- Exp 1 Batch 2: Plots ---------------------------
+# */
+plt1 <- ggplot(agg_order_b2, aes(x = boundary, y = trans_acc, group = Condition, colour = Condition)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA, key_glyph = "rect") + 
+  geom_point(position = position_jitterdodge(jitter.width = 0.2)) + 
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, aes(fill = Condition),
+               position=position_dodge(width =  0.75),
+               key_glyph = "rect") + 
+  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.75, yend= arcsine_transform(1/3)),colour = 'black',
+               arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
+  annotate('text', x = 1.5, y = - 0.75 - 0.03, label = 'Chance') +
+  scale_color_mrc(palette = 'secondary') + 
+  scale_fill_mrc(palette = 'secondary') +
+  labs(y = 'arcsine(3AFC accuracy)', x = "Boundary", title = 'Temporal Order') + 
+  theme(legend.justification = c(0, 1), 
+        legend.position = c(0, 1),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 9),
+        legend.key.size = unit(0.5,"line"))
+
+# Bind room and table together
+roomTable_b2 <- data.frame(id = rep(1:n, 2),
+                           Type = rep(c('Room', 'Table'), each = n),
+                           acc = c(agg_room_b2$acc, agg_table_b2$acc),
+                           trans_acc = c(agg_room_b2$trans_acc, agg_table_b2$trans_acc))
+
+plt2 <- ggplot(roomTable_b2, aes(x = Type, y = trans_acc)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1, height = 0) +
+  geom_hline(yintercept = arcsine_transform(0.5)) +
+  stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red') +
+  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.2, yend= arcsine_transform(0.5)),colour = 'black',
+               arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
+  annotate('text', x = 1.5, y = - 0.2 - 0.03, label = 'Chance') +
+  labs(y = 'arcsine(2AFC accuracy)', x = "Memory type", title = 'Room type and table')
+
+# Combine 2 1 figure
+plot_grid(plt1, plt2)
+```
+
+```{r exp1_batch2_test1}
+# Temporal order question
+# Overall memory performance
+agg_order_overall_b2           <- ddply(df_order_b2, c('id'), summarise, acc = mean(accuracy), rt = mean(rt))
+agg_order_overall_b2$trans_acc <- arcsine_transform(agg_order_overall_b2$acc)
+
+test1 <- ttestBF(agg_order_overall_b2$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
+test1 <- reportBF(1/test1[2])
+
+# Examine the boundary effect
+## Memory
+### Across versus M-room
+val1  <- agg_order_b2[agg_order_b2$Condition == 'across', 'trans_acc']
+val2  <- agg_order_b2[agg_order_b2$boundary  == 'within' & agg_order_b2$Condition  == 'M-room', 'trans_acc']
+test2 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test2 <- reportBF(1/test2[1])
+
+### Across versus O-room
+val1  <- agg_order_b2[agg_order_b2$Condition == 'across', 'trans_acc']
+val2  <- agg_order_b2[agg_order_b2$boundary  == 'within' & agg_order_b2$Condition  == 'O-room', 'trans_acc']
+test3 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test3 <- reportBF(1/test3[1])
+
+## RT
+### Across versus M-room
+val1  <- agg_order_b2[agg_order_b2$Condition == 'across', 'rt']
+val2  <- agg_order_b2[agg_order_b2$boundary  == 'within' & agg_order_b2$Condition  == 'M-room', 'rt']
+test4 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test4 <- reportBF(1/test4[2])
+
+### Across versus O-room
+val1  <- agg_order_b2[agg_order_b2$Condition == 'across', 'rt']
+val2  <- agg_order_b2[agg_order_b2$boundary  == 'within' & agg_order_b2$Condition  == 'O-room', 'rt']
+test5 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test5 <- reportBF(1/test5[2])
+
+# Room question
+test6 <- ttestBF(agg_room_b2$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+test6 <- reportBF(1/test6[2])
+
+# Table question
+test7 <- ttestBF(agg_table_b2$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+test7 <- reportBF(test7[2])
+```
+
+There was again weak evidence that memory performance was not above chance ($BF_{01}$ = `r test1`) for the temporal memory question. Furthermore, I did not find a boundary effect for M-rooms (across vs. within) for accuracy, $BF_{01}$ = `r test2`, and for RT, $BF_{01}$ = `r test4`, but I did not find an effect for O-rooms for accuracy, $BF_{01}$ = `r test3`, and for RT, $BF_{01}$ = `r test5`. 
+
+Participants also did not show above chance performance for remembering in which room type a cue object was presented in ($BF_{01}$ = `r test6`). However, there was stronger evidence that participants did remember on which table type a cue object was presented ($BF_{10}$ = `r test7`).
+
+#### Discussion
+Unfortunately, I again failed to find a boundary effect even for O-rooms. In addition, with the exception of memory for the table question, memory performance was not above chance. Once possible reason of why memory performance was so bad was that in contrast to Horner et al. (2016) I always selected foils +/-4 positions away from the target while Horner and colleagues selected random foils.  Another option could be to use a more semantic task as such a pleasant/unpleasant judgement could be made, however I was concerned that most objects are fairly neutral making this task not meaningful. 
+
+### Batch 3
+#### Description of memory task
+Since memory performance was not above chance in batch 1 & batch 2, I decided to run another batch of participants but this time having the same foil (random) selection procedure as Horner et al (2016) with the hope that this would improve memory performance. 
+
+<!-- describe exact selection  -->
+
+#### Results
+```{r exp1_batch3_loadData}
+# Load all data
+prefix         <- '~/boundaryVR/data/Exp1/batch3/memoryTask/'
+allFiles       <- list.files(paste(prefix, sep = ''))
+allFiles_paths <- paste(prefix, allFiles, sep = '')
+n              <- length(allFiles_paths)
+
+# Load trial information
+load("~/boundaryVR/experiments/Exp1/batch3/r_supportFiles/trialData_randomFoils.RData")
+# Note that counterbalancing in that images goes from 1 to 8, while it goes from 0 to 7 in the javascript
+# files.
+
+# Order trial information
+# Due to an error only 78 trials were tested during 
+trials_cond5 <- trials_cond5[order(trials_cond5$objNum),][1:78,]
+trials_cond6 <- trials_cond6[order(trials_cond6$objNum),][1:78,]
+trials_cond7 <- trials_cond7[order(trials_cond7$objNum),][1:78,]
+trials_cond8 <- trials_cond8[order(trials_cond8$objNum),][1:78,]
+
+for(i in 1:n){
+  ############
+  # Loading daya
+  tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
+  
+  # Recode key presses
+  response      <- rep(NA, dim(tempDF)[1])
+  response[tempDF$key_press == 49] <- 1
+  response[tempDF$key_press == 50] <- 2
+  response[tempDF$key_press == 51] <- 3
+  tempDF$response                  <- response
+  
+  ############
+  # Temporal order memory
+  temporalOrder <- subset(tempDF, test_part == 'temporalOrder')
+  
+  # Sort by objectNumber
+  temporalOrder <- temporalOrder[order(temporalOrder$probe),]
+  
+  # get trialinfo and add to temporalOrder
+  cond <- temporalOrder$condition[1] + 1 # to correct for difference
+  temporalOrder$foil1Pos <- get(paste0("trials_cond", cond))$foil1Pos
+  temporalOrder$foil2Pos <- get(paste0("trials_cond", cond))$foil2Pos
+  
+  temporalOrder$rt <- as.numeric(as.character(temporalOrder$rt))
+
+  # Calcalate accuracy 
+  accuracy <- rep(NA, dim(temporalOrder)[1])
+  accuracy[temporalOrder$response == temporalOrder$corr_resp] <- 1
+  accuracy[temporalOrder$response != temporalOrder$corr_resp] <- 0
+  temporalOrder$accuracy <- accuracy
+  
+  # Create variable that desribe whether target, foil1, foil2 was choosen
+  choice <- rep('Target', dim(temporalOrder)[1])
+  choice[temporalOrder$response == temporalOrder$foil1Pos] <- 'Foil 1'
+  choice[temporalOrder$response == temporalOrder$foil2Pos] <- 'Foil 2'
+  temporalOrder$choice <- choice
+  
+  ############
+  # Room type question
+  roomType      <- subset(tempDF, test_part == 'roomType')
+  roomType$rt   <- as.numeric(as.character(roomType$rt))
+  
+  # get trialinfo and add to roomType
+  roomType$roomType  <- get(paste0("trials_cond", cond))$roomType
+  
+  corr_room <- rep(NA, nrow(roomType))
+  corr_room[roomType$roomType  == "nw"] <- 1
+  corr_room[roomType$roomType  == "ww"] <- 2
+  roomType$corr_room <- corr_room
+  
+  # Calculate accuracy
+  accuracy <- rep(NA, dim(roomType)[1])
+  accuracy[roomType$response == roomType$corr_room] <- 1
+  accuracy[roomType$response != roomType$corr_room] <- 0
+  roomType$accuracy <- accuracy
+  
+  # Adding table information to temporal order memory
+  # Get right information and create temp variable
+  tempInfo      <- get(paste0("trials_cond",  temporalOrder$condition[1]))
+  tempInfo_full <- get(paste0("trials_cond",  temporalOrder$condition[1], '_full'))
+  # Order both data frames by objNum/probe
+  tempInfo <- tempInfo[1:78, ] # Because of an error in the code only 78 trials exist per participant
+  tempInfo <- tempInfo[order(tempInfo$objNum),]
+  temporalOrder <- temporalOrder[order(temporalOrder$probe),]
+  
+  # Transfering information between dfs
+  temporalOrder$probeTable <- tempInfo$table
+  # Loop through df to get table of target, foil1 and foil2
+  targetTable <- c()
+  foil1Table  <- c()
+  foil2Table  <- c()
+  for(j in 1:dim(tempInfo)[1]){
+    targetTable[j] <- tempInfo_full[tempInfo_full$objNum == tempInfo$target[j], 'table']
+    foil1Table[j]  <- tempInfo_full[tempInfo_full$objNum == tempInfo$foil1[j], 'table']
+    foil2Table[j]  <- tempInfo_full[tempInfo_full$objNum == tempInfo$foil2[j], 'table']
+  }
+  
+  # Add the information to main data.frame
+  temporalOrder$targetTable <- targetTable
+  temporalOrder$foil1Table  <- foil1Table
+  temporalOrder$foil2Table  <- foil2Table
+  
+  ############
+  # Table question
+  tableNum      <- subset(tempDF, test_part == 'tableNum')
+  tableNum$rt   <- as.numeric(as.character(tableNum$rt))
+  
+  # Recode keypresses
+  response      <- rep(NA, dim(tableNum)[1])
+  response[tableNum$key_press == 49] <- 3 # for key press 1
+  response[tableNum$key_press == 50] <- 2 # for key press 2
+  tableNum$response                  <- response
+  
+  # Calculate accuracy
+  accuracy <- rep(NA, dim(tableNum)[1])
+  accuracy[tableNum$response == tableNum$corr_resp] <- 1
+  accuracy[tableNum$response != tableNum$corr_resp] <- 0
+  tableNum$accuracy <- accuracy
+  
+  # Create or bind to data.frame
+  if(i == 1){
+    df_order_b3    <- temporalOrder
+    df_order_b3$id <- i
+    df_room_b3     <- roomType
+    df_room_b3$id  <- i
+    df_table_b3    <- tableNum
+    df_table_b3$id <- i
+  } else {
+    temporalOrder$id <- i
+    df_order_b3      <- rbind(df_order_b3, temporalOrder)
+    roomType$id      <- i
+    df_room_b3       <- rbind(df_room_b3, roomType)
+    tableNum$id      <- i
+    df_table_b3      <- rbind(df_table_b3, tableNum)
+  }
+}
+
+# Convert to id factor
+df_order_b3$id <- as.factor(df_order_b3$id)
+df_room_b3$id  <- as.factor(df_room_b3$id)
+df_table_b3$id <- as.factor(df_table_b3$id)
+
+# Recode factor levels
+levels(df_order_b3$context) <- c('across', 'within-open plane', 'within-M-shape')
+
+# Calculate mean accuracy
+agg_order_b3 <- ddply(df_order_b3, c('id', 'context'), summarise, acc = mean(accuracy), rt = mean(rt))
+agg_room_b3  <- ddply(df_room_b3, c('id'), summarise, acc = mean(accuracy))
+agg_table_b3 <- ddply(df_table_b3, c('id'), summarise, acc = mean(accuracy))
+
+# Transform values
+agg_order_b3$trans_acc <- arcsine_transform(agg_order_b3$acc)
+agg_room_b3$trans_acc  <- arcsine_transform(agg_room_b3$acc)
+agg_table_b3$trans_acc <- arcsine_transform(agg_table_b3$acc)
+
+# Rename factor
+agg_order_b3$boundary <- ifelse(agg_order_b3$context == 'across', 'across', 'within')
+agg_order_b3$Condition <- 'across'
+agg_order_b3$Condition[agg_order_b3$context == 'within-open plane'] <- 'O-room'
+agg_order_b3$Condition[agg_order_b3$context == 'within-M-shape']    <- 'M-room'
+```
+
+
+```{r exp1_batch3_plot1}
+# /* 
+# ----------------------------- Exp 1 Batch 2: Plots ---------------------------
+# */
+plt1 <- ggplot(agg_order_b3, aes(x = boundary, y = trans_acc, group = Condition, colour = Condition)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA, key_glyph = "rect") + 
+  geom_point(position = position_jitterdodge(jitter.width = 0.2)) + 
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, aes(fill = Condition),
+               position=position_dodge(width =  0.75),
+               key_glyph = "rect") + 
+  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.75, yend= arcsine_transform(1/3)),colour = 'black',
+               arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
+  annotate('text', x = 1.5, y = - 0.75 - 0.03, label = 'Chance') +
+  scale_color_mrc(palette = 'secondary') + 
+  scale_fill_mrc(palette = 'secondary') +
+  labs(y = 'arcsine(3AFC accuracy)', x = "Boundary", title = 'Temporal Order') + 
+  theme(legend.justification = c(0, 1), 
+        legend.position = c(0, 1),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 9),
+        legend.key.size = unit(0.5,"line"))
+
+# Bind room and table together
+roomTable_b3 <- data.frame(id = rep(1:n, 2),
+                           Type = rep(c('Room', 'Table'), each = n),
+                           acc = c(agg_room_b3$acc, agg_table_b3$acc),
+                           trans_acc = c(agg_room_b3$trans_acc, agg_table_b3$trans_acc))
+
+plt2 <- ggplot(roomTable_b3, aes(x = Type, y = trans_acc)) + 
+  geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
+  geom_jitter(width = 0.1, height = 0) +
+  geom_hline(yintercept = arcsine_transform(0.5)) +
+  stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red') +
+  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.2, yend= arcsine_transform(0.5)),colour = 'black',
+               arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
+  annotate('text', x = 1.5, y = - 0.2 - 0.03, label = 'Chance') +
+  labs(y = 'arcsine(2AFC accuracy)', x = "Memory type", title = 'Room type and table')
+
+# Combine 2 1 figure
+plot_grid(plt1, plt2)
+```
+
+```{r exp1_batch3_test1}
+# Temporal order question
+# Overall memory performance
+agg_order_overall_b3           <- ddply(df_order_b3, c('id'), summarise, acc = mean(accuracy), rt = mean(rt))
+agg_order_overall_b3$trans_acc <- arcsine_transform(agg_order_overall_b3$acc)
+
+test1 <- ttestBF(agg_order_overall_b3$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
+test1 <- reportBF(test1[2])
+
+# Examine the boundary effect
+## Memory
+### Across versus M-room
+val1  <- agg_order_b3[agg_order_b3$Condition == 'across', 'trans_acc']
+val2  <- agg_order_b3[agg_order_b3$boundary  == 'within' & agg_order_b3$Condition  == 'M-room', 'trans_acc']
+test2 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test2 <- reportBF(test2[1])
+
+### Across versus O-room
+val1  <- agg_order_b3[agg_order_b3$Condition == 'across', 'trans_acc']
+val2  <- agg_order_b3[agg_order_b3$boundary  == 'within' & agg_order_b3$Condition  == 'O-room', 'trans_acc']
+test3 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test3 <- reportBF(1/test3[1])
+
+## RT
+### Across versus M-room
+val1  <- agg_order_b3[agg_order_b3$Condition == 'across', 'rt']
+val2  <- agg_order_b3[agg_order_b3$boundary  == 'within' & agg_order_b3$Condition  == 'M-room', 'rt']
+test4 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test4 <- reportBF(1/test4[2])
+
+### Across versus O-room
+val1  <- agg_order_b3[agg_order_b3$Condition == 'across', 'rt']
+val2  <- agg_order_b3[agg_order_b3$boundary  == 'within' & agg_order_b3$Condition  == 'O-room', 'rt']
+test5 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+test5 <- reportBF(1/test5[2])
+
+# Room question
+test6 <- ttestBF(agg_room_b3$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+test6 <- reportBF(1/test6[2])
+
+# Table question
+test7 <- ttestBF(agg_table_b3$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+test7 <- reportBF(test7[2])
+```
+
+This time there was strong evidence that memory performance was above chance ($BF_{01}$ = `r test1`) for the temporal memory question. While, I found a boundary effect for M-rooms (across vs. within) for accuracy, $BF_{01}$ = `r test2`, and but not for RT, $BF_{01}$ = `r test4`, but I did not find an effect for O-rooms for accuracy, $BF_{01}$ = `r test3`, and for RT, $BF_{01}$ = `r test5`. 
+
+Participants again did not show above chance performance for remembering in which room type a cue object was presented in ($BF_{01}$ = `r test6`). However, there was strong evidence that participants did remember on which table type a cue object was presented ($BF_{10}$ = `r test7`).
+
+#### Discussion
+Relaxing the selection of foils did have the intended effect of improving overall memory performance for temporal order. Surprisingly, I only found a boundary effect for M-room but not for O-rooms. This is surprising as with this pilot I wanted to ascertain that walking through an M-room does not have the same boundary effect that was reported in Horner et al. (2016) for walking through doors with 'normal' rooms. However, I found that a boundary effect for M-rooms but not for O-rooms. To investigate the absence of an boundary effect for O-rooms I designed another experiment, in which participants only saw one type of the rooms. 
 
 # Experiment 2
 
 # Experiment 3
 
 # General discussion
+
+## Potential reasons for the null effect
+There, the rooms were also arranged so that they formed a closed circle, in our experiment the rooms were arranged so that they all laid on a linear track. These are potential factors that could explain differences in the results. 
