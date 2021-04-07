@@ -1,0 +1,51 @@
+---
+title: 'Chapter: boundaryVR'
+author: "Joern Alexander Quent"
+output: 
+  word_document:
+    toc: true
+    toc_depth: 4
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+# Libraries
+library(plyr)
+library(ggplot2)
+library(cowplot)
+library(gridExtra)
+library(grid)
+library(knitr)
+library(assortedRFunctions)
+library(kableExtra)
+library(MRColour)
+library(jsonlite)
+library(reshape2)
+library(latex2exp)
+library(lmerTest)
+library(ez)
+library(BayesFactor)
+theme_set(theme_grey()) 
+```
+
+# Introduction
+As we experience the world through a continuous stream of sensory input, our brains are constantly trying to predict what comes next. Prediction errors (PE) can result in “event boundaries”, which segment our memories for our experiences (add quotes). Walking into a new room is thought to trigger such a boundary, as evidenced by better temporal order memory for objects within the same room than for objects in different rooms, e.g. in a virtual environment (Horner et al., 2016). However, walking between rooms also typically results in large perceptual changes (PC). Here I report an experiment that was designed to tease apart the contributions of PE and PC to the formation of event boundaries.
+
+I designed an “M-room” for virtual environments (add FIGURE). When traversing such a room, the viewer can only see one half of the room until they reach the middle section. This enables independent manipulation of PE and PC: PC can be induced by changing the wall colours between the two halves of the room, and PE can be induced by presenting a cue indicating the colour of the second half, which is then violated.
+ 
+The first step in this study was a pilot study to verify that crossing to the second half of the room in the M-room in the absence of PC or PE does not constitute a boundary. To test this, we examined whether the superior temporal order memory for objects within the same room is similar in M-rooms and the “O-rooms”  used in Horner et al. (2016). For that, participants encountered 88 objects in a series of virtual rooms. 
+
+In three experiments, I describe how I failed to replicate the boundary effect on memory (i.e. within > across) while successively removing possible confounds. 
+
+# Experiment 1
+## Batch 1
+## Batch 2
+## Batch 3
+
+# Experiment 2
+
+# Experiment 3
+
+# General discussion
