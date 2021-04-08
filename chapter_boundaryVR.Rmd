@@ -30,6 +30,25 @@ library(BayesFactor)
 theme_set(theme_grey()) 
 ```
 
+```{r table_from_Horner2016}
+# Aidan's results
+# Which object came next?
+aidansData1 <- data.frame(Experiment = c('Exp 1', 'Exp 1', 'Exp 2', 'Exp 2', 'Exp 3', 'Exp 3'),
+                         Context = c('within', 'across', 'within', 'across', 'within', 'across'),
+                         accuracy = c(0.52, 0.42, 0.45, 0.38, 0.52, 0.44),
+                         SD = c(0.15, 0.1, 0.17, 0.18, 0.18, 0.14))
+
+v1 <- aidansData1$accuracy[aidansData1$Context == 'within'] - aidansData1$accuracy[aidansData1$Context == 'across']
+
+# Which object came before?
+aidansData2 <- data.frame(Experiment = c('Exp 1', 'Exp 1', 'Exp 2', 'Exp 2', 'Exp 3', 'Exp 3'),
+                         Context = c('within', 'across', 'within', 'across', 'within', 'across'),
+                         accuracy = c(0.42, 0.38, 0.46, 0.41, 0.49, 0.44),
+                         SD = c(0.15, 0.13, 0.21, 0.16, 0.18, 0.17))
+
+v2 <- aidansData2$accuracy[aidansData2$Context == 'within'] - aidansData2$accuracy[aidansData2$Context == 'across']
+```
+
 # Introduction
 As we experience the world through a continuous stream of sensory input, our brains are constantly trying to predict what comes next. Prediction errors (PE) can result in “event boundaries”, which segment our memories for our experiences (add quotes). Walking into a new room is thought to trigger such a boundary, as evidenced by better temporal order memory for objects within the same room than for objects in different rooms, e.g. in a virtual environment (Horner et al., 2016). However, walking between rooms also typically results in large perceptual changes (PC). Here I report an experiment that was designed to tease apart the contributions of PE and PC to the formation of event boundaries.
 
@@ -782,14 +801,997 @@ This time there was strong evidence that memory performance was above chance ($B
 
 Participants again did not show above chance performance for remembering in which room type a cue object was presented in ($BF_{01}$ = `r test6`). However, there was strong evidence that participants did remember on which table type a cue object was presented ($BF_{10}$ = `r test7`).
 
+```{r exp1_batch3_test2}
+# Collapsing within condition
+df_order_b3$context2 <- 'within'
+df_order_b3$context2[df_order_b3$context == 'across'] <- 'across'
+agg_order_collasp_b3 <- ddply(df_order_b3, c('id',  'context2'), summarise, acc = mean(accuracy))
+agg_order_collasp_b3$trans_acc <- arcsine_transform(agg_order_collasp_b3$acc)
+
+# Test
+test8 <- ttestBF(agg_order_collasp_b3[agg_order_collasp_b3$context2 == 'across', 4],
+                  agg_order_collasp_b3[agg_order_collasp_b3$context2 == 'within', 4],  paired = TRUE)
+
+test8 <- reportBF(test8)
+
+# Effect size
+diffScores <- agg_order_collasp_b3[agg_order_collasp_b3$context2 == 'within', 4] -
+              agg_order_collasp_b3[agg_order_collasp_b3$context2 == 'across', 4] 
+effSize    <- round(mean(diffScores)/sd(diffScores), 2)
+```
+
+Interestingly, the difference between condition (across vs. within) collapsed across room type was still large  (BF10 = `r test8`, d = `r effSize`). 
+
 #### Discussion
 Relaxing the selection of foils did have the intended effect of improving overall memory performance for temporal order. Surprisingly, I only found a boundary effect for M-room but not for O-rooms. This is surprising as with this pilot I wanted to ascertain that walking through an M-room does not have the same boundary effect that was reported in Horner et al. (2016) for walking through doors with 'normal' rooms. However, I found that a boundary effect for M-rooms but not for O-rooms. To investigate the absence of an boundary effect for O-rooms I designed another experiment, in which participants only saw one type of the rooms. 
 
 # Experiment 2
+## Design 
+In this version of the task, participants were asked both temporal order question directions (Which object was before? vs. Which object was after?) in a blocked fashion. The order of which was randomised. 
+
+```{r exp2_table0}
+table9 <- data.frame(v1 = 1:8,
+                     v2 = c('M-room', 'M-room', 'O-room', 'O-room', 'M-room', 'M-room', 'O-room', 'O-room'),
+                     v3 = c('within', 'across', 'within', 'across', 'within', 'across', 'within', 'across'),
+                     v4 = c(rep('Before', 4), rep('After', 4)),
+                     v5 = c(rep('After', 4), rep('Before', 4)))
+
+names(table9) <- c('Condition', 'Room type', 'Start with', 'Block 1', 'Block 2')
+kable(table9, format = 'html', caption = "Table 9: Factorial design for Experiment 2")
+```
+
+These 8 between-subject conditions were fully crossed: room type (M-room vs. O-room), the fist inter-item connection (within vs. across) and the direction of temporal order memory that is tested first (Which object was before? vs. Which object was after?). To keep the experiment from getting too long, room type and table type questions were scraped as sufficient evidence was found that participants can only remember on which table an object was. 
+
+Small changes were made to the lighting in the rooms making it faster to random and look more realistic. Furthermore, camera movement was now scripted instead of generated by me through navigating through the rooms myself and capturing the screen. Also made small changes were made to objects with regards to their colour and size. A few objects were also swapped because they were reported to be difficult to recognise.  
+
+<!-- Update log and specify which objects. Also create list of objects -->
+
+## Design analysis of sequential data collection
+Since I did find a difference between across and within room associations for M-rooms but not for O-rooms, I focussed on finding a boundary effect for O-rooms. To collect data efficiently, data was collected sequentially for Experiment 2. The data collection plan was as follows:
+
+> At first, I will run twelve participants for the O-room, after which I will check the evidence whether there is a difference between across and within room associations. I will increase the sample size by increments of four until we either reach a $BF_{10}$ of 6 or 1/6 or the maximum sample size of 36 that is currently constrained by our remaining balance on prolific (£431.66). If I find evidence for a boundary effect for O-rooms, I will do the same for M-rooms (starting at twelve and incrementing by four) until I reach a criterion. In case, I obtain an inconclusive results for the O-rooms and I still have resources left, I will increase the sample size for O-rooms and vice versa for M-rooms. 
+
+Note that the maximal sample size of later increased to 51 (per room) as the experiment was shorter than expected. 
+
+In order to assess whether this data collection plan had enough chance to provide conclusive evidence ($BF_{10}$ > 6 | < 1/6), I ran a simplified simulation with directional Bayesian _t_-tests with minimum sample size of twelve and maximum of 36 with effect sizes d = 0, 0.44 and 0.78 that correspond to a null effect and effect sizes that we observed in Experiment 1 Batch 3. 
+
+```{r exp2_loadData_designAnalysis}
+# Load data
+load("analysis/powerAnalysis_Exp2_2.RData")
+```
+
+
+```{r exp2_designAnalysis_plotParameters}
+# For plotting
+minN         <- 12
+maxN         <- 36
+barWidth     <- 0.9
+panMar       <- 0.1
+bar_yAxis    <- 0.7
+hist_yAxis   <- 2900
+middle_xlim  <- c(-5.5, 5.5)
+crit1        <- 6
+crit2        <- 1/6
+breaksVal    <- c(-5, -2, 0, 2, 5)
+breaksLab    <- c('1/6', '1/3', '1', '3', '6')
+```
+
+### Null effect
+```{r exp2_designAnalysis_plot1}
+df_H0$trans_bf <- NA
+df_H0$trans_bf[df_H0$bf < 1] <- -1/df_H0$bf[df_H0$bf < 1] + 1
+df_H0$trans_bf[df_H0$bf > 1] <- df_H0$bf[df_H0$bf > 1] - 1
+
+df_H0_agg <- ddply(df_H0, c('id'), summarise, n = n[length(n)], bf = bf[length(bf)])
+df_H0_agg$support <- 'undecided'
+df_H0_agg$support[df_H0_agg$bf > crit1] <- 'H1'
+df_H0_agg$support[df_H0_agg$bf < crit2] <- 'H0'
+
+# Creates band
+df_H0_agg$band                                           <- '> 10'
+df_H0_agg$band[df_H0_agg$bf < 10 & df_H0_agg$bf > 6]     <- '> 6'
+df_H0_agg$band[df_H0_agg$bf < 6 & df_H0_agg$bf > 3]      <- '> 3'
+df_H0_agg$band[df_H0_agg$bf < 3 & df_H0_agg$bf > 1]      <- '> 1'
+df_H0_agg$band[df_H0_agg$bf < 1 & df_H0_agg$bf > 1/3]    <- '< 1'
+df_H0_agg$band[df_H0_agg$bf < 1/3 & df_H0_agg$bf > 1/6]  <- '< 1/3'
+df_H0_agg$band[df_H0_agg$bf < 1/6 & df_H0_agg$bf > 1/10] <- '< 1/6'
+df_H0_agg$band[df_H0_agg$bf < 1/10]                      <- '< 1/10'
+
+# Create factor band
+df_H0_agg$band <- factor(df_H0_agg$band, levels = c('> 10', '> 6', '> 3', '> 1', '< 1', '< 1/3', '< 1/6', '< 1/10'))
+
+
+# Get back to main DF
+df_H0$band <- rep(df_H0_agg$band, table(df_H0$id))
+
+
+# Create upper histogram
+df_H0_agg_supp_H1 <- ddply(subset(df_H0_agg, support == 'H1'),
+                           c('n', 'band'),
+                           summarise,
+                           freq = length(bf)/nIter)
+
+# Upper Histogram
+upper_hist_d0 <- ggplot(df_H0_agg_supp_H1, aes(x = n, y = freq, fill = band)) + 
+ geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth)  +
+ scale_fill_BF() +
+ coord_cartesian(ylim = c(0, bar_yAxis), xlim = c(minN - 0.5, maxN + 0.5), expand = FALSE) +
+  labs(y = 'Frequency', x = NULL) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Create line plot
+linePlotd0 <- ggplot(df_H0, aes(x = n, y = trans_bf, group = id, colour = band)) + 
+  geom_line(alpha = 0.05, show.legend = FALSE) + 
+  scale_colour_BF() +
+  geom_hline(yintercept = 5) +
+  geom_hline(yintercept = -5) +
+  scale_y_continuous(breaks = breaksVal,
+                     labels = breaksLab) +
+  coord_cartesian(xlim = c(minN, maxN), ylim = middle_xlim, expand = FALSE) +
+  labs(y = expression(BF[10]), x = NULL) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Create right histogram
+df_H0_agg_undecided <- subset(df_H0_agg, df_H0_agg$n == maxN & df_H0_agg$bf < crit1 & df_H0_agg$bf > crit2)
+df_H0_agg_undecided$trans_bf <- NA
+df_H0_agg_undecided$trans_bf[df_H0_agg_undecided$bf < 1] <- -1/df_H0_agg_undecided$bf[df_H0_agg_undecided$bf < 1] + 1
+df_H0_agg_undecided$trans_bf[df_H0_agg_undecided$bf > 1] <- df_H0_agg_undecided$bf[df_H0_agg_undecided$bf > 1] - 1
+
+right_hist_d0 <- ggplot(df_H0_agg_undecided, aes(x = trans_bf, fill = band)) +
+  coord_flip(ylim = c(0, hist_yAxis), xlim = middle_xlim, expand = FALSE) +
+  geom_histogram(alpha = 0.5, show.legend = FALSE) +
+  scale_fill_BF(drop = FALSE) +
+  labs(y = 'Count', x = NULL) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Create lower histogram
+df_H0_agg_supp_H0 <- ddply(subset(df_H0_agg, support == 'H0'),
+                           c('n', 'band'),
+                           summarise,
+                           freq = length(bf)/nIter)
+
+# If there are no values for this
+if(nrow(df_H0_agg_supp_H0) == 0){
+  df_H0_agg_supp_H0 <- data.frame(n = seq(minN, maxN, batchSize),
+                                band = rep('< 1/10', 5),
+                                freq = rep(0, 5))
+}
+
+
+lower_hist_d0 <- ggplot(df_H0_agg_supp_H0, aes(x = n, y = freq, fill = band)) + 
+  scale_y_reverse() +
+  scale_fill_BF(drop = F) +
+  geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth) + 
+  labs(y = 'Frequency', x = 'Sample size') +
+  coord_cartesian(ylim = c(bar_yAxis, 0), xlim = c(minN -0.5, maxN + 0.5), expand = FALSE) +
+  theme(plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Get blank plot
+blank <- grid.rect(gp=gpar(col="white"))
+
+# Get legend plot
+legendPlot <- ggplot(df_H0_agg_undecided, aes(x = trans_bf, fill = band)) +
+  geom_histogram(alpha = 0.5) +
+  scale_fill_BF(drop = FALSE) +
+  theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
+  guides(fill = guide_legend(title = expression(BF[10])))
+
+legend <- cowplot::get_legend(legendPlot)
+
+
+# Combine everything into one plot
+## Get Grobs
+gplot1 <- ggplotGrob(upper_hist_d0)
+gplot2 <- ggplotGrob(linePlotd0)
+gplot3 <- ggplotGrob(right_hist_d0) # not adjusted
+gplot4 <- ggplotGrob(lower_hist_d0)
+
+# Align widths
+maxWidth = grid::unit.pmax(gplot1$widths, gplot2$widths, gplot4$widths)
+gplot1$widths <- as.list(maxWidth)
+gplot2$widths <- as.list(maxWidth)
+gplot4$widths <- as.list(maxWidth)
+
+# Align heights
+maxHeight = grid::unit.pmax(gplot2$heights, gplot3$heights)
+gplot2$heights <- as.list(maxHeight)
+gplot3$heights <- as.list(maxHeight)
+
+lay <- rbind(c(1,2,3),
+             c(4,5,3),
+             c(6,7,3))
+
+grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
+             newpage = FALSE,
+             top =  grid.text(expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.00)")),
+             layout_matrix = lay,
+             widths = c(12, 3, 2))
+```
+
+```{r exp2_designAnalysis_table1}
+table10 <- as.data.frame(table(df_H0_agg$band)/nIter)
+names(table10) <- c('Support', 'Percent')
+kable(table10, format = 'html', caption = "Table 10: Results of simulation for null effect")
+```
+
+### Effect size similar to boundary effect for O-rooms
+```{r exp2_designAnalysis_plot2}
+df_H1$trans_bf <- NA
+df_H1$trans_bf[df_H1$bf < 1] <- -1/df_H1$bf[df_H1$bf < 1] + 1
+df_H1$trans_bf[df_H1$bf > 1] <- df_H1$bf[df_H1$bf > 1] - 1
+
+df_H1_agg <- ddply(df_H1, c('id'), summarise, n = n[length(n)], bf = bf[length(bf)])
+df_H1_agg$support <- 'undecided'
+df_H1_agg$support[df_H1_agg$bf > crit1] <- 'H1'
+df_H1_agg$support[df_H1_agg$bf < crit2] <- 'H0'
+
+# Creates band
+df_H1_agg$band                                           <- '> 10'
+df_H1_agg$band[df_H1_agg$bf < 10 & df_H1_agg$bf > 6]     <- '> 6'
+df_H1_agg$band[df_H1_agg$bf < 6 & df_H1_agg$bf > 3]      <- '> 3'
+df_H1_agg$band[df_H1_agg$bf < 3 & df_H1_agg$bf > 1]      <- '> 1'
+df_H1_agg$band[df_H1_agg$bf < 1 & df_H1_agg$bf > 1/3]    <- '< 1'
+df_H1_agg$band[df_H1_agg$bf < 1/3 & df_H1_agg$bf > 1/6]  <- '< 1/3'
+df_H1_agg$band[df_H1_agg$bf < 1/6 & df_H1_agg$bf > 1/10] <- '< 1/6'
+df_H1_agg$band[df_H1_agg$bf < 1/10]                      <- '< 1/10'
+
+# Create factor band
+df_H1_agg$band <- factor(df_H1_agg$band, levels = c('> 10', '> 6', '> 3', '> 1', '< 1', '< 1/3', '< 1/6', '< 1/10'))
+
+
+# Get back to main DF
+df_H1$band <- rep(df_H1_agg$band, table(df_H1$id))
+
+
+# Create upper histogram
+df_H1_agg_supp_H1 <- ddply(subset(df_H1_agg, support == 'H1'),
+                           c('n', 'band'),
+                           summarise,
+                           freq = length(bf)/nIter)
+
+# Upper Histogram
+upper_hist_d0 <- ggplot(df_H1_agg_supp_H1, aes(x = n, y = freq, fill = band)) + 
+  geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth)  +
+  scale_fill_BF() +
+  coord_cartesian(ylim = c(0, bar_yAxis), xlim = c(minN - 0.5, maxN + 0.5), expand = FALSE) +
+  labs(y = 'Frequency', x = NULL) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Create line plot
+linePlotd0 <- ggplot(df_H1, aes(x = n, y = trans_bf, group = id, colour = band)) + 
+  geom_line(alpha = 0.05, show.legend = FALSE) + 
+  scale_colour_BF() +
+  geom_hline(yintercept = 5) +
+  geom_hline(yintercept = -5) +
+  scale_y_continuous(breaks = breaksVal,
+                     labels = breaksLab) +
+  coord_cartesian(xlim = c(minN, maxN), ylim = middle_xlim, expand = FALSE) +
+  labs(y = expression(BF[10]), x = NULL) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Create right histogram
+df_H1_agg_undecided <- subset(df_H1_agg, df_H1_agg$n == maxN & df_H1_agg$bf < crit1 & df_H1_agg$bf > crit2)
+df_H1_agg_undecided$trans_bf <- NA
+df_H1_agg_undecided$trans_bf[df_H1_agg_undecided$bf < 1] <- -1/df_H1_agg_undecided$bf[df_H1_agg_undecided$bf < 1] + 1
+df_H1_agg_undecided$trans_bf[df_H1_agg_undecided$bf > 1] <- df_H1_agg_undecided$bf[df_H1_agg_undecided$bf > 1] - 1
+
+right_hist_d0 <- ggplot(df_H1_agg_undecided, aes(x = trans_bf, fill = band)) +
+  coord_flip(ylim = c(0, hist_yAxis), xlim = middle_xlim, expand = FALSE) +
+  geom_histogram(alpha = 0.5, show.legend = FALSE) +
+  scale_fill_BF(drop = FALSE) +
+  labs(y = 'Count', x = NULL) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Create lower histogram
+df_H1_agg_supp_H0 <- ddply(subset(df_H1_agg, support == 'H0'),
+                           c('n', 'band'),
+                           summarise,
+                           freq = length(bf)/nIter)
+
+# If there are no values for this
+if(nrow(df_H1_agg_supp_H0) == 0){
+  df_H1_agg_supp_H0 <- data.frame(n = seq(minN, maxN, batchSize),
+                                  band = rep('< 1/10', 5),
+                                  freq = rep(0, 5))
+}
+
+
+lower_hist_d0 <- ggplot(df_H1_agg_supp_H0, aes(x = n, y = freq, fill = band)) + 
+  scale_y_reverse() +
+  scale_fill_BF(drop = F) +
+  geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth) + 
+  labs(y = 'Frequency', x = 'Sample size') +
+  coord_cartesian(ylim = c(bar_yAxis, 0), xlim = c(minN -0.5, maxN + 0.5), expand = FALSE) +
+  theme(plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Get blank plot
+blank <- grid.rect(gp=gpar(col="white"))
+
+# Get legend plot
+legendPlot <- ggplot(df_H1_agg_undecided, aes(x = trans_bf, fill = band)) +
+  geom_histogram(alpha = 0.5) +
+  scale_fill_BF(drop = FALSE) +
+  theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
+  guides(fill = guide_legend(title = expression(BF[10])))
+
+legend <- cowplot::get_legend(legendPlot)
+
+
+# Combine everything into one plot
+## Get Grobs
+gplot1 <- ggplotGrob(upper_hist_d0)
+gplot2 <- ggplotGrob(linePlotd0)
+gplot3 <- ggplotGrob(right_hist_d0) # not adjusted
+gplot4 <- ggplotGrob(lower_hist_d0)
+
+# Align widths
+maxWidth = grid::unit.pmax(gplot1$widths, gplot2$widths, gplot4$widths)
+gplot1$widths <- as.list(maxWidth)
+gplot2$widths <- as.list(maxWidth)
+gplot4$widths <- as.list(maxWidth)
+
+# Align heights
+maxHeight = grid::unit.pmax(gplot2$heights, gplot3$heights)
+gplot2$heights <- as.list(maxHeight)
+gplot3$heights <- as.list(maxHeight)
+
+lay <- rbind(c(1,2,3),
+             c(4,5,3),
+             c(6,7,3))
+
+grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
+             newpage = FALSE,
+             top =  grid.text(expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.44)")),
+             layout_matrix = lay,
+             widths = c(12, 3, 2))
+```
+
+```{r exp2_designAnalysis_table2}
+table11 <- as.data.frame(table(df_H1_agg$band)/nIter)
+names(table11) <- c('Support', 'Percent')
+kable(table11, format = 'html', caption = "Table 11: Results of simulation for effect size similar to open-plane room (within vs. across)")
+```
+
+### Effect size similar to boundary effect for M-rooms
+```{r exp2_designAnalysis_plot3}
+df_H2$trans_bf <- NA
+df_H2$trans_bf[df_H2$bf < 1] <- -1/df_H2$bf[df_H2$bf < 1] + 1
+df_H2$trans_bf[df_H2$bf > 1] <- df_H2$bf[df_H2$bf > 1] - 1
+
+df_H2_agg <- ddply(df_H2, c('id'), summarise, n = n[length(n)], bf = bf[length(bf)])
+df_H2_agg$support <- 'undecided'
+df_H2_agg$support[df_H2_agg$bf > crit1] <- 'H1'
+df_H2_agg$support[df_H2_agg$bf < crit2] <- 'H0'
+
+# Creates band
+df_H2_agg$band                                           <- '> 10'
+df_H2_agg$band[df_H2_agg$bf < 10 & df_H2_agg$bf > 6]     <- '> 6'
+df_H2_agg$band[df_H2_agg$bf < 6 & df_H2_agg$bf > 3]      <- '> 3'
+df_H2_agg$band[df_H2_agg$bf < 3 & df_H2_agg$bf > 1]      <- '> 1'
+df_H2_agg$band[df_H2_agg$bf < 1 & df_H2_agg$bf > 1/3]    <- '< 1'
+df_H2_agg$band[df_H2_agg$bf < 1/3 & df_H2_agg$bf > 1/6]  <- '< 1/3'
+df_H2_agg$band[df_H2_agg$bf < 1/6 & df_H2_agg$bf > 1/10] <- '< 1/6'
+df_H2_agg$band[df_H2_agg$bf < 1/10]                      <- '< 1/10'
+
+# Create factor band
+df_H2_agg$band <- factor(df_H2_agg$band, levels = c('> 10', '> 6', '> 3', '> 1', '< 1', '< 1/3', '< 1/6', '< 1/10'))
+
+
+# Get back to main DF
+df_H2$band <- rep(df_H2_agg$band, table(df_H2$id))
+
+
+# Create upper histogram
+df_H2_agg_supp_H1 <- ddply(subset(df_H2_agg, support == 'H1'),
+                           c('n', 'band'),
+                           summarise,
+                           freq = length(bf)/nIter)
+
+# Upper Histogram
+upper_hist_d0 <- ggplot(df_H2_agg_supp_H1, aes(x = n, y = freq, fill = band)) + 
+  geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth)  +
+  scale_fill_BF() +
+  coord_cartesian(ylim = c(0, bar_yAxis), xlim = c(minN - 0.5, maxN + 0.5), expand = FALSE) +
+  labs(y = 'Frequency', x = NULL) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Create line plot
+linePlotd0 <- ggplot(df_H2, aes(x = n, y = trans_bf, group = id, colour = band)) + 
+  geom_line(alpha = 0.05, show.legend = FALSE) + 
+  scale_colour_BF() +
+  geom_hline(yintercept = 5) +
+  geom_hline(yintercept = -5) +
+  scale_y_continuous(breaks = breaksVal,
+                     labels = breaksLab) +
+  coord_cartesian(xlim = c(minN, maxN), ylim = middle_xlim, expand = FALSE) +
+  labs(y = expression(BF[10]), x = NULL) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Create right histogram
+df_H2_agg_undecided <- subset(df_H2_agg, df_H2_agg$n == maxN & df_H2_agg$bf < crit1 & df_H2_agg$bf > crit2)
+df_H2_agg_undecided$trans_bf <- NA
+df_H2_agg_undecided$trans_bf[df_H2_agg_undecided$bf < 1] <- -1/df_H2_agg_undecided$bf[df_H2_agg_undecided$bf < 1] + 1
+df_H2_agg_undecided$trans_bf[df_H2_agg_undecided$bf > 1] <- df_H2_agg_undecided$bf[df_H2_agg_undecided$bf > 1] - 1
+
+right_hist_d0 <- ggplot(df_H2_agg_undecided, aes(x = trans_bf, fill = band)) +
+  coord_flip(ylim = c(0, hist_yAxis), xlim = middle_xlim, expand = FALSE) +
+  geom_histogram(alpha = 0.5, show.legend = FALSE) +
+  scale_fill_BF(drop = FALSE) +
+  labs(y = 'Count', x = NULL) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Create lower histogram
+df_H2_agg_supp_H0 <- ddply(subset(df_H2_agg, support == 'H0'),
+                           c('n', 'band'),
+                           summarise,
+                           freq = length(bf)/nIter)
+
+# If there are no values for this
+if(nrow(df_H2_agg_supp_H0) == 0){
+  df_H2_agg_supp_H0 <- data.frame(n = seq(minN, maxN, batchSize),
+                                  band = rep('< 1/10', 5),
+                                  freq = rep(0, 5))
+}
+
+
+lower_hist_d0 <- ggplot(df_H2_agg_supp_H0, aes(x = n, y = freq, fill = band)) + 
+  scale_y_reverse() +
+  scale_fill_BF(drop = F) +
+  geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth) + 
+  labs(y = 'Frequency', x = 'Sample size') +
+  coord_cartesian(ylim = c(bar_yAxis, 0), xlim = c(minN -0.5, maxN + 0.5), expand = FALSE) +
+  theme(plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
+
+# Get blank plot
+blank <- grid.rect(gp=gpar(col="white"))
+
+# Get legend plot
+legendPlot <- ggplot(df_H2_agg_undecided, aes(x = trans_bf, fill = band)) +
+  geom_histogram(alpha = 0.5) +
+  scale_fill_BF(drop = FALSE) +
+  theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
+  guides(fill = guide_legend(title = expression(BF[10])))
+
+legend <- cowplot::get_legend(legendPlot)
+
+
+# Combine everything into one plot
+## Get Grobs
+gplot1 <- ggplotGrob(upper_hist_d0)
+gplot2 <- ggplotGrob(linePlotd0)
+gplot3 <- ggplotGrob(right_hist_d0) # not adjusted
+gplot4 <- ggplotGrob(lower_hist_d0)
+
+# Align widths
+maxWidth = grid::unit.pmax(gplot1$widths, gplot2$widths, gplot4$widths)
+gplot1$widths <- as.list(maxWidth)
+gplot2$widths <- as.list(maxWidth)
+gplot4$widths <- as.list(maxWidth)
+
+# Align heights
+maxHeight = grid::unit.pmax(gplot2$heights, gplot3$heights)
+gplot2$heights <- as.list(maxHeight)
+gplot3$heights <- as.list(maxHeight)
+
+lay <- rbind(c(1,2,3),
+             c(4,5,3),
+             c(6,7,3))
+
+grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
+             newpage = FALSE,
+             top = grid.text(expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.78)")),
+             layout_matrix = lay,
+             widths = c(12, 3, 2))
+```
+
+```{r exp2_designAnalysis_table3}
+table12 <- as.data.frame(table(df_H2_agg$band)/nIter)
+names(table12) <- c('Support', 'Percent')
+kable(table12, format = 'html', caption = "Table 12: Results of simulation for effect size similar to m-shaped room (within vs. across)")
+```
+
+### Summary
+```{r exp2_designAnalysis_summary}
+table13 <- data.frame(v1 = c('d = 0.00', 'd = 0.44', 'd = 0.78'),
+                      v2 = c(median(df_H0_agg$n), median(df_H1_agg$n), median(df_H2_agg$n)),
+                      v3 = c(sum(table10[7:8, 2]), sum(table11[1:2, 2]), sum(table12[1:2, 2])),
+                      v  = c(sum(table10[1:2, 2]), sum(table11[7:8, 2]), sum(table12[7:8, 2])))
+names(table13) <- c('Effect size', 'Median sample size', 'Evidence rate', 'Misleading evidence rate')
+kable(table13, format = 'html', caption = 'Table 13: Summary of design analysis simulation.')
+```
+
+In sum with exception  of the third simulation, the evidence rate is not very high being around 60%. In contrast, the rate of misleading evidence was low throughout (<= 0.03). Since, the actual maximal sample size was increased after this simulation, I decided go ahead despite the relatively low evidence rate considering that I might not need a sample size of 36 for the M-room, so that I could use the remaining resources for the O-rooms.  
+
+
+## Planned analysis
+The main planned analysis was a paired t-test between within and across room associations for both room types on arcsince transformed accuracy data of the first block. I will used directional t-tests as I expect within room associations to be better than across room associations. I restricted this analysis to data from the first block because of the possibility that the second block would not yield an effect due to interference from the first block. 
+
+As additional analyses we plan to run a Bayesian ANOVA with with factors boundary (within vs across), question (Which object came before? vs. Which object came after?) and block (Block 1 and Block 2). The aim of this analysis is to find whether this is the case. In case, we find no modulation, we will also include data . Furthermore, we will run another ANOVA with boundary and room type as factors to investigate whether the boundary effect (if existing) is stronger comparing both room times. Since, this involves are between subject comparison that is not directional, we might not have sample size that is big enough. Therefore, we do not make this part of our stopping rule. 
+
+## Sample
+The sample size of this experiment was 16. 
+
+## Results
+```{r exp2_loadData}
+exp2_path      <- "~/boundaryVR/data/Exp2"
+folder         <- '/memoryTask/'
+allFiles       <- list.files(paste0(exp2_path, folder))
+allFiles_paths <- paste0(exp2_path, folder, allFiles)
+n              <- length(allFiles_paths)
+
+# Loop
+for(i in 1:n){
+  ############
+  # Loading daya
+  tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
+  
+  # Recode key presses
+  response      <- rep(NA, nrow(tempDF))
+  response[tempDF$key_press == 49] <- 1
+  response[tempDF$key_press == 50] <- 2
+  response[tempDF$key_press == 51] <- 3
+  tempDF$response                  <- response
+  
+  # Convert RT to numeric  
+  tempDF$rt <- suppressWarnings(as.numeric(as.character(tempDF$rt)))
+  
+  ############
+  # Temporal order memory 1
+  temporalOrder1 <- subset(tempDF, test_part == 'temporalOrder1')
+  
+  # Calculate accuracy 
+  accuracy <- rep(NA, nrow(temporalOrder1))
+  accuracy[temporalOrder1$response == temporalOrder1$corr_resp] <- 1
+  accuracy[temporalOrder1$response != temporalOrder1$corr_resp] <- 0
+  temporalOrder1$accuracy <- accuracy
+  
+  # Create variable that desribe whether target, foil1, foil2 was choosen
+  choice <- rep('Target', nrow(temporalOrder1))
+  choice[temporalOrder1$response == temporalOrder1$foil1Pos] <- 'Foil 1'
+  choice[temporalOrder1$response == temporalOrder1$foil2Pos] <- 'Foil 2'
+  temporalOrder1$choice <- choice
+  
+  # Direction of question
+  if(temporalOrder1$questionOrder[1] == 0){
+    temporalOrder1$questionType = 'before'
+  } else {
+    temporalOrder1$questionType = 'after'
+  }
+  
+   ############
+  # Temporal order memory 2
+  temporalOrder2 <- subset(tempDF, test_part == 'temporalOrder2')
+
+  # Calcalate accuracy 
+  accuracy <- rep(NA, nrow(temporalOrder2))
+  accuracy[temporalOrder2$response == temporalOrder2$corr_resp] <- 1
+  accuracy[temporalOrder2$response != temporalOrder2$corr_resp] <- 0
+  temporalOrder2$accuracy <- accuracy
+  
+  # Create variable that desribe whether target, foil1, foil2 was choosen
+  choice <- rep('Target', nrow(temporalOrder2))
+  choice[temporalOrder2$response == temporalOrder2$foil1Pos] <- 'Foil 1'
+  choice[temporalOrder2$response == temporalOrder2$foil2Pos] <- 'Foil 2'
+  temporalOrder2$choice <- choice
+  
+  # Direction of question
+  if(temporalOrder2$questionOrder[1] == 0){
+    temporalOrder2$questionType = 'after'
+  } else {
+    temporalOrder2$questionType = 'before'
+  }
+  
+  # Create or bind to data.frame
+  if(i == 1){
+    df_order_exp2    <- rbind(temporalOrder1, temporalOrder2)
+    df_order_exp2$id <- i
+  } else {
+    temporalOrder1$id <- i
+    temporalOrder2$id <- i
+    df_order_exp2      <- rbind(df_order_exp2, rbind(temporalOrder1, temporalOrder2))
+  }
+}
+
+# Convert to id factor
+df_order_exp2$id       <- as.factor(df_order_exp2$id)
+df_order_exp2$stimulus <- as.character(df_order_exp2$stimulus)
+```
+
+```{r exp2_agg1}
+# Aggregate
+agg_order_exp2 <- ddply(df_order_exp2, c('worker_id', 
+                                         'roomType', 
+                                         'context', 
+                                         'test_part', 
+                                         'questionType', 
+                                         'counterbalance_condition'), 
+                        summarise, 
+                        n = length(accuracy),
+                        acc = mean(accuracy), 
+                        rt = mean(rt))
+
+# Transform values
+agg_order_exp2$trans_acc <- arcsine_transform(agg_order_exp2$acc)
+
+# Subset to first block
+agg_order_exp2_sub1 <- subset(agg_order_exp2, test_part  == 'temporalOrder1')
+```
+
+```{r exp2_plot1}
+plt1 <- ggplot(agg_order_exp2_sub1, aes(x = context, y = trans_acc)) + 
+  geom_line(aes(group = worker_id)) +
+  geom_point() +
+  geom_boxplot(width = 0.5, alpha = 0.5) + 
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red')+
+  geom_segment(aes(x = 0.7, xend = 0.7, y= -0.5, yend= arcsine_transform(1/3)),colour = 'black',
+               arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
+  annotate('text', x = 0.7, y = - 0.5 - 0.03, label = 'Chance') +
+  labs(title = 'Temporal order', y = "arcsine(3AFC accruacy)", x = 'Boundary')
+
+
+plt2 <- ggplot(agg_order_exp2_sub1, aes(x = context, y = rt)) + 
+  geom_line(aes(group = worker_id)) +
+  geom_point() +
+  geom_boxplot(width = 0.5, alpha = 0.5) + 
+  stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red')+
+  labs(title = 'Reaction time', y = "RT in msec", x = 'Boundary')
+
+
+ plot_grid(plt1, plt2)
+```
+
+
+```{r exp2_test1}
+# Boundary effect
+## Memory accuracy
+## Main test on which the stopping rule depended
+test1 <- ttestBF(agg_order_exp2_sub1$trans_acc[agg_order_exp2_sub1$context == 'within'],
+                 agg_order_exp2_sub1$trans_acc[agg_order_exp2_sub1$context == 'across'],
+                 paired = TRUE,
+                 nullInterval = c(-Inf, 0))
+
+test1 <- reportBF(1/test1[2])
+
+## RT
+test2 <- ttestBF(agg_order_exp2_sub1$rt[agg_order_exp2_sub1$context == 'within'],
+                 agg_order_exp2_sub1$rt[agg_order_exp2_sub1$context == 'across'],
+                 paired = TRUE,
+                 nullInterval = c(-Inf, 0))
+
+test2 <- reportBF(1/test2[1])
+```
+
+I stopped data collection at 16, after I reached the stopping criterion. The results was evidence that there is not boundary effect for the first block for accuracy, $BF_{01}$ = `r test1`. There was also no evidence that there is boundary effect for RT, $BF_{01}$ = `r test2`.
+
+
+```{r exp2_test2}
+# Aggregate
+agg2_order_exp2 <- ddply(df_order_exp2, c('worker_id', 
+                                         'roomType', 
+                                         'context', 
+                                         'counterbalance_condition'), 
+                        summarise, 
+                        n = length(accuracy),
+                        acc = mean(accuracy), 
+                        rt = mean(rt))
+
+# Transform values
+agg2_order_exp2$trans_acc <- arcsine_transform(agg2_order_exp2$acc)
+
+# Boundary effect
+## Memory accuracy
+test1 <- ttestBF(agg2_order_exp2$trans_acc[agg2_order_exp2$context == 'within'],
+                 agg2_order_exp2$trans_acc[agg2_order_exp2$context == 'across'],
+                 paired = TRUE,
+                 nullInterval = c(-Inf, 0))
+
+test1 <- reportBF(1/test1[2])
+
+## RT
+test2 <- ttestBF(agg2_order_exp2$rt[agg2_order_exp2$context == 'within'],
+                 agg2_order_exp2$rt[agg2_order_exp2$context == 'across'],
+                 paired = TRUE,
+                 nullInterval = c(-Inf, 0))
+
+test2 <- reportBF(1/test2[1])
+```
+
+This result also held true when collapsing across question type. In this case, there was also evidence against an boundary effect for accuracy, $BF_{01}$ = `r test1`, and for RT, $BF_{01}$ = `r test2`.
+
+
+```{r exp2_test3}
+agg_order_exp2$worker_id     <- as.factor(agg_order_exp2$worker_id)
+agg_order_exp2$context       <- as.factor(agg_order_exp2$context)
+agg_order_exp2$questionType  <- as.factor(agg_order_exp2$questionType)
+agg_order_exp2$test_part     <- as.factor(agg_order_exp2$test_part)
+
+anova1 <- anovaBF(trans_acc ~ context*questionType*test_part + worker_id, 
+                  whichRandom = 'worker_id', 
+                  data = agg_order_exp2,
+                  whichModels = 'top')
+
+test1 <- reportBF(1/anova1[5])
+```
+
+The planned ANOVA with context, question type and block did not produce strong evidence for the presence or absence of an effect apart for the main effect of question type, $BF_{10}$ = `r test1`. 
+
+```{r exp2_test4}
+#Aggregate
+agg_order_exp2_overall <- ddply(df_order_exp2, ('worker_id'), summarise, acc  = mean(accuracy))
+agg_order_exp2_overall$trans_acc <- arcsine_transform(agg_order_exp2_overall$acc)
+
+# Overall test
+test1 <- ttestBF(agg_order_exp2_overall$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
+test1 <- reportBF(test1[2])
+```
+
+Overall, memory performance was low but above chance $BF_{10}$ = `r test1`. 
+
+## Discussion
+Unfortunately, I again failed to provide evidence for a boundary effect for O-rooms. Possible reasons for this repeated failure might be a) that memory performance might be above chance but still too low and b) rooms might look to similar to each other. 
 
 # Experiment 3
+## Changes to the experiment
+```{r exp3_performance_in_Horner2016}
+# Just averaging Aidan's table
+aidan_overall <- round(mean(c(aidansData1$accuracy, aidansData2$accuracy)), 2)
+
+# Our overall memory performance
+our_overall <- round(mean(agg_order_exp2_overall$acc), 2)
+```
+
+Surprisingly, I was not able to report evidence in favour of a boundary effect for O-rooms. However directly comparing, I found that memory performance in Horner et al (2016) was slightly higher with `r aidan_overall` across experiments and than overall memory performance was in Experiment 2, which was `r our_overall`. The main aim for Experiment 3 was there to further improve overall memory performance. 
+
+To do this, I decided to implement three major changes a) memory encoding in Experiment 3 was intentional, b) there were two study-test cycles so that only 44 objects at a time were encoded in a block and c) rooms were made even more distinct. 
+
+In the Experiment 1 & 2, only five different wall colours and five different floor textures were used, which means a room was only unique due to the combination fo the five colours and textures. To increase the distinctiveness in Experiment 3, each floor featured a unique texture that was selected to stand out (e.g. brightly coloured tiles, noticeable carpet patterns etc.). 
+
+## Sample
+The sample size was 47. 
+
+## Results
+<!-- Could add analysis for video data here -->
+
+```{r exp3_loadData}
+# Path
+exp3_path <- "~/boundaryVR/data/Exp3/batch1/"
+
+# Get all files
+folder1         <- '/memoryTask1/'
+folder2         <- '/memoryTask2/'
+allFiles1       <- list.files(paste0(exp3_path, folder1))
+allFiles2       <- list.files(paste0(exp3_path, folder2))
+allFiles1_paths <- paste0(exp3_path, folder1, allFiles1)
+allFiles2_paths <- paste0(exp3_path, folder2, allFiles2)
+n1              <- length(allFiles1_paths)
+n2              <- length(allFiles2_paths)
+
+# Half 1 
+for(i in 1:n1){
+  ############
+  # Loading daya
+  tempDF <- read.csv(allFiles1_paths[i], header = TRUE, na.strings = '')
+  
+  # Recode key presses
+  response      <- rep(NA, nrow(tempDF))
+  response[tempDF$key_press == 49] <- 1
+  response[tempDF$key_press == 50] <- 2
+  response[tempDF$key_press == 51] <- 3
+  tempDF$response                  <- response
+  
+  # Convert RT to numeric  
+  tempDF$rt <- suppressWarnings(as.numeric(as.character(tempDF$rt)))
+  
+  ############
+  # Temporal order memory 1
+  temporalOrder1 <- subset(tempDF, test_part == 'temporalOrder')
+  
+  # Calculate accuracy 
+  accuracy <- rep(NA, nrow(temporalOrder1))
+  accuracy[temporalOrder1$response == temporalOrder1$corr_resp] <- 1
+  accuracy[temporalOrder1$response != temporalOrder1$corr_resp] <- 0
+  temporalOrder1$accuracy <- accuracy
+  
+  # Create variable that describe whether target, foil1, foil2 was chosen
+  choice <- rep('Target', nrow(temporalOrder1))
+  choice[temporalOrder1$response == temporalOrder1$foil1Pos] <- 'Foil 1'
+  choice[temporalOrder1$response == temporalOrder1$foil2Pos] <- 'Foil 2'
+  temporalOrder1$choice <- choice
+  
+  
+  # Create or bind to data.frame
+  if(i == 1){
+    df_order_exp3_h1    <- temporalOrder1
+    df_order_exp3_h1$id <- i
+  } else {
+    temporalOrder1$id <- i
+    df_order_exp3_h1      <- rbind(df_order_exp3_h1, temporalOrder1)
+  }
+}
+
+# Half 2
+for(i in 1:n2){
+  ############
+  # Loading daya
+  tempDF <- read.csv(allFiles2_paths[i], header = TRUE, na.strings = '')
+  
+  # Recode key presses
+  response      <- rep(NA, nrow(tempDF))
+  response[tempDF$key_press == 49] <- 1
+  response[tempDF$key_press == 50] <- 2
+  response[tempDF$key_press == 51] <- 3
+  tempDF$response                  <- response
+  
+  # Convert RT to numeric  
+  tempDF$rt <- suppressWarnings(as.numeric(as.character(tempDF$rt)))
+  
+  ############
+  # Temporal order memory 1
+  temporalOrder1 <- subset(tempDF, test_part == 'temporalOrder')
+  
+  # Calculate accuracy 
+  accuracy <- rep(NA, nrow(temporalOrder1))
+  accuracy[temporalOrder1$response == temporalOrder1$corr_resp] <- 1
+  accuracy[temporalOrder1$response != temporalOrder1$corr_resp] <- 0
+  temporalOrder1$accuracy <- accuracy
+  
+  # Create variable that desribe whether target, foil1, foil2 was choosen
+  choice <- rep('Target', nrow(temporalOrder1))
+  choice[temporalOrder1$response == temporalOrder1$foil1Pos] <- 'Foil 1'
+  choice[temporalOrder1$response == temporalOrder1$foil2Pos] <- 'Foil 2'
+  temporalOrder1$choice <- choice
+  
+  
+  # Create or bind to data.frame
+  if(i == 1){
+    df_order_exp3_h2    <- temporalOrder1
+    df_order_exp3_h2$id <- i
+  } else {
+    temporalOrder1$id <- i
+    df_order_exp3_h2    <- rbind(df_order_exp3_h2, temporalOrder1)
+  }
+}
+
+
+df_order_exp3 <- rbind(df_order_exp3_h1, df_order_exp3_h2)
+df_order_exp3$half <- factor(df_order_exp3$half, levels = c(0, 1), labels = c('h1', 'h2'))
+
+df_order_exp3$context <- factor(df_order_exp3$context, levels = c('across', 'within'), labels = c('across', 'within'))
+```
+
+```{r exp3_memory_outlier}
+# Outlier detection
+outlier_data <- ddply(df_order_exp3, c('worker_id'), summarise, accuracy = mean(accuracy), rt = mean(rt))
+outlier_data$trans_acc         <- arcsine_transform(outlier_data$accuracy)
+outlier_data$trans_acc_outlier <- mad_outlier(outlier_data$trans_acc, 2)
+outlier_data$rt_outlier        <- mad_outlier(outlier_data$rt, 3)
+
+# Outlier removal
+df_order_exp3 <- df_order_exp3[!(df_order_exp3$worker_id %in% c(15177, outlier_data[outlier_data$trans_acc_outlier == 1, 'worker_id'])), ] 
+# 15177 Didn't do whole task
+
+excluded <- round(mean(outlier_data$trans_acc_outlier)*100, 1)
+
+# Final sample size
+n <- length(unique(df_order_exp3$worker_id))
+```
+
+One participant was excluded by because they did not completed the task. Furthermore, average transformed (overall) accuracy was treated as an outlier if it was above/below two median absolute deviations from the median. This led to the exclusion of `r excluded` % of the data. Leaving final sample of `r n` participants. 
+
+```{r exp3_plot1}
+## Aggregate data
+agg_order_exp3 <- ddply(df_order_exp3, c('worker_id', 'subjCond','context'), summarise, accuracy = mean(accuracy), rt = mean(rt))
+
+# Transform accuracy
+agg_order_exp3$trans_acc <- arcsine_transform(agg_order_exp3$accuracy)
+
+
+# Plot
+plt1 <- ggplot(agg_order_exp3, aes(x = context, y = trans_acc)) + 
+  geom_line(aes(group = worker_id)) +
+  geom_point() +
+  geom_boxplot(width = 0.5, alpha = 0.5) + 
+  geom_hline(yintercept = arcsine_transform(1/3)) +
+  stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red')+
+  geom_segment(aes(x = 0.7, xend = 0.7, y= -0.5, yend= arcsine_transform(1/3)),colour = 'black',
+               arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
+  annotate('text', x = 0.7, y = - 0.5 - 0.03, label = 'Chance') +
+  labs(title = 'Temporal order', y = "arcsine(3AFC accruacy)", x = 'Boundary')
+
+
+plt2 <- ggplot(agg_order_exp3, aes(x = context, y = rt)) + 
+  geom_line(aes(group = worker_id)) +
+  geom_point() +
+  geom_boxplot(width = 0.5, alpha = 0.5) + 
+  stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red')+
+  labs(title = 'Reaction time', y = "RT in msec", x = 'Boundary')
+```
+
+
+```{r exp3_test1}
+# Boundary effect
+## Memory accuracy
+test1 <- ttestBF(agg_order_exp3$trans_acc[agg_order_exp3$context == 'within'],
+                 agg_order_exp3$trans_acc[agg_order_exp3$context == 'across'],
+                 paired = TRUE,
+                 nullInterval = c(-Inf, 0))
+
+test1 <- reportBF(1/test1[2])
+
+## RT
+test2 <- ttestBF(agg_order_exp3$rt[agg_order_exp3$context == 'within'],
+                 agg_order_exp3$rt[agg_order_exp3$context == 'across'],
+                 paired = TRUE,
+                 nullInterval = c(-Inf, 0))
+
+test2 <- reportBF(1/test2[1])
+```
+
+The analysis revealed again no boundary effect for O-rooms both for accuracy $BF_{01}$ = `r test1` as well as for RT $BF_{01}$ = ` r test2`. 
+
+```{r exp3_test2}
+#Aggregate
+agg_order_exp3_overall <- ddply(df_order_exp3, ('worker_id'), summarise, acc  = mean(accuracy))
+agg_order_exp3_overall$trans_acc <- arcsine_transform(agg_order_exp3_overall$acc)
+
+# Overall test
+test1 <- ttestBF(agg_order_exp3_overall$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
+test1 <- reportBF(test1[2])
+
+# Strings
+str1 <- mean_SD_str(mean(agg_order_exp3_overall$acc), sd(agg_order_exp3_overall$trans_acc))
+```
+
+This is despite the fact that average overall memory accuracy did improve as expected with `r str1`, which was clearly above chance $BF_{10}$ = `r test1`
+
+## Discussion
+Even with better performance, there was still no evidence for a boundary effect of O-rooms. Due to time constraints, I have not been able to make further changes to the experimental design to replicate the basic effect. 
 
 # General discussion
+In three experiments, I have been unable to provide evidence in favour of boundary effect for O-rooms and only once for M-rooms. I will therefore spent the remaining part of this chapter deliberating what could be the reasons for this. 
 
 ## Potential reasons for the null effect
-There, the rooms were also arranged so that they formed a closed circle, in our experiment the rooms were arranged so that they all laid on a linear track. These are potential factors that could explain differences in the results. 
+While I have made the rooms more distinct and the memory task itself easier successfully improving overall memory performance, two major differences between my experiment and the experiments reported in Horner et al. (2016) remain. First, in Horner et al. (2016) navigation was active, while in the series of experiment reported here participants merely watched a video. Second, the position of the tables and the floorplans in Horner et al. (2016) varied. In this experiment, rooms apart from the fact that there were M and O-rooms were the same. The room variation allowed Horner and colleagues to created a closed circle of rooms, while here the rooms all laid on a linear track. 
+
+Another difference was that I used an online sample. Even though it is conceivable that this influenced our results, it an unlikely explanation as memory performance was above chance. For instances, even in in Experiment 1 where performance was worse participant could remember on which table an object was presented. 
+
+The layout of was the rooms were in series of experiments here because it allowed to create a larger number of them and dynamically create an environment. Further options that have not been tried out that would make the room more distinct would be adding decoration to the rooms (e.g. wall paints or symbols) or even adding music or sounds for each room. 
+
+<!-- Add general remarks on robustness of this finding  -->
