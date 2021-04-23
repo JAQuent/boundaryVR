@@ -947,52 +947,79 @@ breaksLab    <- c('1/6', '1/3', '1', '3', '6')
 
 ### Null effect
 ```{r exp2_designAnalysis_plot1}
-df_H0$trans_bf <- NA
-df_H0$trans_bf[df_H0$bf < 1] <- -1/df_H0$bf[df_H0$bf < 1] + 1
-df_H0$trans_bf[df_H0$bf > 1] <- df_H0$bf[df_H0$bf > 1] - 1
+# Input for plot
+plot_caption   <- expression("A) Simulation for d"[true]*" = 0.00")
+da_sim_results <- df_H0
 
-df_H0_agg <- ddply(df_H0, c('id'), summarise, n = n[length(n)], bf = bf[length(bf)])
-df_H0_agg$support <- 'undecided'
-df_H0_agg$support[df_H0_agg$bf > crit1] <- 'H1'
-df_H0_agg$support[df_H0_agg$bf < crit2] <- 'H0'
+############################
+# Preparation of data
+da_sim_results$trans_bf <- NA
+da_sim_results$trans_bf[da_sim_results$bf < 1] <- -1/da_sim_results$bf[da_sim_results$bf < 1] + 1
+da_sim_results$trans_bf[da_sim_results$bf > 1] <- da_sim_results$bf[da_sim_results$bf > 1] - 1
+
+da_sim_results_agg <- ddply(da_sim_results, c('id'), summarise, n = n[length(n)], bf = bf[length(bf)])
+da_sim_results_agg$support <- 'undecided'
+da_sim_results_agg$support[da_sim_results_agg$bf > crit1] <- 'H1'
+da_sim_results_agg$support[da_sim_results_agg$bf < crit2] <- 'H0'
 
 # Creates band
-df_H0_agg$band                                           <- '> 10'
-df_H0_agg$band[df_H0_agg$bf < 10 & df_H0_agg$bf > 6]     <- '> 6'
-df_H0_agg$band[df_H0_agg$bf < 6 & df_H0_agg$bf > 3]      <- '> 3'
-df_H0_agg$band[df_H0_agg$bf < 3 & df_H0_agg$bf > 1]      <- '> 1'
-df_H0_agg$band[df_H0_agg$bf < 1 & df_H0_agg$bf > 1/3]    <- '< 1'
-df_H0_agg$band[df_H0_agg$bf < 1/3 & df_H0_agg$bf > 1/6]  <- '< 1/3'
-df_H0_agg$band[df_H0_agg$bf < 1/6 & df_H0_agg$bf > 1/10] <- '< 1/6'
-df_H0_agg$band[df_H0_agg$bf < 1/10]                      <- '< 1/10'
+da_sim_results_agg$band                                           <- '> 10'
+da_sim_results_agg$band[da_sim_results_agg$bf < 10 & da_sim_results_agg$bf > 6]     <- '> 6'
+da_sim_results_agg$band[da_sim_results_agg$bf < 6 & da_sim_results_agg$bf > 3]      <- '> 3'
+da_sim_results_agg$band[da_sim_results_agg$bf < 3 & da_sim_results_agg$bf > 1]      <- '> 1'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1 & da_sim_results_agg$bf > 1/3]    <- '< 1'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1/3 & da_sim_results_agg$bf > 1/6]  <- '< 1/3'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1/6 & da_sim_results_agg$bf > 1/10] <- '< 1/6'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1/10]                      <- '< 1/10'
 
 # Create factor band
-df_H0_agg$band <- factor(df_H0_agg$band, levels = c('> 10', '> 6', '> 3', '> 1', '< 1', '< 1/3', '< 1/6', '< 1/10'))
+da_sim_results_agg$band <- factor(da_sim_results_agg$band, levels = c('> 10', '> 6', '> 3', '> 1', '< 1', '< 1/3', '< 1/6', '< 1/10'))
 
 
 # Get back to main DF
-df_H0$band <- rep(df_H0_agg$band, table(df_H0$id))
+da_sim_results$band <- rep(da_sim_results_agg$band, table(da_sim_results$id))
 
 
-# Create upper histogram
-df_H0_agg_supp_H1 <- ddply(subset(df_H0_agg, support == 'H1'),
+# DF for upper histogram
+da_sim_results_agg_supp_H1 <- ddply(subset(da_sim_results_agg, support == 'H1'),
                            c('n', 'band'),
                            summarise,
                            freq = length(bf)/nIter)
 
+# DF for right histogram
+da_sim_results_agg_undecided <- subset(da_sim_results_agg, da_sim_results_agg$n == maxN & da_sim_results_agg$bf < crit1 & da_sim_results_agg$bf > crit2)
+da_sim_results_agg_undecided$trans_bf <- NA
+da_sim_results_agg_undecided$trans_bf[da_sim_results_agg_undecided$bf < 1] <- -1/da_sim_results_agg_undecided$bf[da_sim_results_agg_undecided$bf < 1] + 1
+da_sim_results_agg_undecided$trans_bf[da_sim_results_agg_undecided$bf > 1] <- da_sim_results_agg_undecided$bf[da_sim_results_agg_undecided$bf > 1] - 1
+
+# DF for lower histrogram
+da_sim_results_agg_supp_H0 <- ddply(subset(da_sim_results_agg, support == 'H0'),
+                           c('n', 'band'),
+                           summarise,
+                           freq = length(bf)/nIter)
+
+# If there are no values for this
+if(nrow(da_sim_results_agg_supp_H0) == 0){
+  da_sim_results_agg_supp_H0 <- data.frame(n = seq(minN, maxN, batchSize),
+                                  band = rep('< 1/10', 5),
+                                  freq = rep(0, 5))
+}
+
+
 # Upper Histogram
-upper_hist_d0 <- ggplot(df_H0_agg_supp_H1, aes(x = n, y = freq, fill = band)) + 
- geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth)  +
- scale_fill_BF() +
- coord_cartesian(ylim = c(0, bar_yAxis), xlim = c(minN - 0.5, maxN + 0.5), expand = FALSE) +
-  labs(y = 'Frequency', x = NULL) +
-  theme(axis.title.x = element_blank(),
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),
+upper_hist <- ggplot(da_sim_results_agg_supp_H1, aes(x = n, y = freq, fill = band)) + 
+  geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth)  +
+  scale_fill_BF() +
+  coord_cartesian(ylim = c(0, bar_yAxis), xlim = c(minN - 0.5, maxN + 0.5), expand = FALSE) +
+  labs(y = 'Frequency', x = plot_caption) +
+  scale_x_continuous(position = 'top') + 
+  theme(axis.title.x = element_text(colour = "black", size = 20),
+        axis.text.x = element_text(colour = "white"),
+        axis.ticks.x = element_line(colour = "white"),
         plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
 # Create line plot
-linePlotd0 <- ggplot(df_H0, aes(x = n, y = trans_bf, group = id, colour = band)) + 
+linePlot <- ggplot(da_sim_results, aes(x = n, y = trans_bf, group = id, colour = band)) + 
   geom_line(alpha = 0.05, show.legend = FALSE) + 
   scale_colour_BF() +
   geom_hline(yintercept = 5) +
@@ -1007,12 +1034,7 @@ linePlotd0 <- ggplot(df_H0, aes(x = n, y = trans_bf, group = id, colour = band))
         plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
 # Create right histogram
-df_H0_agg_undecided <- subset(df_H0_agg, df_H0_agg$n == maxN & df_H0_agg$bf < crit1 & df_H0_agg$bf > crit2)
-df_H0_agg_undecided$trans_bf <- NA
-df_H0_agg_undecided$trans_bf[df_H0_agg_undecided$bf < 1] <- -1/df_H0_agg_undecided$bf[df_H0_agg_undecided$bf < 1] + 1
-df_H0_agg_undecided$trans_bf[df_H0_agg_undecided$bf > 1] <- df_H0_agg_undecided$bf[df_H0_agg_undecided$bf > 1] - 1
-
-right_hist_d0 <- ggplot(df_H0_agg_undecided, aes(x = trans_bf, fill = band)) +
+right_hist <- ggplot(da_sim_results_agg_undecided, aes(x = trans_bf, fill = band)) +
   coord_flip(ylim = c(0, hist_yAxis), xlim = middle_xlim, expand = FALSE) +
   geom_histogram(alpha = 0.5, show.legend = FALSE) +
   scale_fill_BF(drop = FALSE) +
@@ -1026,20 +1048,7 @@ right_hist_d0 <- ggplot(df_H0_agg_undecided, aes(x = trans_bf, fill = band)) +
         plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
 # Create lower histogram
-df_H0_agg_supp_H0 <- ddply(subset(df_H0_agg, support == 'H0'),
-                           c('n', 'band'),
-                           summarise,
-                           freq = length(bf)/nIter)
-
-# If there are no values for this
-if(nrow(df_H0_agg_supp_H0) == 0){
-  df_H0_agg_supp_H0 <- data.frame(n = seq(minN, maxN, batchSize),
-                                band = rep('< 1/10', 5),
-                                freq = rep(0, 5))
-}
-
-
-lower_hist_d0 <- ggplot(df_H0_agg_supp_H0, aes(x = n, y = freq, fill = band)) + 
+lower_hist <- ggplot(da_sim_results_agg_supp_H0, aes(x = n, y = freq, fill = band)) + 
   scale_y_reverse() +
   scale_fill_BF(drop = F) +
   geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth) + 
@@ -1047,102 +1056,111 @@ lower_hist_d0 <- ggplot(df_H0_agg_supp_H0, aes(x = n, y = freq, fill = band)) +
   coord_cartesian(ylim = c(bar_yAxis, 0), xlim = c(minN -0.5, maxN + 0.5), expand = FALSE) +
   theme(plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
-# Get blank plot
-blank <- grid.rect(gp=gpar(col="white"))
-
-# Get legend plot
-legendPlot <- ggplot(df_H0_agg_undecided, aes(x = trans_bf, fill = band)) +
-  geom_histogram(alpha = 0.5) +
-  scale_fill_BF(drop = FALSE) +
-  theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
-  guides(fill = guide_legend(title = expression(BF[10])))
-
-legend <- cowplot::get_legend(legendPlot)
-
 
 # Combine everything into one plot
 ## Get Grobs
-gplot1 <- ggplotGrob(upper_hist_d0)
-gplot2 <- ggplotGrob(linePlotd0)
-gplot3 <- ggplotGrob(right_hist_d0) # not adjusted
-gplot4 <- ggplotGrob(lower_hist_d0)
+gplot1 <- ggplotGrob(upper_hist)
+gplot2 <- ggplotGrob(linePlot)
+gplot3 <- ggplotGrob(right_hist) 
+gplot4 <- ggplotGrob(lower_hist)
 
-# Align widths
-maxWidth = grid::unit.pmax(gplot1$widths, gplot2$widths, gplot4$widths)
-gplot1$widths <- as.list(maxWidth)
-gplot2$widths <- as.list(maxWidth)
-gplot4$widths <- as.list(maxWidth)
+## Get gtables
+gt_gplot1  <- gtable_frame(gplot1,  width = unit(12, "null"))
+gt_gplot2  <- gtable_frame(gplot2,  width = unit(12, "null"))
+gt_gplot3  <- gtable_frame(gplot3,  width = unit(3, "null"))
+gt_gplot4  <- gtable_frame(gplot4,  width = unit(12, "null"))
+gt_gBlank2 <- gtable_frame(gBlank2, width = unit(3, "null"))
 
-# Align heights
-maxHeight = grid::unit.pmax(gplot2$heights, gplot3$heights)
-gplot2$heights <- as.list(maxHeight)
-gplot3$heights <- as.list(maxHeight)
+## Combine components
+gt_upper   <- gtable_frame(gtable_cbind(gt_gplot1, gt_gBlank2)) 
+gt_middle  <- gtable_frame(gtable_cbind(gt_gplot2, gt_gplot3))
+gt_lower   <- gtable_frame(gtable_cbind(gt_gplot4, gt_gBlank2))
 
-lay <- rbind(c(1,2,3),
-             c(4,5,3),
-             c(6,7,3))
-
-grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
-             newpage = FALSE,
-             top =  grid.text(expression("Design analysis with max sample size of 36 (d"[true]*" = 0.00)")),
-             layout_matrix = lay,
-             widths = c(12, 3, 2))
+## Combine into 1 plot
+gtable_combined1 <- gtable_frame(gtable_rbind(gt_upper, gt_middle, gt_lower))
 ```
 
 ```{r exp2_designAnalysis_table1}
 table10 <- as.data.frame(table(df_H0_agg$band)/nIter)
 names(table10) <- c('Support', 'Percent')
-kable(table10, format = 'html', caption = "Table 10: Results of simulation for null effect")
+#kable(table10, format = 'html', caption = "Table 10: Results of simulation for null effect")
 ```
 
 ### Effect size similar to boundary effect for O-rooms
 ```{r exp2_designAnalysis_plot2}
-df_H1$trans_bf <- NA
-df_H1$trans_bf[df_H1$bf < 1] <- -1/df_H1$bf[df_H1$bf < 1] + 1
-df_H1$trans_bf[df_H1$bf > 1] <- df_H1$bf[df_H1$bf > 1] - 1
+# Input for plot
+plot_caption   <- expression("B) Simulation for d"[true]*" = 0.44")
+da_sim_results <- df_H1
 
-df_H1_agg <- ddply(df_H1, c('id'), summarise, n = n[length(n)], bf = bf[length(bf)])
-df_H1_agg$support <- 'undecided'
-df_H1_agg$support[df_H1_agg$bf > crit1] <- 'H1'
-df_H1_agg$support[df_H1_agg$bf < crit2] <- 'H0'
+############################
+# Preparation of data
+da_sim_results$trans_bf <- NA
+da_sim_results$trans_bf[da_sim_results$bf < 1] <- -1/da_sim_results$bf[da_sim_results$bf < 1] + 1
+da_sim_results$trans_bf[da_sim_results$bf > 1] <- da_sim_results$bf[da_sim_results$bf > 1] - 1
+
+da_sim_results_agg <- ddply(da_sim_results, c('id'), summarise, n = n[length(n)], bf = bf[length(bf)])
+da_sim_results_agg$support <- 'undecided'
+da_sim_results_agg$support[da_sim_results_agg$bf > crit1] <- 'H1'
+da_sim_results_agg$support[da_sim_results_agg$bf < crit2] <- 'H0'
 
 # Creates band
-df_H1_agg$band                                           <- '> 10'
-df_H1_agg$band[df_H1_agg$bf < 10 & df_H1_agg$bf > 6]     <- '> 6'
-df_H1_agg$band[df_H1_agg$bf < 6 & df_H1_agg$bf > 3]      <- '> 3'
-df_H1_agg$band[df_H1_agg$bf < 3 & df_H1_agg$bf > 1]      <- '> 1'
-df_H1_agg$band[df_H1_agg$bf < 1 & df_H1_agg$bf > 1/3]    <- '< 1'
-df_H1_agg$band[df_H1_agg$bf < 1/3 & df_H1_agg$bf > 1/6]  <- '< 1/3'
-df_H1_agg$band[df_H1_agg$bf < 1/6 & df_H1_agg$bf > 1/10] <- '< 1/6'
-df_H1_agg$band[df_H1_agg$bf < 1/10]                      <- '< 1/10'
+da_sim_results_agg$band                                           <- '> 10'
+da_sim_results_agg$band[da_sim_results_agg$bf < 10 & da_sim_results_agg$bf > 6]     <- '> 6'
+da_sim_results_agg$band[da_sim_results_agg$bf < 6 & da_sim_results_agg$bf > 3]      <- '> 3'
+da_sim_results_agg$band[da_sim_results_agg$bf < 3 & da_sim_results_agg$bf > 1]      <- '> 1'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1 & da_sim_results_agg$bf > 1/3]    <- '< 1'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1/3 & da_sim_results_agg$bf > 1/6]  <- '< 1/3'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1/6 & da_sim_results_agg$bf > 1/10] <- '< 1/6'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1/10]                      <- '< 1/10'
 
 # Create factor band
-df_H1_agg$band <- factor(df_H1_agg$band, levels = c('> 10', '> 6', '> 3', '> 1', '< 1', '< 1/3', '< 1/6', '< 1/10'))
+da_sim_results_agg$band <- factor(da_sim_results_agg$band, levels = c('> 10', '> 6', '> 3', '> 1', '< 1', '< 1/3', '< 1/6', '< 1/10'))
 
 
 # Get back to main DF
-df_H1$band <- rep(df_H1_agg$band, table(df_H1$id))
+da_sim_results$band <- rep(da_sim_results_agg$band, table(da_sim_results$id))
 
 
-# Create upper histogram
-df_H1_agg_supp_H1 <- ddply(subset(df_H1_agg, support == 'H1'),
+# DF for upper histogram
+da_sim_results_agg_supp_H1 <- ddply(subset(da_sim_results_agg, support == 'H1'),
                            c('n', 'band'),
                            summarise,
                            freq = length(bf)/nIter)
 
+# DF for right histogram
+da_sim_results_agg_undecided <- subset(da_sim_results_agg, da_sim_results_agg$n == maxN & da_sim_results_agg$bf < crit1 & da_sim_results_agg$bf > crit2)
+da_sim_results_agg_undecided$trans_bf <- NA
+da_sim_results_agg_undecided$trans_bf[da_sim_results_agg_undecided$bf < 1] <- -1/da_sim_results_agg_undecided$bf[da_sim_results_agg_undecided$bf < 1] + 1
+da_sim_results_agg_undecided$trans_bf[da_sim_results_agg_undecided$bf > 1] <- da_sim_results_agg_undecided$bf[da_sim_results_agg_undecided$bf > 1] - 1
+
+# DF for lower histrogram
+da_sim_results_agg_supp_H0 <- ddply(subset(da_sim_results_agg, support == 'H0'),
+                           c('n', 'band'),
+                           summarise,
+                           freq = length(bf)/nIter)
+
+# If there are no values for this
+if(nrow(da_sim_results_agg_supp_H0) == 0){
+  da_sim_results_agg_supp_H0 <- data.frame(n = seq(minN, maxN, batchSize),
+                                  band = rep('< 1/10', 5),
+                                  freq = rep(0, 5))
+}
+
+
 # Upper Histogram
-upper_hist_d0 <- ggplot(df_H1_agg_supp_H1, aes(x = n, y = freq, fill = band)) + 
+upper_hist <- ggplot(da_sim_results_agg_supp_H1, aes(x = n, y = freq, fill = band)) + 
   geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth)  +
   scale_fill_BF() +
   coord_cartesian(ylim = c(0, bar_yAxis), xlim = c(minN - 0.5, maxN + 0.5), expand = FALSE) +
-  labs(y = 'Frequency', x = NULL) +
-  theme(axis.title.x = element_blank(),
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),
+  labs(y = 'Frequency', x = plot_caption) +
+  scale_x_continuous(position = 'top') + 
+  theme(axis.title.x = element_text(colour = "black", size = 20),
+        axis.text.x = element_text(colour = "white"),
+        axis.ticks.x = element_line(colour = "white"),
         plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
 # Create line plot
-linePlotd0 <- ggplot(df_H1, aes(x = n, y = trans_bf, group = id, colour = band)) + 
+linePlot <- ggplot(da_sim_results, aes(x = n, y = trans_bf, group = id, colour = band)) + 
   geom_line(alpha = 0.05, show.legend = FALSE) + 
   scale_colour_BF() +
   geom_hline(yintercept = 5) +
@@ -1157,12 +1175,7 @@ linePlotd0 <- ggplot(df_H1, aes(x = n, y = trans_bf, group = id, colour = band))
         plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
 # Create right histogram
-df_H1_agg_undecided <- subset(df_H1_agg, df_H1_agg$n == maxN & df_H1_agg$bf < crit1 & df_H1_agg$bf > crit2)
-df_H1_agg_undecided$trans_bf <- NA
-df_H1_agg_undecided$trans_bf[df_H1_agg_undecided$bf < 1] <- -1/df_H1_agg_undecided$bf[df_H1_agg_undecided$bf < 1] + 1
-df_H1_agg_undecided$trans_bf[df_H1_agg_undecided$bf > 1] <- df_H1_agg_undecided$bf[df_H1_agg_undecided$bf > 1] - 1
-
-right_hist_d0 <- ggplot(df_H1_agg_undecided, aes(x = trans_bf, fill = band)) +
+right_hist <- ggplot(da_sim_results_agg_undecided, aes(x = trans_bf, fill = band)) +
   coord_flip(ylim = c(0, hist_yAxis), xlim = middle_xlim, expand = FALSE) +
   geom_histogram(alpha = 0.5, show.legend = FALSE) +
   scale_fill_BF(drop = FALSE) +
@@ -1176,20 +1189,7 @@ right_hist_d0 <- ggplot(df_H1_agg_undecided, aes(x = trans_bf, fill = band)) +
         plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
 # Create lower histogram
-df_H1_agg_supp_H0 <- ddply(subset(df_H1_agg, support == 'H0'),
-                           c('n', 'band'),
-                           summarise,
-                           freq = length(bf)/nIter)
-
-# If there are no values for this
-if(nrow(df_H1_agg_supp_H0) == 0){
-  df_H1_agg_supp_H0 <- data.frame(n = seq(minN, maxN, batchSize),
-                                  band = rep('< 1/10', 5),
-                                  freq = rep(0, 5))
-}
-
-
-lower_hist_d0 <- ggplot(df_H1_agg_supp_H0, aes(x = n, y = freq, fill = band)) + 
+lower_hist <- ggplot(da_sim_results_agg_supp_H0, aes(x = n, y = freq, fill = band)) + 
   scale_y_reverse() +
   scale_fill_BF(drop = F) +
   geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth) + 
@@ -1197,102 +1197,111 @@ lower_hist_d0 <- ggplot(df_H1_agg_supp_H0, aes(x = n, y = freq, fill = band)) +
   coord_cartesian(ylim = c(bar_yAxis, 0), xlim = c(minN -0.5, maxN + 0.5), expand = FALSE) +
   theme(plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
-# Get blank plot
-blank <- grid.rect(gp=gpar(col="white"))
-
-# Get legend plot
-legendPlot <- ggplot(df_H1_agg_undecided, aes(x = trans_bf, fill = band)) +
-  geom_histogram(alpha = 0.5) +
-  scale_fill_BF(drop = FALSE) +
-  theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
-  guides(fill = guide_legend(title = expression(BF[10])))
-
-legend <- cowplot::get_legend(legendPlot)
-
 
 # Combine everything into one plot
 ## Get Grobs
-gplot1 <- ggplotGrob(upper_hist_d0)
-gplot2 <- ggplotGrob(linePlotd0)
-gplot3 <- ggplotGrob(right_hist_d0) # not adjusted
-gplot4 <- ggplotGrob(lower_hist_d0)
+gplot1 <- ggplotGrob(upper_hist)
+gplot2 <- ggplotGrob(linePlot)
+gplot3 <- ggplotGrob(right_hist) 
+gplot4 <- ggplotGrob(lower_hist)
 
-# Align widths
-maxWidth = grid::unit.pmax(gplot1$widths, gplot2$widths, gplot4$widths)
-gplot1$widths <- as.list(maxWidth)
-gplot2$widths <- as.list(maxWidth)
-gplot4$widths <- as.list(maxWidth)
+## Get gtables
+gt_gplot1  <- gtable_frame(gplot1,  width = unit(12, "null"))
+gt_gplot2  <- gtable_frame(gplot2,  width = unit(12, "null"))
+gt_gplot3  <- gtable_frame(gplot3,  width = unit(3, "null"))
+gt_gplot4  <- gtable_frame(gplot4,  width = unit(12, "null"))
+gt_gBlank2 <- gtable_frame(gBlank2, width = unit(3, "null"))
 
-# Align heights
-maxHeight = grid::unit.pmax(gplot2$heights, gplot3$heights)
-gplot2$heights <- as.list(maxHeight)
-gplot3$heights <- as.list(maxHeight)
+## Combine components
+gt_upper   <- gtable_frame(gtable_cbind(gt_gplot1, gt_gBlank2)) 
+gt_middle  <- gtable_frame(gtable_cbind(gt_gplot2, gt_gplot3))
+gt_lower   <- gtable_frame(gtable_cbind(gt_gplot4, gt_gBlank2))
 
-lay <- rbind(c(1,2,3),
-             c(4,5,3),
-             c(6,7,3))
-
-grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
-             newpage = FALSE,
-             top =  grid.text(expression("Design analysis with max sample size of 36 (d"[true]*" = 0.44)")),
-             layout_matrix = lay,
-             widths = c(12, 3, 2))
+## Combine into 1 plot
+gtable_combined2 <- gtable_frame(gtable_rbind(gt_upper, gt_middle, gt_lower))
 ```
 
 ```{r exp2_designAnalysis_table2}
 table11 <- as.data.frame(table(df_H1_agg$band)/nIter)
 names(table11) <- c('Support', 'Percent')
-kable(table11, format = 'html', caption = "Table 11: Results of simulation for effect size similar to open-plane room (within vs. across)")
+#kable(table11, format = 'html', caption = "Table 11: Results of simulation for effect size similar to open-plane room (within vs. across)")
 ```
 
 ### Effect size similar to boundary effect for M-rooms
 ```{r exp2_designAnalysis_plot3}
-df_H2$trans_bf <- NA
-df_H2$trans_bf[df_H2$bf < 1] <- -1/df_H2$bf[df_H2$bf < 1] + 1
-df_H2$trans_bf[df_H2$bf > 1] <- df_H2$bf[df_H2$bf > 1] - 1
+# Input for plot
+plot_caption   <- expression("C) Simulation for d"[true]*" = 0.78")
+da_sim_results <- df_H2
 
-df_H2_agg <- ddply(df_H2, c('id'), summarise, n = n[length(n)], bf = bf[length(bf)])
-df_H2_agg$support <- 'undecided'
-df_H2_agg$support[df_H2_agg$bf > crit1] <- 'H1'
-df_H2_agg$support[df_H2_agg$bf < crit2] <- 'H0'
+############################
+# Preparation of data
+da_sim_results$trans_bf <- NA
+da_sim_results$trans_bf[da_sim_results$bf < 1] <- -1/da_sim_results$bf[da_sim_results$bf < 1] + 1
+da_sim_results$trans_bf[da_sim_results$bf > 1] <- da_sim_results$bf[da_sim_results$bf > 1] - 1
+
+da_sim_results_agg <- ddply(da_sim_results, c('id'), summarise, n = n[length(n)], bf = bf[length(bf)])
+da_sim_results_agg$support <- 'undecided'
+da_sim_results_agg$support[da_sim_results_agg$bf > crit1] <- 'H1'
+da_sim_results_agg$support[da_sim_results_agg$bf < crit2] <- 'H0'
 
 # Creates band
-df_H2_agg$band                                           <- '> 10'
-df_H2_agg$band[df_H2_agg$bf < 10 & df_H2_agg$bf > 6]     <- '> 6'
-df_H2_agg$band[df_H2_agg$bf < 6 & df_H2_agg$bf > 3]      <- '> 3'
-df_H2_agg$band[df_H2_agg$bf < 3 & df_H2_agg$bf > 1]      <- '> 1'
-df_H2_agg$band[df_H2_agg$bf < 1 & df_H2_agg$bf > 1/3]    <- '< 1'
-df_H2_agg$band[df_H2_agg$bf < 1/3 & df_H2_agg$bf > 1/6]  <- '< 1/3'
-df_H2_agg$band[df_H2_agg$bf < 1/6 & df_H2_agg$bf > 1/10] <- '< 1/6'
-df_H2_agg$band[df_H2_agg$bf < 1/10]                      <- '< 1/10'
+da_sim_results_agg$band                                           <- '> 10'
+da_sim_results_agg$band[da_sim_results_agg$bf < 10 & da_sim_results_agg$bf > 6]     <- '> 6'
+da_sim_results_agg$band[da_sim_results_agg$bf < 6 & da_sim_results_agg$bf > 3]      <- '> 3'
+da_sim_results_agg$band[da_sim_results_agg$bf < 3 & da_sim_results_agg$bf > 1]      <- '> 1'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1 & da_sim_results_agg$bf > 1/3]    <- '< 1'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1/3 & da_sim_results_agg$bf > 1/6]  <- '< 1/3'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1/6 & da_sim_results_agg$bf > 1/10] <- '< 1/6'
+da_sim_results_agg$band[da_sim_results_agg$bf < 1/10]                      <- '< 1/10'
 
 # Create factor band
-df_H2_agg$band <- factor(df_H2_agg$band, levels = c('> 10', '> 6', '> 3', '> 1', '< 1', '< 1/3', '< 1/6', '< 1/10'))
+da_sim_results_agg$band <- factor(da_sim_results_agg$band, levels = c('> 10', '> 6', '> 3', '> 1', '< 1', '< 1/3', '< 1/6', '< 1/10'))
 
 
 # Get back to main DF
-df_H2$band <- rep(df_H2_agg$band, table(df_H2$id))
+da_sim_results$band <- rep(da_sim_results_agg$band, table(da_sim_results$id))
 
 
-# Create upper histogram
-df_H2_agg_supp_H1 <- ddply(subset(df_H2_agg, support == 'H1'),
+# DF for upper histogram
+da_sim_results_agg_supp_H1 <- ddply(subset(da_sim_results_agg, support == 'H1'),
                            c('n', 'band'),
                            summarise,
                            freq = length(bf)/nIter)
 
+# DF for right histogram
+da_sim_results_agg_undecided <- subset(da_sim_results_agg, da_sim_results_agg$n == maxN & da_sim_results_agg$bf < crit1 & da_sim_results_agg$bf > crit2)
+da_sim_results_agg_undecided$trans_bf <- NA
+da_sim_results_agg_undecided$trans_bf[da_sim_results_agg_undecided$bf < 1] <- -1/da_sim_results_agg_undecided$bf[da_sim_results_agg_undecided$bf < 1] + 1
+da_sim_results_agg_undecided$trans_bf[da_sim_results_agg_undecided$bf > 1] <- da_sim_results_agg_undecided$bf[da_sim_results_agg_undecided$bf > 1] - 1
+
+# DF for lower histrogram
+da_sim_results_agg_supp_H0 <- ddply(subset(da_sim_results_agg, support == 'H0'),
+                           c('n', 'band'),
+                           summarise,
+                           freq = length(bf)/nIter)
+
+# If there are no values for this
+if(nrow(da_sim_results_agg_supp_H0) == 0){
+  da_sim_results_agg_supp_H0 <- data.frame(n = seq(minN, maxN, batchSize),
+                                  band = rep('< 1/10', 5),
+                                  freq = rep(0, 5))
+}
+
+
 # Upper Histogram
-upper_hist_d0 <- ggplot(df_H2_agg_supp_H1, aes(x = n, y = freq, fill = band)) + 
+upper_hist <- ggplot(da_sim_results_agg_supp_H1, aes(x = n, y = freq, fill = band)) + 
   geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth)  +
   scale_fill_BF() +
   coord_cartesian(ylim = c(0, bar_yAxis), xlim = c(minN - 0.5, maxN + 0.5), expand = FALSE) +
-  labs(y = 'Frequency', x = NULL) +
-  theme(axis.title.x = element_blank(),
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),
+  labs(y = 'Frequency', x = plot_caption) +
+  scale_x_continuous(position = 'top') + 
+  theme(axis.title.x = element_text(colour = "black", size = 20),
+        axis.text.x = element_text(colour = "white"),
+        axis.ticks.x = element_line(colour = "white"),
         plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
 # Create line plot
-linePlotd0 <- ggplot(df_H2, aes(x = n, y = trans_bf, group = id, colour = band)) + 
+linePlot <- ggplot(da_sim_results, aes(x = n, y = trans_bf, group = id, colour = band)) + 
   geom_line(alpha = 0.05, show.legend = FALSE) + 
   scale_colour_BF() +
   geom_hline(yintercept = 5) +
@@ -1307,12 +1316,7 @@ linePlotd0 <- ggplot(df_H2, aes(x = n, y = trans_bf, group = id, colour = band))
         plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
 # Create right histogram
-df_H2_agg_undecided <- subset(df_H2_agg, df_H2_agg$n == maxN & df_H2_agg$bf < crit1 & df_H2_agg$bf > crit2)
-df_H2_agg_undecided$trans_bf <- NA
-df_H2_agg_undecided$trans_bf[df_H2_agg_undecided$bf < 1] <- -1/df_H2_agg_undecided$bf[df_H2_agg_undecided$bf < 1] + 1
-df_H2_agg_undecided$trans_bf[df_H2_agg_undecided$bf > 1] <- df_H2_agg_undecided$bf[df_H2_agg_undecided$bf > 1] - 1
-
-right_hist_d0 <- ggplot(df_H2_agg_undecided, aes(x = trans_bf, fill = band)) +
+right_hist <- ggplot(da_sim_results_agg_undecided, aes(x = trans_bf, fill = band)) +
   coord_flip(ylim = c(0, hist_yAxis), xlim = middle_xlim, expand = FALSE) +
   geom_histogram(alpha = 0.5, show.legend = FALSE) +
   scale_fill_BF(drop = FALSE) +
@@ -1326,20 +1330,7 @@ right_hist_d0 <- ggplot(df_H2_agg_undecided, aes(x = trans_bf, fill = band)) +
         plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
 # Create lower histogram
-df_H2_agg_supp_H0 <- ddply(subset(df_H2_agg, support == 'H0'),
-                           c('n', 'band'),
-                           summarise,
-                           freq = length(bf)/nIter)
-
-# If there are no values for this
-if(nrow(df_H2_agg_supp_H0) == 0){
-  df_H2_agg_supp_H0 <- data.frame(n = seq(minN, maxN, batchSize),
-                                  band = rep('< 1/10', 5),
-                                  freq = rep(0, 5))
-}
-
-
-lower_hist_d0 <- ggplot(df_H2_agg_supp_H0, aes(x = n, y = freq, fill = band)) + 
+lower_hist <- ggplot(da_sim_results_agg_supp_H0, aes(x = n, y = freq, fill = band)) + 
   scale_y_reverse() +
   scale_fill_BF(drop = F) +
   geom_bar(stat = "identity", show.legend = FALSE, alpha = 0.5, width = barWidth) + 
@@ -1347,53 +1338,55 @@ lower_hist_d0 <- ggplot(df_H2_agg_supp_H0, aes(x = n, y = freq, fill = band)) +
   coord_cartesian(ylim = c(bar_yAxis, 0), xlim = c(minN -0.5, maxN + 0.5), expand = FALSE) +
   theme(plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
-# Get blank plot
-blank <- grid.rect(gp=gpar(col="white"))
-
-# Get legend plot
-legendPlot <- ggplot(df_H2_agg_undecided, aes(x = trans_bf, fill = band)) +
-  geom_histogram(alpha = 0.5) +
-  scale_fill_BF(drop = FALSE) +
-  theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
-  guides(fill = guide_legend(title = expression(BF[10])))
-
-legend <- cowplot::get_legend(legendPlot)
-
 
 # Combine everything into one plot
 ## Get Grobs
-gplot1 <- ggplotGrob(upper_hist_d0)
-gplot2 <- ggplotGrob(linePlotd0)
-gplot3 <- ggplotGrob(right_hist_d0) # not adjusted
-gplot4 <- ggplotGrob(lower_hist_d0)
+gplot1 <- ggplotGrob(upper_hist)
+gplot2 <- ggplotGrob(linePlot)
+gplot3 <- ggplotGrob(right_hist) 
+gplot4 <- ggplotGrob(lower_hist)
 
-# Align widths
-maxWidth = grid::unit.pmax(gplot1$widths, gplot2$widths, gplot4$widths)
-gplot1$widths <- as.list(maxWidth)
-gplot2$widths <- as.list(maxWidth)
-gplot4$widths <- as.list(maxWidth)
+## Get gtables
+gt_gplot1  <- gtable_frame(gplot1,  width = unit(12, "null"))
+gt_gplot2  <- gtable_frame(gplot2,  width = unit(12, "null"))
+gt_gplot3  <- gtable_frame(gplot3,  width = unit(3, "null"))
+gt_gplot4  <- gtable_frame(gplot4,  width = unit(12, "null"))
+gt_gBlank2 <- gtable_frame(gBlank2, width = unit(3, "null"))
 
-# Align heights
-maxHeight = grid::unit.pmax(gplot2$heights, gplot3$heights)
-gplot2$heights <- as.list(maxHeight)
-gplot3$heights <- as.list(maxHeight)
+## Combine components
+gt_upper   <- gtable_frame(gtable_cbind(gt_gplot1, gt_gBlank2)) 
+gt_middle  <- gtable_frame(gtable_cbind(gt_gplot2, gt_gplot3))
+gt_lower   <- gtable_frame(gtable_cbind(gt_gplot4, gt_gBlank2))
 
-lay <- rbind(c(1,2,3),
-             c(4,5,3),
-             c(6,7,3))
-
-grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
-             newpage = FALSE,
-             top = grid.text(expression("Design analysis with max sample size of 36 (d"[true]*" = 0.78)")),
-             layout_matrix = lay,
-             widths = c(12, 3, 2))
+## Combine into 1 plot
+gtable_combined3 <- gtable_frame(gtable_rbind(gt_upper, gt_middle, gt_lower))
 ```
 
 ```{r exp2_designAnalysis_table3}
 table12 <- as.data.frame(table(df_H2_agg$band)/nIter)
 names(table12) <- c('Support', 'Percent')
-kable(table12, format = 'html', caption = "Table 12: Results of simulation for effect size similar to m-shaped room (within vs. across)")
+#kable(table12, format = 'html', caption = "Table 12: Results of simulation for effect size similar to m-shaped room (within vs. across)")
 ```
+
+```{r plot_in_1_figure, eval = FALSE}
+# Create legend plot
+legendPlot <- ggplot(da_sim_results_agg_undecided, aes(x = trans_bf, fill = band)) +
+  geom_histogram(alpha = 0.5) +
+  scale_fill_BF(drop = FALSE) +
+  theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
+  guides(fill = guide_legend(title = expression(BF[10])))
+legend <- cowplot::get_legend(legendPlot)
+
+# Combine plots with legend
+all3_plots <- arrangeGrob(gtable_combined1, gtable_combined2, gtable_combined3, legend, ncol = 2)
+
+# Save as image
+save_plot('Design_analysis.png', all3_plots,
+          base_height = 19/cm(1),
+          base_width = 19/cm(1),
+          base_aspect_ratio = 1)
+```
+
 
 ### Summary
 ```{r exp2_designAnalysis_summary}
