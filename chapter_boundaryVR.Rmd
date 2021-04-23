@@ -91,7 +91,22 @@ The foils were +/- 4 positions away from the target object (see Figure). This wa
 An in-lab pilot experiment has shown that participants could not identify the exact room a particular objects was in based on as still image that showed wall colour and floor texture. This memory question was therefore not used again. However, I asked participants to choose the but room type and table type in a 2AFC task.  
 
 #### Sample
-In this batch, I collected data of 10 participants. 
+```{r exp1_batch1_demographics}
+# Load data
+exp1a_demographics <- read.table("~/boundaryVR/data/Exp1/batch1/exp1a_demographics.csv", header = TRUE, sep = ',')
+
+# Exclude returned (not approved)
+exp1a_demographics <- exp1a_demographics[exp1a_demographics$status != 'RETURNED', ]
+
+# Exclude no codes 
+exp1a_demographics <- exp1a_demographics[exp1a_demographics$entered_code != 'NOCODE', ]
+
+# Create strings
+str1      <- mean_SD_str2(exp1a_demographics$age, 1)
+sex_table <- table(droplevels.factor(exp1a_demographics$Sex)) 
+```
+
+In total, 10 participants (`r sex_table[1]`  female and `r sex_table[2]` male)  recruited through prolific completed this version of the experiment. Their age was `r str1` years. 
 
 #### Statistical analysis
 <!-- add description -->
@@ -199,25 +214,29 @@ agg_order_b1$boundary <- ifelse(agg_order_b1$context == 'across', 'across', 'wit
 agg_order_b1$Condition <- 'across'
 agg_order_b1$Condition[agg_order_b1$context == 'within-open plane'] <- 'O-room'
 agg_order_b1$Condition[agg_order_b1$context == 'within-M-shape']    <- 'M-room'
+
+# Get trial number etc. 
+exp1a_trials     <- ddply(df_order_b1, c('id','condition', 'context'), summarise, n = length(id))
+exp1a_trials_agg <- ddply(exp1a_trials, c('condition', 'context'), summarise, n = mean(n))
 ```
 
 ```{r exp1_batch1_plot1}
 # /* 
 # ----------------------------- Exp 1 Batch 1: Plots ---------------------------
 # */
-plt1 <- ggplot(agg_order_b1, aes(x = boundary, y = trans_acc, group = Condition, colour = Condition)) + 
+plt1 <- ggplot(agg_order_b1, aes(x = boundary, y = acc, group = Condition, colour = Condition)) + 
   geom_boxplot(alpha = 0.5,outlier.shape = NA, key_glyph = "rect") + 
   geom_point(position = position_jitterdodge(jitter.width = 0.2)) + 
-  geom_hline(yintercept = arcsine_transform(1/3)) +
+  geom_hline(yintercept = 1/3) +
   stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, aes(fill = Condition),
                position=position_dodge(width =  0.75),
                key_glyph = "rect") + 
-  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.75, yend= arcsine_transform(1/3)),colour = 'black',
+  geom_segment(aes(x = 1.5, xend = 1.5, y= 0.1, yend= 1/3),colour = 'black',
                arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
-  annotate('text', x = 1.5, y = - 0.75 - 0.03, label = 'Chance') +
+  annotate('text', x = 1.5, y = 0.1 - 0.03, label = 'Chance') +
   scale_color_mrc(palette = 'secondary') + 
   scale_fill_mrc(palette = 'secondary') +
-  labs(y = 'arcsine(3AFC accuracy)', x = "Boundary", title = 'Temporal Order') + 
+  labs(y = '3AFC accuracy', x = "Boundary", title = 'Temporal Order') + 
   theme(legend.justification = c(0, 1), 
         legend.position = c(0, 1),
         legend.title = element_text(size = 10),
@@ -230,15 +249,15 @@ roomTable_b1 <- data.frame(id = rep(1:n, 2),
                            acc = c(agg_room_b1$acc, agg_table_b1$acc),
                            trans_acc = c(agg_room_b1$trans_acc, agg_table_b1$trans_acc))
 
-plt2 <- ggplot(roomTable_b1, aes(x = Type, y = trans_acc)) + 
+plt2 <- ggplot(roomTable_b1, aes(x = Type, y = acc)) + 
   geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
   geom_jitter(width = 0.1, height = 0) +
-  geom_hline(yintercept = arcsine_transform(0.5)) +
+  geom_hline(yintercept = 0.5) +
   stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red') +
-  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.2, yend= arcsine_transform(0.5)),colour = 'black',
+  geom_segment(aes(x = 1.5, xend = 1.5, y= 0.3, yend= 0.5),colour = 'black',
                arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
-  annotate('text', x = 1.5, y = - 0.2 - 0.03, label = 'Chance') +
-  labs(y = 'arcsine(2AFC accuracy)', x = "Memory type", title = 'Room type and table')
+  annotate('text', x = 1.5, y = 0.3 - 0.03, label = 'Chance') +
+  labs(y = '2AFC accuracy', x = "Memory type", title = 'Room type and table')
 
 # Combine 2 1 figure
 plot_grid(plt1, plt2)
@@ -304,7 +323,22 @@ Another notable concern was that memory performance was not above chance, which 
 In order to avoid confusion I improved the instructions and the specific wording of the temporal order question. Participants were now asked "In the video you just watched, which one of the three objects at the bottom of the screen appeared immediately before this object?" in order to make sure that there is no misunderstanding. Besides other small changes to the instruction of this task, no significant changes were made. 
 
 #### Sample
-In this batch, I collected data of 12 participants. 
+```{r exp1_batch2_demographics}
+# Load data
+exp1b_demographics <- read.table("~/boundaryVR/data/Exp1/batch2/exp1b_demographics.csv", header = TRUE, sep = ',')
+
+# Exclude returned (not approved)
+exp1b_demographics <- exp1b_demographics[exp1b_demographics$status != 'RETURNED', ]
+
+# Exclude no codes 
+exp1b_demographics <- exp1b_demographics[exp1b_demographics$entered_code != 'NOCODE', ]
+
+# Create strings
+str1      <- mean_SD_str2(exp1b_demographics$age, 1)
+sex_table <- table(droplevels.factor(exp1b_demographics$Sex)) 
+```
+
+In total, 12 participants (`r sex_table[1]`  female and `r sex_table[2]` male)  recruited through prolific completed this version of the experiment. Their age was `r str1` years. 
 
 #### Results
 ```{r exp1_batch2_loadData}
@@ -441,6 +475,10 @@ agg_order_b2$boundary <- ifelse(agg_order_b2$context == 'across', 'across', 'wit
 agg_order_b2$Condition <- 'across'
 agg_order_b2$Condition[agg_order_b1$context == 'within-open plane'] <- 'O-room'
 agg_order_b2$Condition[agg_order_b1$context == 'within-M-shape']    <- 'M-room'
+
+# Get trial number etc. 
+exp1b_trials     <- ddply(df_order_b2, c('id','condition', 'context'), summarise, n = length(id))
+exp1b_trials_agg <- ddply(exp1b_trials, c('condition', 'context'), summarise, n = mean(n))
 ```
 
 
@@ -448,19 +486,19 @@ agg_order_b2$Condition[agg_order_b1$context == 'within-M-shape']    <- 'M-room'
 # /* 
 # ----------------------------- Exp 1 Batch 2: Plots ---------------------------
 # */
-plt1 <- ggplot(agg_order_b2, aes(x = boundary, y = trans_acc, group = Condition, colour = Condition)) + 
+plt1 <- ggplot(agg_order_b2, aes(x = boundary, y = acc, group = Condition, colour = Condition)) + 
   geom_boxplot(alpha = 0.5,outlier.shape = NA, key_glyph = "rect") + 
   geom_point(position = position_jitterdodge(jitter.width = 0.2)) + 
-  geom_hline(yintercept = arcsine_transform(1/3)) +
+  geom_hline(yintercept = 1/3) +
   stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, aes(fill = Condition),
                position=position_dodge(width =  0.75),
                key_glyph = "rect") + 
-  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.75, yend= arcsine_transform(1/3)),colour = 'black',
+  geom_segment(aes(x = 1.5, xend = 1.5, y= 0.1, yend= 1/3),colour = 'black',
                arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
-  annotate('text', x = 1.5, y = - 0.75 - 0.03, label = 'Chance') +
+  annotate('text', x = 1.5, y = 0.1 - 0.03, label = 'Chance') +
   scale_color_mrc(palette = 'secondary') + 
   scale_fill_mrc(palette = 'secondary') +
-  labs(y = 'arcsine(3AFC accuracy)', x = "Boundary", title = 'Temporal Order') + 
+  labs(y = '3AFC accuracy', x = "Boundary", title = 'Temporal Order') + 
   theme(legend.justification = c(0, 1), 
         legend.position = c(0, 1),
         legend.title = element_text(size = 10),
@@ -473,15 +511,15 @@ roomTable_b2 <- data.frame(id = rep(1:n, 2),
                            acc = c(agg_room_b2$acc, agg_table_b2$acc),
                            trans_acc = c(agg_room_b2$trans_acc, agg_table_b2$trans_acc))
 
-plt2 <- ggplot(roomTable_b2, aes(x = Type, y = trans_acc)) + 
+plt2 <- ggplot(roomTable_b2, aes(x = Type, y = acc)) + 
   geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
   geom_jitter(width = 0.1, height = 0) +
-  geom_hline(yintercept = arcsine_transform(0.5)) +
+  geom_hline(yintercept = 0.5) +
   stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red') +
-  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.2, yend= arcsine_transform(0.5)),colour = 'black',
+  geom_segment(aes(x = 1.5, xend = 1.5, y= 0.3, yend= 0.5),colour = 'black',
                arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
-  annotate('text', x = 1.5, y = - 0.2 - 0.03, label = 'Chance') +
-  labs(y = 'arcsine(2AFC accuracy)', x = "Memory type", title = 'Room type and table')
+  annotate('text', x = 1.5, y = 0.3 - 0.03, label = 'Chance') +
+  labs(y = '2AFC accuracy', x = "Memory type", title = 'Room type and table')
 
 # Combine 2 1 figure
 plot_grid(plt1, plt2)
@@ -540,6 +578,21 @@ Participants also did not show above chance performance for remembering in which
 Unfortunately, I again failed to find a boundary effect even for O-rooms. In addition, with the exception of memory for the table question, memory performance was not above chance. Once possible reason of why memory performance was so bad was that in contrast to Horner et al. (2016) I always selected foils +/-4 positions away from the target while Horner and colleagues selected random foils.  Another option could be to use a more semantic task as such a pleasant/unpleasant judgement could be made, however I was concerned that most objects are fairly neutral making this task not meaningful. 
 
 ### Batch 3
+#### Sample
+```{r exp1_batch3_demographics}
+# Load data
+exp1c_demographics <- read.table("~/boundaryVR/data/Exp1/batch3/exp1c_demographics.csv", header = TRUE, sep = ',')
+
+# Exclude returned (not approved)
+exp1c_demographics <- exp1c_demographics[exp1c_demographics$status != 'RETURNED', ]
+
+# Create strings
+str1      <- mean_SD_str2(exp1c_demographics$age, 1)
+sex_table <- table(droplevels.factor(exp1c_demographics$Sex))
+```
+
+Due to technical problems, some prolific submissions were not usable. Unfortunately, the data containing the prolific IDs were deleted so that it not possible anymore to retrieve the demographical data only for those data that remained in the final sample of 13 participants. These came from a population of 31 (`r sex_table[1]` female and `r sex_table[2]` male). Their mean age was `r str1` years.
+
 #### Description of memory task
 Since memory performance was not above chance in batch 1 & batch 2, I decided to run another batch of participants but this time having the same foil (random) selection procedure as Horner et al (2016) with the hope that this would improve memory performance. 
 
@@ -706,26 +759,42 @@ agg_order_b3$boundary <- ifelse(agg_order_b3$context == 'across', 'across', 'wit
 agg_order_b3$Condition <- 'across'
 agg_order_b3$Condition[agg_order_b3$context == 'within-open plane'] <- 'O-room'
 agg_order_b3$Condition[agg_order_b3$context == 'within-M-shape']    <- 'M-room'
+
+# Get trial number etc. 
+exp1c_trials     <- ddply(df_order_b3, c('id','condition', 'context'), summarise, n = length(id))
+exp1c_trials_agg <- ddply(exp1c_trials, c('condition', 'context'), summarise, n = mean(n))
 ```
+
+
+```{r foil_distance}
+foil_distances <- ddply(df_order_b3, c('worker_id'), summarise, dist1 = mean(dist1), dist2 = mean(dist2))
+
+dist1 <- unique(foil_distances$dist1 + 1) 
+dist2 <- unique(foil_distances$dist2 - 1)
+
+#range(dist1)
+#range(dist2)
+```
+
 
 
 ```{r exp1_batch3_plot1}
 # /* 
-# ----------------------------- Exp 1 Batch 2: Plots ---------------------------
+# ----------------------------- Exp 1 Batch 3: Plots ---------------------------
 # */
-plt1 <- ggplot(agg_order_b3, aes(x = boundary, y = trans_acc, group = Condition, colour = Condition)) + 
+plt1 <- ggplot(agg_order_b3, aes(x = boundary, y = acc, group = Condition, colour = Condition)) + 
   geom_boxplot(alpha = 0.5,outlier.shape = NA, key_glyph = "rect") + 
   geom_point(position = position_jitterdodge(jitter.width = 0.2)) + 
-  geom_hline(yintercept = arcsine_transform(1/3)) +
+  geom_hline(yintercept = 1/3) +
   stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, aes(fill = Condition),
                position=position_dodge(width =  0.75),
                key_glyph = "rect") + 
-  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.75, yend= arcsine_transform(1/3)),colour = 'black',
+  geom_segment(aes(x = 1.5, xend = 1.5, y= 0.1, yend= 1/3),colour = 'black',
                arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
-  annotate('text', x = 1.5, y = - 0.75 - 0.03, label = 'Chance') +
+  annotate('text', x = 1.5, y = 0.1 - 0.03, label = 'Chance') +
   scale_color_mrc(palette = 'secondary') + 
   scale_fill_mrc(palette = 'secondary') +
-  labs(y = 'arcsine(3AFC accuracy)', x = "Boundary", title = 'Temporal Order') + 
+  labs(y = '3AFC accuracy', x = "Boundary", title = 'Temporal Order') + 
   theme(legend.justification = c(0, 1), 
         legend.position = c(0, 1),
         legend.title = element_text(size = 10),
@@ -738,15 +807,15 @@ roomTable_b3 <- data.frame(id = rep(1:n, 2),
                            acc = c(agg_room_b3$acc, agg_table_b3$acc),
                            trans_acc = c(agg_room_b3$trans_acc, agg_table_b3$trans_acc))
 
-plt2 <- ggplot(roomTable_b3, aes(x = Type, y = trans_acc)) + 
+plt2 <- ggplot(roomTable_b3, aes(x = Type, y = acc)) + 
   geom_boxplot(alpha = 0.5,outlier.shape = NA) + 
   geom_jitter(width = 0.1, height = 0) +
-  geom_hline(yintercept = arcsine_transform(0.5)) +
+  geom_hline(yintercept = 0.5) +
   stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red') +
-  geom_segment(aes(x = 1.5, xend = 1.5, y= -0.2, yend= arcsine_transform(0.5)),colour = 'black',
+  geom_segment(aes(x = 1.5, xend = 1.5, y= 0.3, yend = 0.5),colour = 'black',
                arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
-  annotate('text', x = 1.5, y = - 0.2 - 0.03, label = 'Chance') +
-  labs(y = 'arcsine(2AFC accuracy)', x = "Memory type", title = 'Room type and table')
+  annotate('text', x = 1.5, y = 0.3 - 0.03, label = 'Chance') +
+  labs(y = '2AFC accuracy', x = "Memory type", title = 'Room type and table')
 
 # Combine 2 1 figure
 plot_grid(plt1, plt2)
@@ -1015,7 +1084,7 @@ lay <- rbind(c(1,2,3),
 
 grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
              newpage = FALSE,
-             top =  grid.text(expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.00)")),
+             top =  grid.text(expression("Design analysis with max sample size of 36 (d"[true]*" = 0.00)")),
              layout_matrix = lay,
              widths = c(12, 3, 2))
 ```
@@ -1165,7 +1234,7 @@ lay <- rbind(c(1,2,3),
 
 grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
              newpage = FALSE,
-             top =  grid.text(expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.44)")),
+             top =  grid.text(expression("Design analysis with max sample size of 36 (d"[true]*" = 0.44)")),
              layout_matrix = lay,
              widths = c(12, 3, 2))
 ```
@@ -1315,7 +1384,7 @@ lay <- rbind(c(1,2,3),
 
 grid.arrange(grobs = list(gplot1, blank, legend, gplot2, gplot3, gplot4, blank),
              newpage = FALSE,
-             top = grid.text(expression("Bayesian sequential design analysis with max sample size of 38 (d"[true]*" = 0.78)")),
+             top = grid.text(expression("Design analysis with max sample size of 36 (d"[true]*" = 0.78)")),
              layout_matrix = lay,
              widths = c(12, 3, 2))
 ```
@@ -1345,7 +1414,25 @@ The main planned analysis was a paired t-test between within and across room ass
 As additional analyses we plan to run a Bayesian ANOVA with with factors boundary (within vs across), question (Which object came before? vs. Which object came after?) and block (Block 1 and Block 2). The aim of this analysis is to find whether this is the case. In case, we find no modulation, we will also include data . Furthermore, we will run another ANOVA with boundary and room type as factors to investigate whether the boundary effect (if existing) is stronger comparing both room times. Since, this involves are between subject comparison that is not directional, we might not have sample size that is big enough. Therefore, we do not make this part of our stopping rule. 
 
 ## Sample
-The sample size of this experiment was 16. 
+```{r exp2_demographics}
+# Load data
+exp2_demographics <- read.table("~/boundaryVR/data/Exp2/exp2_demographics.csv", header = TRUE, sep = ',')
+
+# Exclude returned (only approved)
+exp2_demographics <- exp2_demographics[exp2_demographics$status == 'APPROVED', ]
+
+# Exclude no codes 
+exp2_demographics <- exp2_demographics[exp2_demographics$entered_code != 'NOCODE', ]
+
+# Exclude Manual Completion
+exp2_demographics <- exp2_demographics[exp2_demographics$entered_code != 'Manual Completion', ]
+
+# Create strings
+str1      <- mean_SD_str2(na.omit(exp2_demographics$age), 1)
+sex_table <- table(droplevels.factor(exp2_demographics$Sex))
+```
+
+In total, 16 participants  (`r sex_table[1]` female and `r sex_table[2]` male)  recruited through prolific completed this version of the experiment. Their age was `r str1` years. 
 
 ## Results
 ```{r exp2_loadData}
@@ -1431,6 +1518,10 @@ for(i in 1:n){
 # Convert to id factor
 df_order_exp2$id       <- as.factor(df_order_exp2$id)
 df_order_exp2$stimulus <- as.character(df_order_exp2$stimulus)
+
+# Get trial number etc. 
+exp2_trials     <- ddply(df_order_exp2, c('worker_id','counterbalance_condition', 'questionType', 'context'), summarise, n = length(worker_id))
+exp2_trials_agg <- ddply(exp2_trials, c('counterbalance_condition', 'questionType', 'context'), summarise, n = mean(n))
 ```
 
 ```{r exp2_agg1}
@@ -1454,16 +1545,16 @@ agg_order_exp2_sub1 <- subset(agg_order_exp2, test_part  == 'temporalOrder1')
 ```
 
 ```{r exp2_plot1}
-plt1 <- ggplot(agg_order_exp2_sub1, aes(x = context, y = trans_acc)) + 
+plt1 <- ggplot(agg_order_exp2_sub1, aes(x = context, y = acc)) + 
   geom_line(aes(group = worker_id)) +
   geom_point() +
   geom_boxplot(width = 0.5, alpha = 0.5) + 
-  geom_hline(yintercept = arcsine_transform(1/3)) +
+  geom_hline(yintercept = 1/3) +
   stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red')+
-  geom_segment(aes(x = 0.7, xend = 0.7, y= -0.5, yend= arcsine_transform(1/3)),colour = 'black',
+  geom_segment(aes(x = 0.7, xend = 0.7, y= 0.1, yend= 1/3),colour = 'black',
                arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
-  annotate('text', x = 0.7, y = - 0.5 - 0.03, label = 'Chance') +
-  labs(title = 'Temporal order', y = "arcsine(3AFC accruacy)", x = 'Boundary')
+  annotate('text', x = 0.7, y = 0.1 - 0.03, label = 'Chance') +
+  labs(title = 'Temporal order', y = "3AFC accruacy", x = 'Boundary')
 
 
 plt2 <- ggplot(agg_order_exp2_sub1, aes(x = context, y = rt)) + 
@@ -1584,7 +1675,19 @@ To do this, I decided to implement three major changes a) memory encoding in Exp
 In the Experiment 1 & 2, only five different wall colours and five different floor textures were used, which means a room was only unique due to the combination fo the five colours and textures. To increase the distinctiveness in Experiment 3, each floor featured a unique texture that was selected to stand out (e.g. brightly coloured tiles, noticeable carpet patterns etc.). 
 
 ## Sample
-The sample size was 47. 
+```{r exp3_demographics}
+# Load data
+exp3_demographics <- read.table("~/boundaryVR/data/Exp3/exp3_demographics.csv", header = TRUE, sep = ',')
+
+# Exclude returned (only approved)
+exp3_demographics <- exp3_demographics[exp3_demographics$status == 'APPROVED', ]
+
+# Create strings
+str1      <- mean_SD_str2(na.omit(exp3_demographics$age), 1)
+sex_table <- table(droplevels.factor(exp3_demographics$Sex))
+```
+
+In total,  49 participants  (`r sex_table[1]` female and `r sex_table[2]` male) recruited through prolific completed this version of the experiment. Their age was `r str1` years. 
 
 ## Results
 <!-- Could add analysis for video data here -->
@@ -1606,8 +1709,50 @@ n2              <- length(allFiles2_paths)
 # Half 1 
 for(i in 1:n1){
   ############
-  # Loading daya
+  # Loading data
   tempDF <- read.csv(allFiles1_paths[i], header = TRUE, na.strings = '')
+  
+  # Recode key presses
+  response      <- rep(NA, nrow(tempDF))
+  response[tempDF$key_press == 49] <- 1
+  response[tempDF$key_press == 50] <- 2
+  response[tempDF$key_press == 51] <- 3
+  tempDF$response                  <- response
+  
+  # Convert RT to numeric  
+  tempDF$rt <- suppressWarnings(as.numeric(as.character(tempDF$rt)))
+  
+  ############
+  # Temporal order memory 1
+  temporalOrder1 <- subset(tempDF, test_part == 'temporalOrder')
+  
+  # Calculate accuracy 
+  accuracy <- rep(NA, nrow(temporalOrder1))
+  accuracy[temporalOrder1$response == temporalOrder1$corr_resp] <- 1
+  accuracy[temporalOrder1$response != temporalOrder1$corr_resp] <- 0
+  temporalOrder1$accuracy <- accuracy
+  
+  # Create variable that describe whether target, foil1, foil2 was chosen
+  choice <- rep('Target', nrow(temporalOrder1))
+  choice[temporalOrder1$response == temporalOrder1$foil1Pos] <- 'Foil 1'
+  choice[temporalOrder1$response == temporalOrder1$foil2Pos] <- 'Foil 2'
+  temporalOrder1$choice <- choice
+  
+  # Create or bind to data.frame
+  if(i == 1){
+    df_order_exp3_h1    <- temporalOrder1
+    df_order_exp3_h1$id <- i
+  } else {
+    temporalOrder1$id <- i
+    df_order_exp3_h1      <- rbind(df_order_exp3_h1, temporalOrder1)
+  }
+}
+
+# Half 2
+for(i in 1:n2){
+  ############
+  # Loading data
+  tempDF <- read.csv(allFiles2_paths[i], header = TRUE, na.strings = '')
   
   # Recode key presses
   response      <- rep(NA, nrow(tempDF))
@@ -1638,49 +1783,6 @@ for(i in 1:n1){
   
   # Create or bind to data.frame
   if(i == 1){
-    df_order_exp3_h1    <- temporalOrder1
-    df_order_exp3_h1$id <- i
-  } else {
-    temporalOrder1$id <- i
-    df_order_exp3_h1      <- rbind(df_order_exp3_h1, temporalOrder1)
-  }
-}
-
-# Half 2
-for(i in 1:n2){
-  ############
-  # Loading daya
-  tempDF <- read.csv(allFiles2_paths[i], header = TRUE, na.strings = '')
-  
-  # Recode key presses
-  response      <- rep(NA, nrow(tempDF))
-  response[tempDF$key_press == 49] <- 1
-  response[tempDF$key_press == 50] <- 2
-  response[tempDF$key_press == 51] <- 3
-  tempDF$response                  <- response
-  
-  # Convert RT to numeric  
-  tempDF$rt <- suppressWarnings(as.numeric(as.character(tempDF$rt)))
-  
-  ############
-  # Temporal order memory 1
-  temporalOrder1 <- subset(tempDF, test_part == 'temporalOrder')
-  
-  # Calculate accuracy 
-  accuracy <- rep(NA, nrow(temporalOrder1))
-  accuracy[temporalOrder1$response == temporalOrder1$corr_resp] <- 1
-  accuracy[temporalOrder1$response != temporalOrder1$corr_resp] <- 0
-  temporalOrder1$accuracy <- accuracy
-  
-  # Create variable that desribe whether target, foil1, foil2 was choosen
-  choice <- rep('Target', nrow(temporalOrder1))
-  choice[temporalOrder1$response == temporalOrder1$foil1Pos] <- 'Foil 1'
-  choice[temporalOrder1$response == temporalOrder1$foil2Pos] <- 'Foil 2'
-  temporalOrder1$choice <- choice
-  
-  
-  # Create or bind to data.frame
-  if(i == 1){
     df_order_exp3_h2    <- temporalOrder1
     df_order_exp3_h2$id <- i
   } else {
@@ -1690,10 +1792,13 @@ for(i in 1:n2){
 }
 
 
-df_order_exp3 <- rbind(df_order_exp3_h1, df_order_exp3_h2)
-df_order_exp3$half <- factor(df_order_exp3$half, levels = c(0, 1), labels = c('h1', 'h2'))
-
+df_order_exp3         <- rbind(df_order_exp3_h1, df_order_exp3_h2)
+df_order_exp3$half    <- factor(df_order_exp3$half, levels = c(0, 1), labels = c('h1', 'h2'))
 df_order_exp3$context <- factor(df_order_exp3$context, levels = c('across', 'within'), labels = c('across', 'within'))
+
+# Get trial number etc. 
+exp3_trials     <- ddply(df_order_exp3, c('worker_id','counterbalance_condition', 'context'), summarise, n = length(worker_id))
+exp3_trials_agg <- ddply(exp3_trials, c('counterbalance_condition', 'context'), summarise, n = mean(n))
 ```
 
 ```{r exp3_memory_outlier}
@@ -1724,16 +1829,16 @@ agg_order_exp3$trans_acc <- arcsine_transform(agg_order_exp3$accuracy)
 
 
 # Plot
-plt1 <- ggplot(agg_order_exp3, aes(x = context, y = trans_acc)) + 
+plt1 <- ggplot(agg_order_exp3, aes(x = context, y = accuracy)) + 
   geom_line(aes(group = worker_id)) +
   geom_point() +
   geom_boxplot(width = 0.5, alpha = 0.5) + 
-  geom_hline(yintercept = arcsine_transform(1/3)) +
+  geom_hline(yintercept = 1/3) +
   stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red')+
-  geom_segment(aes(x = 0.7, xend = 0.7, y= -0.5, yend= arcsine_transform(1/3)),colour = 'black',
+  geom_segment(aes(x = 0.7, xend = 0.7, y= 0.1, yend= 1/3),colour = 'black',
                arrow = arrow(length = unit(0.30,"cm"), type = "closed"), show.legend = FALSE) +
-  annotate('text', x = 0.7, y = - 0.5 - 0.03, label = 'Chance') +
-  labs(title = 'Temporal order', y = "arcsine(3AFC accruacy)", x = 'Boundary')
+  annotate('text', x = 0.7, y = 0.1 - 0.03, label = 'Chance') +
+  labs(title = 'Temporal order', y = "3AFC accruacy", x = 'Boundary')
 
 
 plt2 <- ggplot(agg_order_exp3, aes(x = context, y = rt)) + 
@@ -1742,6 +1847,8 @@ plt2 <- ggplot(agg_order_exp3, aes(x = context, y = rt)) +
   geom_boxplot(width = 0.5, alpha = 0.5) + 
   stat_summary(geom = "point", fun = "mean", col = 'black', size = 3, shape = 24, fill = 'red')+
   labs(title = 'Reaction time', y = "RT in msec", x = 'Boundary')
+
+ plot_grid(plt1, plt2)
 ```
 
 
@@ -1764,7 +1871,7 @@ test2 <- ttestBF(agg_order_exp3$rt[agg_order_exp3$context == 'within'],
 test2 <- reportBF(1/test2[1])
 ```
 
-The analysis revealed again no boundary effect for O-rooms both for accuracy $BF_{01}$ = `r test1` as well as for RT $BF_{01}$ = ` r test2`. 
+The analysis revealed again no boundary effect for O-rooms both for accuracy $BF_{01}$ = `r test1` as well as for RT $BF_{01}$ = `r test2`. 
 
 ```{r exp3_test2}
 #Aggregate
