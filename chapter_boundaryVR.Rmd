@@ -620,7 +620,7 @@ trials_cond8 <- trials_cond8[order(trials_cond8$objNum),][1:78,]
 
 for(i in 1:n){
   ############
-  # Loading daya
+  # Loading data
   tempDF <- read.csv(allFiles_paths[i], header = TRUE, na.strings = '')
   
   # Recode key presses

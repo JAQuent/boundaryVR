@@ -16,7 +16,8 @@ library(rjson)
 library(assortedRFunctions)
 
 # Setting wd
-setwd("C:/Users/Alex/Documents/GitHub/boundaryVR/onlineExperiment/r_supportFiles")
+setwd("~/boundaryVR/experiments/Exp1/batch3/r_supportFiles")
+#setwd("C:/Users/Alex/Documents/GitHub/boundaryVR/onlineExperiment/r_supportFiles")
 #setwd("U:/Projects/boundaryVR/onlineExperiment/r_supportFiles")
 
 # /* 
