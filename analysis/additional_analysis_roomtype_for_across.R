@@ -24,7 +24,7 @@ theme_set(theme_grey())
 # ----------------------------- Load data ---------------------------
 # */
 # Load all data
-prefix         <- "~/boundaryVR/data/Exp1/batch1/memoryTask/"
+prefix         <- "data/Exp1/batch1/memoryTask/"
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -487,7 +487,18 @@ plt3 <- ggplot(agg_order_b3_roomInfo, aes(x = boundary, y = acc, fill = interact
 # */
 all_plots <- plot_grid(plt1, plt2, plt3, ncol = 3)
 
-save_plot("spliiting_across_trials.png", all_plots,
+save_plot("splitting_across_trials.png", all_plots,
           base_height = 10/cm(1)*1.5,
           base_width = 19/cm(1)*1.5,
           base_aspect_ratio = 1)
+
+
+a <- agg_order_b3_roomInfo[agg_order_b3_roomInfo$context == 'across' & agg_order_b3_roomInfo$roomType == 'M-room', 'acc']
+b <- agg_order_b3_roomInfo[agg_order_b3_roomInfo$context == 'across' & agg_order_b3_roomInfo$roomType == 'O-room', 'acc']
+
+a <- agg_order_b1_roomInfo[agg_order_b1_roomInfo$context == 'across' & agg_order_b1_roomInfo$roomType == 'M-room', 'acc']
+b <- agg_order_b1_roomInfo[agg_order_b1_roomInfo$context == 'across' & agg_order_b1_roomInfo$roomType == 'O-room', 'acc']
+
+ttestBF(arcsine_transform(a), arcsine_transform(b), paired = TRUE)
+
+ttestBF(a, b, paired = TRUE)

@@ -23,11 +23,15 @@ library(kableExtra)
 library(MRColour)
 library(jsonlite)
 library(reshape2)
+library(egg)
 library(latex2exp)
 library(lmerTest)
 library(ez)
 library(BayesFactor)
 theme_set(theme_grey()) 
+
+# Other parameters
+ digits <- 3
 ```
 
 ```{r table_from_Horner2016}
@@ -47,6 +51,18 @@ aidansData2 <- data.frame(Experiment = c('Exp 1', 'Exp 1', 'Exp 2', 'Exp 2', 'Ex
                          SD = c(0.15, 0.13, 0.21, 0.16, 0.18, 0.17))
 
 v2 <- aidansData2$accuracy[aidansData2$Context == 'within'] - aidansData2$accuracy[aidansData2$Context == 'across']
+
+horner2016_mean_within <- mean(c(aidansData1$accuracy[aidansData1$Context == 'within'], 
+                                 aidansData2$accuracy[aidansData2$Context == 'within']))
+
+horner2016_SD_within   <- mean(c(aidansData1$SD[aidansData1$Context == 'within'], 
+                                 aidansData2$SD[aidansData2$Context == 'within']))
+
+horner2016_mean_across <- mean(c(aidansData1$accuracy[aidansData1$Context == 'across'], 
+                                 aidansData2$accuracy[aidansData2$Context == 'across']))
+
+horner2016_SD_across   <- mean(c(aidansData1$SD[aidansData1$Context == 'across'], 
+                                 aidansData2$SD[aidansData2$Context == 'across']))
 ```
 
 # Introduction
@@ -93,7 +109,7 @@ An in-lab pilot experiment has shown that participants could not identify the ex
 #### Sample
 ```{r exp1_batch1_demographics}
 # Load data
-exp1a_demographics <- read.table("~/boundaryVR/data/Exp1/batch1/exp1a_demographics.csv", header = TRUE, sep = ',')
+exp1a_demographics <- read.table("data/Exp1/batch1/exp1a_demographics.csv", header = TRUE, sep = ',')
 
 # Exclude returned (not approved)
 exp1a_demographics <- exp1a_demographics[exp1a_demographics$status != 'RETURNED', ]
@@ -114,7 +130,7 @@ In total, 10 participants (`r sex_table[1]`  female and `r sex_table[2]` male)  
 #### Results
 ```{r exp1_batch1_loadData}
 # Load all data
-prefix         <- "~/boundaryVR/data/Exp1/batch1/memoryTask/"
+prefix         <- "data/Exp1/batch1/memoryTask/"
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -212,12 +228,28 @@ agg_table_b1$trans_acc <- arcsine_transform(agg_table_b1$acc)
 # Rename factor
 agg_order_b1$boundary <- ifelse(agg_order_b1$context == 'across', 'across', 'within')
 agg_order_b1$Condition <- 'across'
-agg_order_b1$Condition[agg_order_b1$context == 'within-open plane'] <- 'O-room'
-agg_order_b1$Condition[agg_order_b1$context == 'within-M-shape']    <- 'M-room'
+agg_order_b1$Condition[agg_order_b1$context == 'within-no-walls'] <- 'O-room'
+agg_order_b1$Condition[agg_order_b1$context == 'within-walls']    <- 'M-room'
 
 # Get trial number etc. 
 exp1a_trials     <- ddply(df_order_b1, c('id','condition', 'context'), summarise, n = length(id))
 exp1a_trials_agg <- ddply(exp1a_trials, c('condition', 'context'), summarise, n = mean(n))
+
+# Add room information to analyse across trials separately
+df_order_b1_roomInfo           <- df_order_b1
+df_order_b1_roomInfo$roomType  <- df_room_b1$corr_resp
+df_order_b1_roomInfo$roomType  <- ifelse(df_order_b1_roomInfo$roomType == 1, 'O-room', 'M-room')
+agg_order_b1_roomInfo          <- ddply(df_order_b1_roomInfo, c('id', 'context', 'roomType'), summarise, acc = mean(accuracy), rt = mean(rt))
+agg_order_b1_roomInfo$boundary <- ifelse(agg_order_b1_roomInfo$context == 'across', 'across', 'within')
+agg_order_b1_roomInfo$Condition <- 'across'
+agg_order_b1_roomInfo$Condition[agg_order_b1_roomInfo$context == 'within-open plane'] <- 'O-room'
+agg_order_b1_roomInfo$Condition[agg_order_b1_roomInfo$context == 'within-M-shape']    <- 'M-room'
+
+# Transform values and variables factor
+agg_order_b1_roomInfo$trans_acc <- arcsine_transform(agg_order_b1_roomInfo$acc)
+agg_order_b1_roomInfo$id        <- as.factor(agg_order_b1_roomInfo$id)
+agg_order_b1_roomInfo$roomType  <- as.factor(agg_order_b1_roomInfo$roomType)
+agg_order_b1_roomInfo$boundary  <- as.factor(agg_order_b1_roomInfo$boundary)
 ```
 
 ```{r exp1_batch1_plot1}
@@ -241,7 +273,9 @@ plt1 <- ggplot(agg_order_b1, aes(x = boundary, y = acc, group = Condition, colou
         legend.position = c(0, 1),
         legend.title = element_text(size = 10),
         legend.text = element_text(size = 9),
-        legend.key.size = unit(0.5,"line"))
+        legend.key.size = unit(0.5,"line")) +
+  ## Data from Horner 2016
+  geom_point(aes(x = 1.3, y = horner2016_mean_across), colour = "blue", shape = 15, size = 5, alpha = 0.1) 
 
 # Bind room and table together
 roomTable_b1 <- data.frame(id = rep(1:n, 2),
@@ -265,58 +299,109 @@ plot_grid(plt1, plt2)
 
 
 ```{r exp1_batch1_test1}
-# Temporal order question
-# Overall memory performance
+### Difference between across trials
+# Get values
+val1 <- agg_order_b1_roomInfo[agg_order_b1_roomInfo$context == 'across' & agg_order_b1_roomInfo$roomType == 'M-room', 'acc']
+val2 <- agg_order_b1_roomInfo[agg_order_b1_roomInfo$context == 'across' & agg_order_b1_roomInfo$roomType == 'O-room', 'acc']
+
+# Create report strings
+str1 <- mean_SD_str2(val1, 1, digits, 'signif')
+str2 <- mean_SD_str2(val2, 1, digits, 'signif')
+
+# Transform values
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
+d1   <- signif(mean(val1 - val2)/sd(val1 - val2), 3)
+
+# Test
+bf01_1 <- ttestBF(val1, val2, paired = TRUE)
+bf01_1 <- reportBF(1/bf01_1, digits, 'signif')
+
+### Overall memory performance
 agg_order_overall_b1           <- ddply(df_order_b1, c('id'), summarise, acc = mean(accuracy), rt = mean(rt))
 agg_order_overall_b1$trans_acc <- arcsine_transform(agg_order_overall_b1$acc)
 
-test1 <- ttestBF(agg_order_overall_b1$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
-test1 <- reportBF(1/test1[2])
+str3 <- mean_SD_str2(agg_order_overall_b1$acc, 1, digits, 'signif')
 
-# Examine the boundary effect
-## Memory
+bf01_2 <- ttestBF(agg_order_overall_b1$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
+bf01_2 <- reportBF(1/bf01_2[2], digits, 'signif')
+
 ### Across versus M-room
-val1  <- agg_order_b1[agg_order_b1$Condition == 'across', 'trans_acc']
-val2  <- agg_order_b1[agg_order_b1$boundary  == 'within' & agg_order_b1$Condition  == 'M-room', 'trans_acc']
-test2 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test2 <- reportBF(1/test2[1])
+val1  <- agg_order_b1[agg_order_b1$Condition == 'across', 'acc']
+val2  <- agg_order_b1[agg_order_b1$boundary  == 'within' & agg_order_b1$Condition  == 'M-room', 'acc']
+
+# Create report strings
+str4 <- mean_SD_str2(val1, 1, digits, 'signif')
+str5 <- mean_SD_str2(val2, 1, digits, 'signif')
+
+# Transform values
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
+d2   <- signif(mean(val1 - val2)/sd(val1 - val2), 3)
+
+
+# Test
+bf01_3 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+bf01_3 <- reportBF(1/bf01_3[1], digits, 'signif')
 
 ### Across versus O-room
-val1  <- agg_order_b1[agg_order_b1$Condition == 'across', 'trans_acc']
-val2  <- agg_order_b1[agg_order_b1$boundary  == 'within' & agg_order_b1$Condition  == 'O-room', 'trans_acc']
-test3 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test3 <- reportBF(1/test3[1])
+val1  <- agg_order_b1[agg_order_b1$Condition == 'across', 'acc']
+val2  <- agg_order_b1[agg_order_b1$boundary  == 'within' & agg_order_b1$Condition  == 'O-room', 'acc']
 
-## RT
-### Across versus M-room
-val1  <- agg_order_b1[agg_order_b1$Condition == 'across', 'rt']
-val2  <- agg_order_b1[agg_order_b1$boundary  == 'within' & agg_order_b1$Condition  == 'M-room', 'rt']
-test4 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test4 <- reportBF(1/test4[2])
+# Create report strings
+str6 <- mean_SD_str2(val1, 1, digits, 'signif')
+str7 <- mean_SD_str2(val2, 1, digits, 'signif')
 
-### Across versus O-room
-val1  <- agg_order_b1[agg_order_b1$Condition == 'across', 'rt']
-val2  <- agg_order_b1[agg_order_b1$boundary  == 'within' & agg_order_b1$Condition  == 'O-room', 'rt']
-test5 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test5 <- reportBF(1/test5[2])
+# Transform values
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
+d3   <- signif(mean(val1 - val2)/sd(val1 - val2), 3)
+
+
+# Test
+bf01_4 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+bf01_4 <- reportBF(1/bf01_4[1], digits, 'signif')
 
 # Room question
-test6 <- ttestBF(agg_room_b1$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
-test6 <- reportBF(1/test6[2])
+str8 <- mean_SD_str2(agg_room_b1$acc, 1, digits, 'signif')
+
+bf01_5 <- ttestBF(agg_room_b1$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+bf01_5 <- reportBF(1/bf01_5[2], digits, 'signif')
 
 # Table question
-test7 <- ttestBF(agg_table_b1$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
-test7 <- reportBF(test7[2])
+str9 <- mean_SD_str2(agg_table_b1$acc, 1, digits, 'signif')
+
+bf10_6 <- ttestBF(agg_table_b1$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+bf10_6 <- reportBF(bf10_6[2], digits, 'signif')
 ```
 
-There was considerable evidence that memory performance was not above chance ($BF_{01}$ = `r test1`) for the temporal memory question. Furthermore, I did not find a boundary effect for M-rooms (across vs. within) for accuracy, $BF_{01}$ = `r test2`, and for RT, $BF_{01}$ = `r test4`, but I did not find an effect for O-rooms for accuracy, $BF_{01}$ = `r test3`, and for RT, $BF_{01}$ = `r test5`. 
+There was no conclusive evidence that memory performance in the across room condition differed as a function of whether the cue object was in an M, `r str1`, or O-room, `r str2`, BF_01 = `r bf01_1`, *d* = `r d1` (see Figure x), so that this condition was collapsed across rooms for further analysis. 
 
-Participants also did not show above chance performance for remembering in which room type a cue object was presented in ($BF_{01}$ = `r test6`). However, there was weak evidence that participants did remember on which table type a cue object was presented ($BF_{10}$ = `r test7`).
+There was moderate evidence that temporal order memory was not above chance (i.e., averaged across within and across conditions; `r str3`), BF_01 = `r bf01_2`. This might be why there was also no evidence for a boundary effect - across, `r str4` ,  vs. within, `r str5`, - for either M rooms, BF_01 = `r bf01_3`, *d* = `r d2`, or O-rooms, BF_01 = `r bf01_4`, *d* = `r d3` - across, `r str6` ,  vs. within, `r str7`.
+
+There was evidence that participants could not remember in the room type in which an object was presented, BF_01 = `r bf01_5`, `r str8`. The evidence for whether they could remember the table on which an object was presented was anecdotal only, BF_10 = `r bf10_6`, `r str9`.
+
+
+```{r exp1_batch1_across_split}
+# Run anova
+anova1 <- anovaBF(trans_acc ~ roomType*boundary + id, 
+                  whichRandom = 'id', 
+                  whichModels = 'top', 
+                  data = agg_order_b1_roomInfo, 
+                  progress = FALSE)
+
+bf01_1 <- reportBF(anova1[1], digits, 'signif')
+bf01_2 <- reportBF(anova1[2], digits, 'signif')
+bf01_3 <- reportBF(anova1[3], digits, 'signif')
+```
+
+Additionally, I submitted the data to a 2 x 2 repeated measure anova with room type (O vs. M room) and boundary (across vs. within) as factors. This uncovered that there is no evidence for a main effect of room type, BF01 = `r bf01_3`, for a main effect of boundary, BF01 =
+`r bf01_2` and for the interaction term, BF01 = `r bf01_1`. 
 
 #### Discussion
 In contrast to my expectations, I did not find boundary effect for either room type. After consultation in a lab meeting, I considered whether the question "What came before this object?" could be interpreted in a way that participants thought that both objects that appeared before the cue object (i.e. the target as well as one of the foils) would be a valid answer. 
 
-Another notable concern was that memory performance was not above chance, which might have been another reason why I did not fnd the boundary effect. 
+Another notable concern was that memory performance was not above chance, which might have been another reason why I did not find the boundary effect. 
 
 ### Batch 2
 #### Description of memory task
@@ -325,7 +410,7 @@ In order to avoid confusion I improved the instructions and the specific wording
 #### Sample
 ```{r exp1_batch2_demographics}
 # Load data
-exp1b_demographics <- read.table("~/boundaryVR/data/Exp1/batch2/exp1b_demographics.csv", header = TRUE, sep = ',')
+exp1b_demographics <- read.table("data/Exp1/batch2/exp1b_demographics.csv", header = TRUE, sep = ',')
 
 # Exclude returned (not approved)
 exp1b_demographics <- exp1b_demographics[exp1b_demographics$status != 'RETURNED', ]
@@ -343,7 +428,7 @@ In total, 12 participants (`r sex_table[1]`  female and `r sex_table[2]` male)  
 #### Results
 ```{r exp1_batch2_loadData}
 # Load trial information
-load("~/boundaryVR/experiments/Exp1/batch2/r_supportFiles/trialData_20200522_182214.RData")
+load("experiments/Exp1/batch2/r_supportFiles/trialData_20200522_182214.RData")
 # Note that counterbalancing in that images goes from 1 to 8, while it goes from 0 to 7 in the javascript
 # files.
 
@@ -354,7 +439,7 @@ trials_cond7 <- trials_cond7[order(trials_cond7$objNum),]
 trials_cond8 <- trials_cond8[order(trials_cond8$objNum),]
 
 # Load all data
-prefix         <- '~/boundaryVR/data/Exp1/batch2/memoryTask/'
+prefix         <- 'data/Exp1/batch2/memoryTask/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
@@ -473,12 +558,28 @@ agg_table_b2$trans_acc <- arcsine_transform(agg_table_b2$acc)
 # Rename factor
 agg_order_b2$boundary <- ifelse(agg_order_b2$context == 'across', 'across', 'within')
 agg_order_b2$Condition <- 'across'
-agg_order_b2$Condition[agg_order_b1$context == 'within-open plane'] <- 'O-room'
-agg_order_b2$Condition[agg_order_b1$context == 'within-M-shape']    <- 'M-room'
+agg_order_b2$Condition[agg_order_b2$context == 'within-no-walls'] <- 'O-room'
+agg_order_b2$Condition[agg_order_b2$context == 'within-walls']    <- 'M-room'
 
 # Get trial number etc. 
 exp1b_trials     <- ddply(df_order_b2, c('id','condition', 'context'), summarise, n = length(id))
 exp1b_trials_agg <- ddply(exp1b_trials, c('condition', 'context'), summarise, n = mean(n))
+
+# Add room information to analyse across trials separately
+df_order_b2_roomInfo           <- df_order_b2
+df_order_b2_roomInfo$roomType  <- df_room_b2$corr_resp
+df_order_b2_roomInfo$roomType  <- ifelse(df_order_b2_roomInfo$roomType == 1, 'O-room', 'M-room')
+agg_order_b2_roomInfo          <- ddply(df_order_b2_roomInfo, c('id', 'context', 'roomType'), summarise, acc = mean(accuracy), rt = mean(rt))
+agg_order_b2_roomInfo$boundary <- ifelse(agg_order_b2_roomInfo$context == 'across', 'across', 'within')
+agg_order_b2_roomInfo$Condition <- 'across'
+agg_order_b2_roomInfo$Condition[agg_order_b2_roomInfo$context == 'within-open plane'] <- 'O-room'
+agg_order_b2_roomInfo$Condition[agg_order_b2_roomInfo$context == 'within-M-shape']    <- 'M-room'
+
+# Transform values and variables factor
+agg_order_b2_roomInfo$trans_acc <- arcsine_transform(agg_order_b2_roomInfo$acc)
+agg_order_b2_roomInfo$id        <- as.factor(agg_order_b2_roomInfo$id)
+agg_order_b2_roomInfo$roomType  <- as.factor(agg_order_b2_roomInfo$roomType)
+agg_order_b2_roomInfo$boundary  <- as.factor(agg_order_b2_roomInfo$boundary)
 ```
 
 
@@ -526,53 +627,101 @@ plot_grid(plt1, plt2)
 ```
 
 ```{r exp1_batch2_test1}
-# Temporal order question
-# Overall memory performance
+### Difference between across trials
+# Get values
+val1 <- agg_order_b2_roomInfo[agg_order_b2_roomInfo$context == 'across' & agg_order_b2_roomInfo$roomType == 'M-room', 'acc']
+val2 <- agg_order_b2_roomInfo[agg_order_b2_roomInfo$context == 'across' & agg_order_b2_roomInfo$roomType == 'O-room', 'acc']
+
+# Create report strings
+str1 <- mean_SD_str2(val1, 1, digits, 'signif')
+str2 <- mean_SD_str2(val2, 1, digits, 'signif')
+
+
+# Transform values
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
+d1   <- signif(mean(val1 - val2)/sd(val1 - val2), 3)
+
+# Test
+bf01_1 <- ttestBF(val1, val2, paired = TRUE)
+bf01_1 <- reportBF(1/bf01_1, digits, 'signif')
+
+### Overall memory performance
 agg_order_overall_b2           <- ddply(df_order_b2, c('id'), summarise, acc = mean(accuracy), rt = mean(rt))
 agg_order_overall_b2$trans_acc <- arcsine_transform(agg_order_overall_b2$acc)
 
-test1 <- ttestBF(agg_order_overall_b2$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
-test1 <- reportBF(1/test1[2])
+str3 <- mean_SD_str2(agg_order_overall_b2$acc, 1, digits, 'signif')
 
-# Examine the boundary effect
-## Memory
+bf01_2 <- ttestBF(agg_order_overall_b2$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
+bf01_2 <- reportBF(1/bf01_2[2], digits, 'signif')
+
 ### Across versus M-room
-val1  <- agg_order_b2[agg_order_b2$Condition == 'across', 'trans_acc']
-val2  <- agg_order_b2[agg_order_b2$boundary  == 'within' & agg_order_b2$Condition  == 'M-room', 'trans_acc']
-test2 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test2 <- reportBF(1/test2[1])
+val1  <- agg_order_b2[agg_order_b2$Condition == 'across', 'acc']
+val2  <- agg_order_b2[agg_order_b2$boundary  == 'within' & agg_order_b2$Condition  == 'M-room', 'acc']
+
+# Create report strings
+str4 <- mean_SD_str2(val1, 1, digits, 'signif')
+str5 <- mean_SD_str2(val2, 1, digits, 'signif')
+
+# Transform values
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
+d2   <- signif(mean(val1 - val2)/sd(val1 - val2), 3)
+
+# Test
+bf01_3 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+bf01_3 <- reportBF(1/bf01_3[1], digits, 'signif')
 
 ### Across versus O-room
-val1  <- agg_order_b2[agg_order_b2$Condition == 'across', 'trans_acc']
-val2  <- agg_order_b2[agg_order_b2$boundary  == 'within' & agg_order_b2$Condition  == 'O-room', 'trans_acc']
-test3 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test3 <- reportBF(1/test3[1])
+val1  <- agg_order_b2[agg_order_b2$Condition == 'across', 'acc']
+val2  <- agg_order_b2[agg_order_b2$boundary  == 'within' & agg_order_b2$Condition  == 'O-room', 'acc']
 
-## RT
-### Across versus M-room
-val1  <- agg_order_b2[agg_order_b2$Condition == 'across', 'rt']
-val2  <- agg_order_b2[agg_order_b2$boundary  == 'within' & agg_order_b2$Condition  == 'M-room', 'rt']
-test4 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test4 <- reportBF(1/test4[2])
+# Create report strings
+str6 <- mean_SD_str2(val1, 1, digits, 'signif')
+str7 <- mean_SD_str2(val2, 1, digits, 'signif')
 
-### Across versus O-room
-val1  <- agg_order_b2[agg_order_b2$Condition == 'across', 'rt']
-val2  <- agg_order_b2[agg_order_b2$boundary  == 'within' & agg_order_b2$Condition  == 'O-room', 'rt']
-test5 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test5 <- reportBF(1/test5[2])
+# Transform values
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
+d3   <- signif(mean(val1 - val2)/sd(val1 - val2), 3)
+
+# Test
+bf01_4 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+bf01_4 <- reportBF(1/bf01_4[1], digits, 'signif')
 
 # Room question
-test6 <- ttestBF(agg_room_b2$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
-test6 <- reportBF(1/test6[2])
+str8 <- mean_SD_str2(agg_room_b2$acc, 1, digits, 'signif')
+
+bf01_5 <- ttestBF(agg_room_b2$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+bf01_5 <- reportBF(1/bf01_5[2], digits, 'signif')
 
 # Table question
-test7 <- ttestBF(agg_table_b2$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
-test7 <- reportBF(test7[2])
+str9 <- mean_SD_str2(agg_table_b2$acc, 1, digits, 'signif')
+
+bf10_6 <- ttestBF(agg_table_b2$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+bf10_6 <- reportBF(bf10_6[2], digits, 'signif')
 ```
 
-There was again weak evidence that memory performance was not above chance ($BF_{01}$ = `r test1`) for the temporal memory question. Furthermore, I did not find a boundary effect for M-rooms (across vs. within) for accuracy, $BF_{01}$ = `r test2`, and for RT, $BF_{01}$ = `r test4`, but I did not find an effect for O-rooms for accuracy, $BF_{01}$ = `r test3`, and for RT, $BF_{01}$ = `r test5`. 
+There was again weak evidence that memory performance was not above chance, BF01 = `r bf01_2`, `r str3`, for the temporal memory question. Furthermore, I did not find a boundary effect for M-rooms for accuracy, across: `r str4`, within: `r str5`, BF01 = `r bf01_3`, *d* = `r d2`, and I did not find an effect for O-rooms for accuracy, across: `r str6`, within: `r str7`, BF01= `r bf01_4`,  *d* = `r d3`. 
 
-Participants also did not show above chance performance for remembering in which room type a cue object was presented in ($BF_{01}$ = `r test6`). However, there was stronger evidence that participants did remember on which table type a cue object was presented ($BF_{10}$ = `r test7`).
+Participants also did not show above chance performance for remembering in which room type a cue object was presented in, BF01 = `r bf01_5`, `r str8`. However, there was stronger evidence that participants did remember on which table type a cue object was presented, BF10 = `r bf10_6`, `r str9`.
+
+
+```{r exp1_batch2_across_split}
+# Run anova
+anova1 <- anovaBF(trans_acc ~ roomType*boundary + id, 
+                  whichRandom = 'id', 
+                  whichModels = 'top', 
+                  data = agg_order_b2_roomInfo, 
+                  progress = FALSE)
+
+bf01_1 <- reportBF(anova1[1], digits, 'signif')
+bf01_2 <- reportBF(anova1[2], digits, 'signif')
+bf01_3 <- reportBF(anova1[3], digits, 'signif')
+```
+
+Additionally, I submitted the data to a 2 x 2 repeated measure anova with room type (O vs. M room) and boundary (across vs. within) as factors. This uncovered that there is no evidence for a main effect of room type, BF01 = `r bf01_3`, for a main effect of boundary, BF01 =
+`r bf01_2` and for the interaction term, BF01 = `r bf01_1`. 
 
 #### Discussion
 Unfortunately, I again failed to find a boundary effect even for O-rooms. In addition, with the exception of memory for the table question, memory performance was not above chance. Once possible reason of why memory performance was so bad was that in contrast to Horner et al. (2016) I always selected foils +/-4 positions away from the target while Horner and colleagues selected random foils.  Another option could be to use a more semantic task as such a pleasant/unpleasant judgement could be made, however I was concerned that most objects are fairly neutral making this task not meaningful. 
@@ -581,7 +730,7 @@ Unfortunately, I again failed to find a boundary effect even for O-rooms. In add
 #### Sample
 ```{r exp1_batch3_demographics}
 # Load data
-exp1c_demographics <- read.table("~/boundaryVR/data/Exp1/batch3/exp1c_demographics.csv", header = TRUE, sep = ',')
+exp1c_demographics <- read.table("data/Exp1/batch3/exp1c_demographics.csv", header = TRUE, sep = ',')
 
 # Exclude returned (not approved)
 exp1c_demographics <- exp1c_demographics[exp1c_demographics$status != 'RETURNED', ]
@@ -601,13 +750,13 @@ Since memory performance was not above chance in batch 1 & batch 2, I decided to
 #### Results
 ```{r exp1_batch3_loadData}
 # Load all data
-prefix         <- '~/boundaryVR/data/Exp1/batch3/memoryTask/'
+prefix         <- 'data/Exp1/batch3/memoryTask/'
 allFiles       <- list.files(paste(prefix, sep = ''))
 allFiles_paths <- paste(prefix, allFiles, sep = '')
 n              <- length(allFiles_paths)
 
 # Load trial information
-load("~/boundaryVR/experiments/Exp1/batch3/r_supportFiles/trialData_randomFoils.RData")
+load("experiments/Exp1/batch3/r_supportFiles/trialData_randomFoils.RData")
 # Note that counterbalancing in that images goes from 1 to 8, while it goes from 0 to 7 in the javascript
 # files.
 
@@ -757,12 +906,28 @@ agg_table_b3$trans_acc <- arcsine_transform(agg_table_b3$acc)
 # Rename factor
 agg_order_b3$boundary <- ifelse(agg_order_b3$context == 'across', 'across', 'within')
 agg_order_b3$Condition <- 'across'
-agg_order_b3$Condition[agg_order_b3$context == 'within-open plane'] <- 'O-room'
-agg_order_b3$Condition[agg_order_b3$context == 'within-M-shape']    <- 'M-room'
+agg_order_b3$Condition[agg_order_b3$context == 'within-no-walls'] <- 'O-room'
+agg_order_b3$Condition[agg_order_b3$context == 'within-walls']    <- 'M-room'
 
 # Get trial number etc. 
 exp1c_trials     <- ddply(df_order_b3, c('id','condition', 'context'), summarise, n = length(id))
 exp1c_trials_agg <- ddply(exp1c_trials, c('condition', 'context'), summarise, n = mean(n))
+
+# Add room information to analyse across trials separately
+df_order_b3_roomInfo           <- df_order_b3
+df_order_b3_roomInfo$roomType  <- df_room_b3$corr_resp
+df_order_b3_roomInfo$roomType  <- ifelse(df_order_b3_roomInfo$roomType == 1, 'O-room', 'M-room')
+agg_order_b3_roomInfo          <- ddply(df_order_b3_roomInfo, c('id', 'context', 'roomType'), summarise, acc = mean(accuracy), rt = mean(rt))
+agg_order_b3_roomInfo$boundary <- ifelse(agg_order_b3_roomInfo$context == 'across', 'across', 'within')
+agg_order_b3_roomInfo$Condition <- 'across'
+agg_order_b3_roomInfo$Condition[agg_order_b3_roomInfo$context == 'within-open plane'] <- 'O-room'
+agg_order_b3_roomInfo$Condition[agg_order_b3_roomInfo$context == 'within-M-shape']    <- 'M-room'
+
+# Transform values and variables factor
+agg_order_b3_roomInfo$trans_acc <- arcsine_transform(agg_order_b3_roomInfo$acc)
+agg_order_b3_roomInfo$id        <- as.factor(agg_order_b3_roomInfo$id)
+agg_order_b3_roomInfo$roomType  <- as.factor(agg_order_b3_roomInfo$roomType)
+agg_order_b3_roomInfo$boundary  <- as.factor(agg_order_b3_roomInfo$boundary)
 ```
 
 
@@ -822,74 +987,130 @@ plot_grid(plt1, plt2)
 ```
 
 ```{r exp1_batch3_test1}
-# Temporal order question
-# Overall memory performance
+### Difference between across trials
+# Get values
+val1 <- agg_order_b3_roomInfo[agg_order_b3_roomInfo$context == 'across' & agg_order_b3_roomInfo$roomType == 'M-room', 'acc']
+val2 <- agg_order_b3_roomInfo[agg_order_b3_roomInfo$context == 'across' & agg_order_b3_roomInfo$roomType == 'O-room', 'acc']
+
+# Create report strings
+str1 <- mean_SD_str2(val1, 1, digits, 'signif')
+str2 <- mean_SD_str2(val2, 1, digits, 'signif')
+
+# Transform values
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
+d1   <- signif(mean(val1 - val2)/sd(val1 - val2), 3)
+
+# Test
+bf01_1 <- ttestBF(val1, val2, paired = TRUE)
+bf01_1 <- reportBF(1/bf01_1, digits, 'signif')
+
+### Overall memory performance
 agg_order_overall_b3           <- ddply(df_order_b3, c('id'), summarise, acc = mean(accuracy), rt = mean(rt))
 agg_order_overall_b3$trans_acc <- arcsine_transform(agg_order_overall_b3$acc)
 
-test1 <- ttestBF(agg_order_overall_b3$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
-test1 <- reportBF(test1[2])
+str3 <- mean_SD_str2(agg_order_overall_b3$acc, 1, digits, 'signif')
 
-# Examine the boundary effect
-## Memory
+bf10_2 <- ttestBF(agg_order_overall_b3$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
+bf10_2 <- reportBF(bf10_2[2], digits, 'signif')
+
 ### Across versus M-room
-val1  <- agg_order_b3[agg_order_b3$Condition == 'across', 'trans_acc']
-val2  <- agg_order_b3[agg_order_b3$boundary  == 'within' & agg_order_b3$Condition  == 'M-room', 'trans_acc']
-test2 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test2 <- reportBF(test2[1])
+val1  <- agg_order_b3[agg_order_b3$Condition == 'across', 'acc']
+val2  <- agg_order_b3[agg_order_b3$boundary  == 'within' & agg_order_b3$Condition  == 'M-room', 'acc']
+
+# Create report strings
+str4 <- mean_SD_str2(val1, 1, digits, 'signif')
+str5 <- mean_SD_str2(val2, 1, digits, 'signif')
+
+# Transform values
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
+d2   <- signif(mean(val1 - val2)/sd(val1 - val2), 3)
+
+# Test
+bf10_3 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+bf10_3 <- reportBF(bf10_3, digits, 'signif')
 
 ### Across versus O-room
-val1  <- agg_order_b3[agg_order_b3$Condition == 'across', 'trans_acc']
-val2  <- agg_order_b3[agg_order_b3$boundary  == 'within' & agg_order_b3$Condition  == 'O-room', 'trans_acc']
-test3 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test3 <- reportBF(1/test3[1])
+val1  <- agg_order_b3[agg_order_b3$Condition == 'across', 'acc']
+val2  <- agg_order_b3[agg_order_b3$boundary  == 'within' & agg_order_b3$Condition  == 'O-room', 'acc']
 
-## RT
-### Across versus M-room
-val1  <- agg_order_b3[agg_order_b3$Condition == 'across', 'rt']
-val2  <- agg_order_b3[agg_order_b3$boundary  == 'within' & agg_order_b3$Condition  == 'M-room', 'rt']
-test4 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test4 <- reportBF(1/test4[2])
+# Create report strings
+str6 <- mean_SD_str2(val1, 1, digits, 'signif')
+str7 <- mean_SD_str2(val2, 1, digits, 'signif')
 
-### Across versus O-room
-val1  <- agg_order_b3[agg_order_b3$Condition == 'across', 'rt']
-val2  <- agg_order_b3[agg_order_b3$boundary  == 'within' & agg_order_b3$Condition  == 'O-room', 'rt']
-test5 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
-test5 <- reportBF(1/test5[2])
+# Transform values
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
+d3   <- signif(mean(val1 - val2)/sd(val1 - val2), 3)
+
+# Test
+bf01_4 <- ttestBF(val1, val2, paired = TRUE, nullInterval = c(-Inf, 0))
+bf01_4 <- reportBF(1/bf01_4[1], digits, 'signif')
 
 # Room question
-test6 <- ttestBF(agg_room_b3$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
-test6 <- reportBF(1/test6[2])
+str8 <- mean_SD_str2(agg_room_b3$acc, 1, digits, 'signif')
+
+bf01_5 <- ttestBF(agg_room_b3$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+bf01_5 <- reportBF(1/bf01_5[2], digits, 'signif')
 
 # Table question
-test7 <- ttestBF(agg_table_b3$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
-test7 <- reportBF(test7[2])
+str9 <- mean_SD_str2(agg_table_b3$acc, 1, digits, 'signif')
+
+bf10_6 <- ttestBF(agg_table_b3$trans_acc - arcsine_transform(0.5), nullInterval = c(-Inf, 0))
+bf10_6 <- reportBF(bf10_6[2], digits, 'signif')
 ```
 
-This time there was strong evidence that memory performance was above chance ($BF_{01}$ = `r test1`) for the temporal memory question. While, I found a boundary effect for M-rooms (across vs. within) for accuracy, $BF_{01}$ = `r test2`, and but not for RT, $BF_{01}$ = `r test4`, but I did not find an effect for O-rooms for accuracy, $BF_{01}$ = `r test3`, and for RT, $BF_{01}$ = `r test5`. 
-
-Participants again did not show above chance performance for remembering in which room type a cue object was presented in ($BF_{01}$ = `r test6`). However, there was strong evidence that participants did remember on which table type a cue object was presented ($BF_{10}$ = `r test7`).
+This time there was strong evidence that memory performance was above chance  for the temporal memory question, BF10 = `r bf10_2`, `r str3`. While, I found a boundary effect for M-rooms  for accuracy, across: `r str4`, within: `r str5`, BF10 = `r bf10_3`, *d* = `r d2`, but I did not find an effect for O-rooms for accuracy, across: `r str6`, within: `r str7`, BF01 = `r bf01_4`, *d* = `r d3`. 
 
 ```{r exp1_batch3_test2}
 # Collapsing within condition
 df_order_b3$context2 <- 'within'
 df_order_b3$context2[df_order_b3$context == 'across'] <- 'across'
-agg_order_collasp_b3 <- ddply(df_order_b3, c('id',  'context2'), summarise, acc = mean(accuracy))
+agg_order_collasp_b3          <- ddply(df_order_b3, c('id',  'context2'), summarise, acc = mean(accuracy))
 agg_order_collasp_b3$trans_acc <- arcsine_transform(agg_order_collasp_b3$acc)
 
 # Test
-test8 <- ttestBF(agg_order_collasp_b3[agg_order_collasp_b3$context2 == 'across', 4],
-                  agg_order_collasp_b3[agg_order_collasp_b3$context2 == 'within', 4],  paired = TRUE)
+val1 <- agg_order_collasp_b3[agg_order_collasp_b3$context2 == 'across', 3]
+val2 <- agg_order_collasp_b3[agg_order_collasp_b3$context2 == 'within', 3]
 
-test8 <- reportBF(test8)
+str1 <- mean_SD_str2(val1, 1, digits, 'signif')
+str2 <- mean_SD_str2(val2, 1, digits, 'signif')
+
+# Transform
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
 
 # Effect size
-diffScores <- agg_order_collasp_b3[agg_order_collasp_b3$context2 == 'within', 4] -
-              agg_order_collasp_b3[agg_order_collasp_b3$context2 == 'across', 4] 
-effSize    <- round(mean(diffScores)/sd(diffScores), 2)
+diffScores <- val2 - val1
+d1         <- signif(mean(diffScores)/sd(diffScores), digits)
+
+
+# test
+test1 <- ttestBF(val1, val2,  paired = TRUE)
+test1 <- reportBF(test1, digits, 'signif')
 ```
 
-Interestingly, the difference between condition (across vs. within) collapsed across room type was still large  (BF10 = `r test8`, d = `r effSize`). 
+Interestingly, the difference between condition (across vs. within) collapsed across room type was still large, across: `r str1`, within: `r str2`, BF10 = `r test1`, d = `r d1`. 
+
+```{r exp1_batch3_across_split}
+# Run anova
+anova1 <- anovaBF(trans_acc ~ roomType*boundary + id, 
+                  whichRandom = 'id', 
+                  whichModels = 'top', 
+                  data = agg_order_b3_roomInfo, 
+                  progress = FALSE)
+
+bf01_1 <- reportBF(anova1[1], digits, 'signif')
+bf01_2 <- reportBF(anova1[2], digits, 'signif')
+bf01_3 <- reportBF(anova1[3], digits, 'signif')
+```
+
+Like before, I submitted the data to a 2 x 2 repeated measure anova with room type (O vs. M room) and boundary (across vs. within) as factors. This uncovered that there is no evidence for a main effect of room type, BF01 = `r bf01_3`, for a main effect of boundary, BF01 =
+`r bf01_2` and for the interaction term, BF01 = `r bf01_1`. 
+
+Participants again did not show above chance performance for remembering in which room type a cue object was presented in, BF01 = `r bf01_5`, `r str8`. However, there was strong evidence that participants did remember on which table type a cue object was presented, BF10 = `r bf10_6`, `r str9`.
+
 
 #### Discussion
 Relaxing the selection of foils did have the intended effect of improving overall memory performance for temporal order. Surprisingly, I only found a boundary effect for M-room but not for O-rooms. This is surprising as with this pilot I wanted to ascertain that walking through an M-room does not have the same boundary effect that was reported in Horner et al. (2016) for walking through doors with 'normal' rooms. However, I found that a boundary effect for M-rooms but not for O-rooms. To investigate the absence of an boundary effect for O-rooms I designed another experiment, in which participants only saw one type of the rooms. 
@@ -1056,6 +1277,8 @@ lower_hist <- ggplot(da_sim_results_agg_supp_H0, aes(x = n, y = freq, fill = ban
   coord_cartesian(ylim = c(bar_yAxis, 0), xlim = c(minN -0.5, maxN + 0.5), expand = FALSE) +
   theme(plot.margin = unit(c(panMar, panMar, panMar, 0), "cm"))
 
+blank <- ggplot() + theme_void()
+
 
 # Combine everything into one plot
 ## Get Grobs
@@ -1063,13 +1286,14 @@ gplot1 <- ggplotGrob(upper_hist)
 gplot2 <- ggplotGrob(linePlot)
 gplot3 <- ggplotGrob(right_hist) 
 gplot4 <- ggplotGrob(lower_hist)
+gblank <- ggplotGrob(blank)
 
 ## Get gtables
 gt_gplot1  <- gtable_frame(gplot1,  width = unit(12, "null"))
 gt_gplot2  <- gtable_frame(gplot2,  width = unit(12, "null"))
 gt_gplot3  <- gtable_frame(gplot3,  width = unit(3, "null"))
 gt_gplot4  <- gtable_frame(gplot4,  width = unit(12, "null"))
-gt_gBlank2 <- gtable_frame(gBlank2, width = unit(3, "null"))
+gt_gBlank2 <- gtable_frame(gblank, width = unit(3, "null"))
 
 ## Combine components
 gt_upper   <- gtable_frame(gtable_cbind(gt_gplot1, gt_gBlank2)) 
@@ -1081,9 +1305,11 @@ gtable_combined1 <- gtable_frame(gtable_rbind(gt_upper, gt_middle, gt_lower))
 ```
 
 ```{r exp2_designAnalysis_table1}
-table10 <- as.data.frame(table(df_H0_agg$band)/nIter)
+table10 <- as.data.frame(table(da_sim_results_agg$band)/nIter)
 names(table10) <- c('Support', 'Percent')
 #kable(table10, format = 'html', caption = "Table 10: Results of simulation for null effect")
+
+df_H0_agg <- da_sim_results_agg
 ```
 
 ### Effect size similar to boundary effect for O-rooms
@@ -1210,7 +1436,6 @@ gt_gplot1  <- gtable_frame(gplot1,  width = unit(12, "null"))
 gt_gplot2  <- gtable_frame(gplot2,  width = unit(12, "null"))
 gt_gplot3  <- gtable_frame(gplot3,  width = unit(3, "null"))
 gt_gplot4  <- gtable_frame(gplot4,  width = unit(12, "null"))
-gt_gBlank2 <- gtable_frame(gBlank2, width = unit(3, "null"))
 
 ## Combine components
 gt_upper   <- gtable_frame(gtable_cbind(gt_gplot1, gt_gBlank2)) 
@@ -1222,9 +1447,11 @@ gtable_combined2 <- gtable_frame(gtable_rbind(gt_upper, gt_middle, gt_lower))
 ```
 
 ```{r exp2_designAnalysis_table2}
-table11 <- as.data.frame(table(df_H1_agg$band)/nIter)
+table11 <- as.data.frame(table(da_sim_results_agg$band)/nIter)
 names(table11) <- c('Support', 'Percent')
 #kable(table11, format = 'html', caption = "Table 11: Results of simulation for effect size similar to open-plane room (within vs. across)")
+
+df_H1_agg <- da_sim_results_agg
 ```
 
 ### Effect size similar to boundary effect for M-rooms
@@ -1351,7 +1578,7 @@ gt_gplot1  <- gtable_frame(gplot1,  width = unit(12, "null"))
 gt_gplot2  <- gtable_frame(gplot2,  width = unit(12, "null"))
 gt_gplot3  <- gtable_frame(gplot3,  width = unit(3, "null"))
 gt_gplot4  <- gtable_frame(gplot4,  width = unit(12, "null"))
-gt_gBlank2 <- gtable_frame(gBlank2, width = unit(3, "null"))
+
 
 ## Combine components
 gt_upper   <- gtable_frame(gtable_cbind(gt_gplot1, gt_gBlank2)) 
@@ -1363,9 +1590,11 @@ gtable_combined3 <- gtable_frame(gtable_rbind(gt_upper, gt_middle, gt_lower))
 ```
 
 ```{r exp2_designAnalysis_table3}
-table12 <- as.data.frame(table(df_H2_agg$band)/nIter)
+table12 <- as.data.frame(table(da_sim_results_agg$band)/nIter)
 names(table12) <- c('Support', 'Percent')
 #kable(table12, format = 'html', caption = "Table 12: Results of simulation for effect size similar to m-shaped room (within vs. across)")
+
+df_H2_agg <- da_sim_results_agg
 ```
 
 ```{r plot_in_1_figure, eval = FALSE}
@@ -1386,7 +1615,6 @@ save_plot('Design_analysis.png', all3_plots,
           base_width = 19/cm(1),
           base_aspect_ratio = 1)
 ```
-
 
 ### Summary
 ```{r exp2_designAnalysis_summary}
@@ -1409,7 +1637,7 @@ As additional analyses we plan to run a Bayesian ANOVA with with factors boundar
 ## Sample
 ```{r exp2_demographics}
 # Load data
-exp2_demographics <- read.table("~/boundaryVR/data/Exp2/exp2_demographics.csv", header = TRUE, sep = ',')
+exp2_demographics <- read.table("data/Exp2/exp2_demographics.csv", header = TRUE, sep = ',')
 
 # Exclude returned (only approved)
 exp2_demographics <- exp2_demographics[exp2_demographics$status == 'APPROVED', ]
@@ -1429,7 +1657,7 @@ In total, 16 participants  (`r sex_table[1]` female and `r sex_table[2]` male)  
 
 ## Results
 ```{r exp2_loadData}
-exp2_path      <- "~/boundaryVR/data/Exp2"
+exp2_path      <- "data/Exp2"
 folder         <- '/memoryTask/'
 allFiles       <- list.files(paste0(exp2_path, folder))
 allFiles_paths <- paste0(exp2_path, folder, allFiles)
@@ -1561,31 +1789,30 @@ plt2 <- ggplot(agg_order_exp2_sub1, aes(x = context, y = rt)) +
  plot_grid(plt1, plt2)
 ```
 
-
 ```{r exp2_test1}
-# Boundary effect
-## Memory accuracy
-## Main test on which the stopping rule depended
-test1 <- ttestBF(agg_order_exp2_sub1$trans_acc[agg_order_exp2_sub1$context == 'within'],
-                 agg_order_exp2_sub1$trans_acc[agg_order_exp2_sub1$context == 'across'],
-                 paired = TRUE,
-                 nullInterval = c(-Inf, 0))
+# Boundary effect for block1
+# Get values
+val1 <- agg_order_exp2_sub1$acc[agg_order_exp2_sub1$context == 'across']
+val2 <- agg_order_exp2_sub1$acc[agg_order_exp2_sub1$context == 'within']
 
-test1 <- reportBF(1/test1[2])
+str1 <- mean_SD_str2(val1, 1, digits, 'signif')
+str2 <- mean_SD_str2(val2, 1, digits, 'signif')
 
-## RT
-test2 <- ttestBF(agg_order_exp2_sub1$rt[agg_order_exp2_sub1$context == 'within'],
-                 agg_order_exp2_sub1$rt[agg_order_exp2_sub1$context == 'across'],
-                 paired = TRUE,
-                 nullInterval = c(-Inf, 0))
+# Transform
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
 
-test2 <- reportBF(1/test2[1])
-```
-
-I stopped data collection at 16, after I reached the stopping criterion. The results was evidence that there is not boundary effect for the first block for accuracy, $BF_{01}$ = `r test1`. There was also no evidence that there is boundary effect for RT, $BF_{01}$ = `r test2`.
+# Effect size
+diffScores <- val2 - val1
+d1         <- signif(mean(diffScores)/sd(diffScores), digits)
 
 
-```{r exp2_test2}
+# test
+bf01_1 <- ttestBF(val2, val1, paired = TRUE, nullInterval = c(-Inf, 0))
+bf01_1 <- reportBF(1/bf01_1[2], digits, 'signif')
+
+
+### Collapse across block
 # Aggregate
 agg2_order_exp2 <- ddply(df_order_exp2, c('worker_id', 
                                          'roomType', 
@@ -1596,57 +1823,66 @@ agg2_order_exp2 <- ddply(df_order_exp2, c('worker_id',
                         acc = mean(accuracy), 
                         rt = mean(rt))
 
-# Transform values
-agg2_order_exp2$trans_acc <- arcsine_transform(agg2_order_exp2$acc)
+# Get values
+val1 <- agg2_order_exp2$acc[agg2_order_exp2$context == 'across']
+val2 <- agg2_order_exp2$acc[agg2_order_exp2$context == 'within']
 
-# Boundary effect
-## Memory accuracy
-test1 <- ttestBF(agg2_order_exp2$trans_acc[agg2_order_exp2$context == 'within'],
-                 agg2_order_exp2$trans_acc[agg2_order_exp2$context == 'across'],
-                 paired = TRUE,
-                 nullInterval = c(-Inf, 0))
+str3 <- mean_SD_str2(val1, 1, digits, 'signif')
+str4 <- mean_SD_str2(val2, 1, digits, 'signif')
 
-test1 <- reportBF(1/test1[2])
+# Effect size
+diffScores <- val2 - val1
+d2         <- signif(mean(diffScores)/sd(diffScores), digits)
 
-## RT
-test2 <- ttestBF(agg2_order_exp2$rt[agg2_order_exp2$context == 'within'],
-                 agg2_order_exp2$rt[agg2_order_exp2$context == 'across'],
-                 paired = TRUE,
-                 nullInterval = c(-Inf, 0))
+# Transform
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
 
-test2 <- reportBF(1/test2[1])
-```
+# test
+bf01_2 <- ttestBF(val2, val1, paired = TRUE, nullInterval = c(-Inf, 0))
+bf01_2 <- reportBF(1/bf01_2[2], digits, 'signif')
 
-This result also held true when collapsing across question type. In this case, there was also evidence against an boundary effect for accuracy, $BF_{01}$ = `r test1`, and for RT, $BF_{01}$ = `r test2`.
-
-
-```{r exp2_test3}
+### Anova
 agg_order_exp2$worker_id     <- as.factor(agg_order_exp2$worker_id)
 agg_order_exp2$context       <- as.factor(agg_order_exp2$context)
 agg_order_exp2$questionType  <- as.factor(agg_order_exp2$questionType)
 agg_order_exp2$test_part     <- as.factor(agg_order_exp2$test_part)
 
+set.seed(31241)
 anova1 <- anovaBF(trans_acc ~ context*questionType*test_part + worker_id, 
                   whichRandom = 'worker_id', 
                   data = agg_order_exp2,
-                  whichModels = 'top')
+                  iterations = 100000,
+                  whichModels = 'top',
+                  progress = FALSE)
 
-test1 <- reportBF(1/anova1[5])
-```
+bf01_3   <- reportBF(1/anova1[5])
+max_bf01 <- max(as.vector(anova1))
 
-The planned ANOVA with context, question type and block did not produce strong evidence for the presence or absence of an effect apart for the main effect of question type, $BF_{10}$ = `r test1`. 
+# Which question has better memory
+agg_order_exp2_question <-ddply(agg_order_exp2, c('worker_id', 'questionType'), summarise, acc = mean(acc))
+val1 <- agg_order_exp2_question[agg_order_exp2_question$questionType == 'before', 'acc']
+val2 <- agg_order_exp2_question[agg_order_exp2_question$questionType == 'after', 'acc']
 
-```{r exp2_test4}
+str5 <- mean_SD_str2(val1, 1, digits, 'signif')
+str6 <- mean_SD_str2(val2, 1, digits, 'signif')
+
+### Overall memory
 #Aggregate
 agg_order_exp2_overall <- ddply(df_order_exp2, ('worker_id'), summarise, acc  = mean(accuracy))
 agg_order_exp2_overall$trans_acc <- arcsine_transform(agg_order_exp2_overall$acc)
 
 # Overall test
-test1 <- ttestBF(agg_order_exp2_overall$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
-test1 <- reportBF(test1[2])
+bf10_4 <- ttestBF(agg_order_exp2_overall$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
+bf10_4 <- reportBF(bf10_4[2])
+
+str7 <- mean_SD_str2(agg_order_exp2_overall$acc, 1, digits, 'signif')
 ```
 
-Overall, memory performance was low but above chance $BF_{10}$ = `r test1`. 
+Data collection terminated at N = 16, all of whom did the O-room condition, at which the BF for the null exceeded the criterion that there is no boundary effect for the first block for accuracy with O-rooms, across: `r str1`, within: `r str2`, BF_01 = `r bf01_1`, *d* = `r d1`. This result also held true when collapsing across both blocks, across: `r str3`, within: `r str4`, BF_01 = `r bf01_2`, *d* = `r d2`.
+
+The planned ANOVA with boundary-type, question-type and block did not produce strong evidence for main effects or interactions, apart for the main effect of question type, BF_10 = `r bf01_3` with performance for the after question, `r str6`, being higher than before question, `r str5`. Overall, memory performance was low, but above chance, BF_10 = `r bf10_4`, `r str7`.
+
 
 ## Discussion
 Unfortunately, I again failed to provide evidence for a boundary effect for O-rooms. Possible reasons for this repeated failure might be a) that memory performance might be above chance but still too low and b) rooms might look to similar to each other. 
@@ -1670,7 +1906,7 @@ In the Experiment 1 & 2, only five different wall colours and five different flo
 ## Sample
 ```{r exp3_demographics}
 # Load data
-exp3_demographics <- read.table("~/boundaryVR/data/Exp3/exp3_demographics.csv", header = TRUE, sep = ',')
+exp3_demographics <- read.table("data/Exp3/exp3_demographics.csv", header = TRUE, sep = ',')
 
 # Exclude returned (only approved)
 exp3_demographics <- exp3_demographics[exp3_demographics$status == 'APPROVED', ]
@@ -1687,7 +1923,7 @@ In total,  49 participants  (`r sex_table[1]` female and `r sex_table[2]` male) 
 
 ```{r exp3_loadData}
 # Path
-exp3_path <- "~/boundaryVR/data/Exp3/batch1/"
+exp3_path <- "data/Exp3/batch1/"
 
 # Get all files
 folder1         <- '/memoryTask1/'
@@ -1846,40 +2082,39 @@ plt2 <- ggplot(agg_order_exp3, aes(x = context, y = rt)) +
 
 
 ```{r exp3_test1}
-# Boundary effect
-## Memory accuracy
-test1 <- ttestBF(agg_order_exp3$trans_acc[agg_order_exp3$context == 'within'],
-                 agg_order_exp3$trans_acc[agg_order_exp3$context == 'across'],
-                 paired = TRUE,
-                 nullInterval = c(-Inf, 0))
-
-test1 <- reportBF(1/test1[2])
-
-## RT
-test2 <- ttestBF(agg_order_exp3$rt[agg_order_exp3$context == 'within'],
-                 agg_order_exp3$rt[agg_order_exp3$context == 'across'],
-                 paired = TRUE,
-                 nullInterval = c(-Inf, 0))
-
-test2 <- reportBF(1/test2[1])
-```
-
-The analysis revealed again no boundary effect for O-rooms both for accuracy $BF_{01}$ = `r test1` as well as for RT $BF_{01}$ = `r test2`. 
-
-```{r exp3_test2}
 #Aggregate
 agg_order_exp3_overall <- ddply(df_order_exp3, ('worker_id'), summarise, acc  = mean(accuracy))
 agg_order_exp3_overall$trans_acc <- arcsine_transform(agg_order_exp3_overall$acc)
 
 # Overall test
-test1 <- ttestBF(agg_order_exp3_overall$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
-test1 <- reportBF(test1[2])
+bf10_1 <- ttestBF(agg_order_exp3_overall$trans_acc - arcsine_transform(1/3), nullInterval = c(-Inf, 0))
+bf10_1 <- reportBF(bf10_1[2], digits, 'signif')
 
 # Strings
 str1 <- mean_SD_str(mean(agg_order_exp3_overall$acc), sd(agg_order_exp3_overall$trans_acc))
+
+### Boundary effect
+# Get values
+val1 <- agg_order_exp3$acc[agg_order_exp3$context == 'across']
+val2 <- agg_order_exp3$acc[agg_order_exp3$context == 'within']
+
+str2 <- mean_SD_str2(val1, 1, digits, 'signif')
+str3 <- mean_SD_str2(val2, 1, digits, 'signif')
+
+# Transform
+val1 <- arcsine_transform(val1)
+val2 <- arcsine_transform(val2)
+
+# Effect size
+diffScores <- val2 - val1
+d1         <- signif(mean(diffScores)/sd(diffScores), digits)
+
+# test
+bf01_2 <- ttestBF(val2, val1, paired = TRUE, nullInterval = c(-Inf, 0))
+bf01_2 <- reportBF(1/bf01_2[2], digits, 'signif')
 ```
 
-This is despite the fact that average overall memory accuracy did improve as expected with `r str1`, which was clearly above chance $BF_{10}$ = `r test1`
+Mean accuracy did increase relative to Experiment 2, up to `r str1`, which was clearly above chance BF_10 = `r bf10_1`. However, there was no evidence for a boundary effect, in fact, some evidence against such an effect, across: `r str2`, within: `r str3` BF_01 = `r bf01_2`, *d* = `r d1`. 
 
 ## Discussion
 Even with better performance, there was still no evidence for a boundary effect of O-rooms. Due to time constraints, I have not been able to make further changes to the experimental design to replicate the basic effect. 
