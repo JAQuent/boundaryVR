@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Spatial Experiment</title>
+  <script src="/assets/javascripts/jatos.js"></script>
+  <script src="/study_assets_root/boundaryVR3/jspsych-6.1.0/jspsych.js"></script>
+  <script src="/study_assets_root/boundaryVR3/jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="/study_assets_root/boundaryVR3/movie_var.js"></script>
+</head>
+<body>
+</body>
+<script>
+    jatos.onLoad(function() {
+      /* Determines the subj condition for counterbalancing */
+      // Get JSON input regarding counter balancing
+      var counterbalance_control = jatos.componentJsonInput.counterbalance_control;
+
+      // Loop through conditions
+      if(counterbalance_control == 'all'){
+        // Use all 8 conditions
+        var first_subj = !jatos.batchSession.defined("/lastCondition"); // makes it a boolean
+        if(first_subj){
+          // Start with counter balancing condition 0
+          var counterbalance_condition  = 0;
+        } else {
+          var last_counterbalance_condition = jatos.batchSession.get("lastCondition");
+          counterbalance_condition = last_counterbalance_condition + 1; 
+          if(counterbalance_condition > 3){
+            counterbalance_condition = 0; // reset to 0 if one loop is completed
+          }
+        }
+      } else if(counterbalance_control == 'm'){
+        var first_subj = !jatos.batchSession.defined("/lastCondition"); // makes it a boolean
+        if(first_subj){
+          // Start with counter balancing condition 0
+          var counterbalance_condition  = 0;
+        } else {
+          var last_counterbalance_condition = jatos.batchSession.get("lastCondition");
+          if(last_counterbalance_condition == 0){
+            var counterbalance_condition = 1;
+          } else if(last_counterbalance_condition == 1){
+            var counterbalance_condition = 0;
+          } 
+        }
+      } else if(counterbalance_control == 'o'){
+        var first_subj = !jatos.batchSession.defined("/lastCondition"); // makes it a boolean
+        if(first_subj){
+          // Start with counter balancing condition 2
+          var counterbalance_condition  = 2;
+        } else {
+          var last_counterbalance_condition = jatos.batchSession.get("lastCondition");
+          if(last_counterbalance_condition == 2){
+            var counterbalance_condition = 3;
+          } else if(last_counterbalance_condition == 3){
+            var counterbalance_condition = 2;
+          } 
+        }
+      } else if(counterbalance_control == 'custom') {
+        // Specify condition with JSON input
+        var counterbalance_condition = jatos.componentJsonInput.counterbalance_condition;
+      } else {
+        alert('Wrong input for counterbalance_control. Please inform experimenter about this (alex.quent@mrc-cbu.cam.ac.uk).');
+      }
+      // Saving in session data
+      jatos.studySessionData.counterbalance_condition = counterbalance_condition;
+
+      // Translate counterbalance_condition into subjCond and saving as sessions data
+      if(counterbalance_condition == 0){
+        jatos.studySessionData.subjCond = 0;
+      } else if(counterbalance_condition == 1){
+        jatos.studySessionData.subjCond = 1;
+      } else if(counterbalance_condition == 2){
+        jatos.studySessionData.subjCond = 2;
+      } else if(counterbalance_condition == 3){
+        jatos.studySessionData.subjCond = 3;
+      } else {
+        alert('Wrong input for counterbalance_control. Please inform experimenter about this (alex.quent@mrc-cbu.cam.ac.uk).');
+      }
+
+      var deferred2 = jatos.batchSession.setAll({"lastCondition": counterbalance_condition});
+      deferred2.done(function() {
+        // Creating timeline
+        var timeline = [];
+
+        var instruction_trial = {
+          type: "html-keyboard-response",
+          stimulus: "<div align=\"center\" style='display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;'><div style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.5em;\"><p style=\"width: 90%; text-align: justify\"><br><br><br>In the following experiment, you will be presented with a video that is approximately 10 minutes long. This video depicts someone walking through rooms which is shown from a first-person perspective. In each room you will see tables with boxes on them and when you approach a box it will disappear, revealing an everyday object (e.g. toys or household items) inside. Each object will be shown for a few seconds and will then be placed back in that cardboard box. <br><br>As soon as you see an object, please press S if the object is smaller than 36 cm / 14 inches. If the object is bigger than 36 cm / 14 inches, please press L. For your reference, a standard shoe box for men's shoes is around 36 cm / 14 inches long. You can use this information to judge the size. Some objects can come in different sizes, but try to judge based on the typical size of the object. Please do not forget to press S or L as soon as you see an object and also <strong>do not reload</strong> this page at any point. Each time you press either S or L the border around the video will change to grey for a short time. This will provide you with feedback whether your keypresses are registered. In case this does not happen, please stop the experiment and contact the experimenter (alex.quent@mrc-cbu.cam.ac.uk)<br>Note that after watching the video we will also test your memory performance. So, please try to remember the objects that you see and their order.<br><br>Press <strong>any key</strong> to start the experiment.</p></div>"
+        };
+        timeline.push(instruction_trial);
+
+        jsPsych.init({
+          timeline: timeline,
+          exclusions: {
+            min_width: jatos.studySessionData.min_width,
+            min_height: jatos.studySessionData.min_height
+          },
+          on_finish: function(){ 
+            jatos.startNextComponent();
+          }
+        })
+      })
+    });
+
+</script>
+

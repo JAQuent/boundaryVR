@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Spatial Experiment</title>
+  <script src="/assets/javascripts/jatos.js"></script>
+  <script src="/study_assets_root/boundaryVR3/jspsych-6.1.0/jspsych.js"></script>
+  <script src="/study_assets_root/boundaryVR3/jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+  <script src="/study_assets_root/boundaryVR3/movie_var.js"></script>
+</head>
+<body>
+</body>
+<script>
+    jatos.onLoad(function() {
+      // Creating timeline
+      var timeline = [];
+
+      var instruction_trial = {
+        type: "html-keyboard-response",
+        stimulus: "<div align=\"center\" style='display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;'><div style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.5em;\"><p style=\"width: 90%; text-align: justify\"><br><br><br>Now you will watch another video with a series of objects. Please continue the task has you have done during the first video. Please do not forget to press S or L as soon as you see an object and also <strong>do not reload</strong> this page at any point.<br><br>Press <strong>any key</strong> to start the experiment.</p></div>"
+      };
+      timeline.push(instruction_trial);
+
+      jsPsych.init({
+        timeline: timeline,
+        exclusions: {
+          min_width: jatos.studySessionData.min_width,
+          min_height: jatos.studySessionData.min_height
+        },
+        on_finish: function(){ 
+          jatos.startNextComponent();
+        }
+      })
+
+    });
+
+</script>
+

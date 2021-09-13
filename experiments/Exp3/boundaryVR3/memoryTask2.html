@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spatial Experiment</title>
+        <script src="jspsych-6.1.0/jspsych.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-fullscreen.js"></script>
+        <script src="trialInformation.js"></script>
+        <script src="memoryTask_functions.js"></script>
+        <script src="/assets/javascripts/jatos.js"></script>
+        <link href="memoryTask_style.css" rel="stylesheet" type="text/css"></link>
+        <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body></body>
+    <script>
+    jatos.onLoad(function(){
+      ///////////////////////////////////////////////////
+      /* create timeline */
+      var timeline = [];
+
+      /* Get subject counter balancing condition*/
+      var subjCond = jatos.studySessionData.subjCond;
+      var counterbalance_condition = jatos.studySessionData.counterbalance_condition;
+
+      ///////////////////////////////////////////////////
+      /* Getting information on window size*/
+      var width = window.innerWidth
+          || document.documentElement.clientWidth
+          || document.body.clientWidth;
+
+      var height = window.innerHeight
+          || document.documentElement.clientHeight
+          || document.body.clientHeight; 
+
+      /* Adjusting image sizes if necessary*/
+      hspace   = 5;  // spaces between images
+      margin   = 50; // Space towards the sides
+      true_imgWidth  = 1086;
+      true_imgHeight = 843;
+
+      // Maximum image width
+      widthAvail = width - hspace*4 - margin*2;
+      withCorr   = widthAvail/(true_imgWidth*3);
+
+      // Maximum image height
+      heightAvail = height - hspace*4 - margin*4;
+      heightCorr  = heightAvail/(true_imgHeight*2);
+
+      // Choose the smallest correction value and correct image size accordingly
+      var imageSize = Math.min(withCorr, heightCorr);
+      var disp_imgWidth  = true_imgWidth*imageSize;
+      var disp_imgHeight = true_imgHeight*imageSize;
+
+      ///////////////////////////////////////////////////
+      /* Parse and input and instruction snippets*/
+      snippet1 = "immediately followed";
+      snippet2 = "after";
+
+      // Parse number of trials
+      var half = 1; // Because this is the first memory test
+      var nTrial = probe[subjCond][half].length; // This is important to get the right number of trials as they are different between condiditons. 
+      var nComps = (nTrial*2) + 3; // Number of components 
+      // (fixation + task)  + 3 (instructions) 
+
+      ///////////////////////////////////////////////////
+      /* define instructions */
+      var instructions1 = {
+        type: "html-keyboard-response",
+        stimulus: "<div align=\"center\" style='display: flex; flex-direction: column; margin: auto; flex: 1 1 100%; width: 90%; height: 90%;'><div style=\"font-family: 'Open Sans', 'Arial', sans-serif; font-size: 150%; line-height: 1.5em;\"><p style=\"width: 90%; text-align: justify\">Thank you for making it so far. We will now present you with the same type of question you have been presented with the first memory test. Please continue completed this task in the same way you have completed the previous memory test. <br><br>Press <strong>space</strong> to begin the task.",
+        choices: ['space'],
+        post_trial_gap: 2000,
+        on_finish: function(data){
+          jsPsych.setProgressBar((data.trial_index + 1)/(nComps));
+        }
+      };
+
+
+      ///////////////////////////////////////////////////
+      /* Creating timeline variables and trial*/
+      var i;
+      var stimuli = new Array();
+      for (i = 0; i < nTrial; i++){ 
+          stimuli[i] = {temp_stim: create_temporalOrder_stim(probe[subjCond][half][i], 
+                                                             target[subjCond][half][i], 
+                                                             targetPos[subjCond][half][i],  
+                                                             foil1[subjCond][half][i],
+                                                             foil1Pos[subjCond][half][i], 
+                                                             foil2[subjCond][half][i], 
+                                                             foil2Pos[subjCond][half][i], 
+                                                             question[0],
+                                                             disp_imgWidth,
+                                                             disp_imgHeight),
+                        temp_data: {worker_id: jatos.workerId, 
+                                    test_part: 'temporalOrder', 
+                                    half: half,
+                                    corr_resp: targetPos[subjCond][half][i], 
+                                    probe: objNum[subjCond][half][i], 
+                                    target: target[subjCond][half][i], 
+                                    foil1: foil1[subjCond][half][i], 
+                                    dist1: dist1[subjCond][half][i], 
+                                    foil1Pos: foil1Pos[subjCond][half][i], 
+                                    foil2: foil2[subjCond][half][i], 
+                                    dist2: dist2[subjCond][half][i], 
+                                    foil2Pos: foil2Pos[subjCond][half][i], 
+                                    subjCond: subjCond, 
+                                    counterbalance_condition: counterbalance_condition,
+                                    question: question[half], 
+                                    roomNum: roomNum_probe[subjCond][half][i],
+                                    roomType: roomType[subjCond][half][i],
+                                    sameRoom: sameRoom[subjCond][half][i], 
+                                    context: context[subjCond][half][i],
+                                    probeTable: table[subjCond][half][i],
+                                    foil1Table: foil1Table[subjCond][half][i],
+                                    foil2Table: foil2Table[subjCond][half][i],
+                                    imageSize: imageSize}};
+      };
+
+      //////////////////////////////////////////////////////////////
+      /* define trial components */
+      timeline.push(instructions1);
+
+      var fixation = {
+        type: 'html-keyboard-response',
+        stimulus: '<div style="font-size:60px;">+</div>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 500,
+        data: {test_part: 'fixation'},
+        on_finish: function(data){
+          jsPsych.setProgressBar((data.trial_index + 1)/(nComps));
+        }
+      };
+
+      var temporalOrder = {
+        type: "html-keyboard-response",
+        stimulus: jsPsych.timelineVariable('temp_stim'),
+        choices: ['1', '2', '3'],
+        data: jsPsych.timelineVariable('temp_data'),
+        on_finish: function(data){
+          jsPsych.setProgressBar((data.trial_index + 1)/(nComps));
+        }
+      };
+
+      /* define procedure for block 1 */
+      var experiment = {
+        timeline: [fixation, temporalOrder],
+        timeline_variables: stimuli,
+        repetitions: 1,
+        randomize_order: true
+      };
+      timeline.push(experiment);
+
+      // Initialise experiment
+      jsPsych.init({
+          timeline: timeline,
+          show_progress_bar: true,
+          auto_update_progress_bar: false,
+          on_finish: function(){
+           jatos.submitResultData(jsPsych.data.get().csv(), function(){jatos.startNextComponent()}); // Error if I also try to submit the data at the same time. 
+          }
+      });
+    }); 
+    </script>
+</html>

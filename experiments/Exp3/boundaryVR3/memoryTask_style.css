@@ -1,0 +1,21 @@
+/*
+ * CSS for memoryTask.
+ */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  text-align: center;
+  grid-gap: 0 10px;
+}
+
+.top {
+  grid-column: 1/4;
+  justify-self: center;
+}
+
+.num {
+  font-size: 20px;
+  text-align: center;
+}
