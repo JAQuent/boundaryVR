@@ -12,7 +12,7 @@
 # ----------------------------- Setting up ---------------------------
 # */
 ######################################################
-# Path to parent folder noveltyVR
+# Path to parent folder bondaryVR
 path2parent <- "D:/Alex/Laptop/Documents/boundaryVR" # This need to be changed to run this document
 ######################################################
 
